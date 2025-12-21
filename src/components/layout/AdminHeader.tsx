@@ -1,4 +1,4 @@
-import { Bell, Search } from 'lucide-react';
+import { Bell, Search, Menu, X } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -19,17 +19,25 @@ interface AdminHeaderProps {
 }
 
 export function AdminHeader({ title }: AdminHeaderProps) {
-  const { isCollapsed } = useSidebarStore();
+  const { isCollapsed, isMobileOpen, setMobileOpen } = useSidebarStore();
 
   return (
     <header className={cn(
-      "sticky top-0 z-30 flex items-center justify-between h-16 px-6 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border transition-all duration-300",
+      "sticky top-0 z-30 flex items-center justify-between h-16 px-4 sm:px-6 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border transition-all duration-300",
       isCollapsed ? "lg:ml-20" : "lg:ml-64"
     )}>
-      <div className="flex items-center gap-4 flex-1">
-        <h1 className="text-xl font-semibold text-foreground hidden sm:block">{title}</h1>
+      <div className="flex items-center gap-3 sm:gap-4 flex-1 min-w-0">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-9 w-9 flex-shrink-0 lg:hidden"
+          onClick={() => setMobileOpen(!isMobileOpen)}
+        >
+          {isMobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+        </Button>
+        <h1 className="text-lg sm:text-xl font-semibold text-foreground truncate">{title}</h1>
         
-        <div className="relative max-w-md w-full ml-auto lg:ml-8">
+        <div className="relative max-w-md w-full ml-auto hidden md:block lg:ml-8">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input 
             placeholder="Search..." 
