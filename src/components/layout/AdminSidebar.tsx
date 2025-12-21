@@ -1,4 +1,4 @@
-import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { 
   LayoutDashboard, 
   Users, 
@@ -14,6 +14,7 @@ import {
 import { cn } from '@/lib/utils';
 import { useSidebarStore } from '@/stores/sidebarStore';
 import { Button } from '@/components/ui/button';
+import { useAuth } from '@/api/auth.api';
 
 const mainNavItems = [
   { title: 'Dashboard', icon: LayoutDashboard, path: '/' },
@@ -30,6 +31,8 @@ const secondaryNavItems = [
 export function AdminSidebar() {
   const { isCollapsed, isMobileOpen, toggleCollapsed, setMobileOpen } = useSidebarStore();
   const location = useLocation();
+  const navigate = useNavigate();
+  const { logout } = useAuth();
 
   const isActive = (path: string) => {
     if (path === '/') return location.pathname === '/';
@@ -111,10 +114,15 @@ export function AdminSidebar() {
       </nav>
 
       <div className="px-3 py-4 border-t border-sidebar-border">
-        <button className={cn(
-          "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium w-full",
-          "text-destructive hover:bg-destructive/10 transition-colors"
-        )}>
+        <button 
+          onClick={() => {
+            logout();
+            navigate('/login');
+          }}
+          className={cn(
+            "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium w-full",
+            "text-destructive hover:bg-destructive/10 transition-colors"
+          )}>
           <LogOut className="h-5 w-5" />
           {!isCollapsed && <span>Logout</span>}
         </button>
