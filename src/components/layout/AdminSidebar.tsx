@@ -54,15 +54,38 @@ export function AdminSidebar() {
 
   const sidebarContent = (
     <div className="flex flex-col h-full">
-      <div className="flex items-center gap-3 px-4 py-6 border-b border-sidebar-border">
-        <div className="h-10 w-10 rounded-xl bg-primary flex items-center justify-center">
-          <ChefHat className="h-6 w-6 text-primary-foreground" />
-        </div>
-        {!isCollapsed && (
-          <div>
-            <h1 className="text-lg font-bold text-foreground">Smart Meal</h1>
-            <p className="text-xs text-muted-foreground">Admin Dashboard</p>
-          </div>
+      <div className="flex items-center justify-center px-4 py-6 border-b border-sidebar-border">
+        {isCollapsed ? (
+          /* When collapsed: show toggle button in center (replacing ChefHat) */
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-10 w-10 rounded-xl hidden lg:flex"
+            onClick={toggleCollapsed}
+          >
+            <Menu className="h-5 w-5" />
+          </Button>
+        ) : (
+          /* When expanded: show logo + text on left, toggle on right */
+          <>
+            <div className="flex items-center gap-3 flex-1">
+              <div className="h-10 w-10 rounded-xl bg-primary flex items-center justify-center">
+                <ChefHat className="h-6 w-6 text-primary-foreground" />
+              </div>
+              <div>
+                <h1 className="text-lg font-bold text-foreground">Smart Meal</h1>
+                <p className="text-xs text-muted-foreground">Admin Dashboard</p>
+              </div>
+            </div>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 hidden lg:flex flex-shrink-0"
+              onClick={toggleCollapsed}
+            >
+              <Menu className="h-4 w-4" />
+            </Button>
+          </>
         )}
       </div>
 
@@ -127,19 +150,6 @@ export function AdminSidebar() {
       )}>
         {sidebarContent}
       </aside>
-
-      {/* Desktop toggle button */}
-      <Button
-        variant="ghost"
-        size="icon"
-        className={cn(
-          "fixed top-6 z-50 hidden lg:flex transition-all duration-300",
-          isCollapsed ? "left-[72px]" : "left-[248px]"
-        )}
-        onClick={toggleCollapsed}
-      >
-        <Menu className="h-5 w-5" />
-      </Button>
     </>
   );
 }
