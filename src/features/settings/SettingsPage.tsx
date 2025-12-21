@@ -4,19 +4,22 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
+import { useAuth } from '@/api/auth.api';
 
 export function SettingsPage() {
+  const { user } = useAuth();
+
   return (
     <AdminLayout title="Settings">
-      <div className="max-w-2xl space-y-6">
+      <div className="space-y-6">
         <Card>
           <CardHeader><CardTitle>Profile Settings</CardTitle></CardHeader>
           <CardContent className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
+            {/* <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2"><Label>First Name</Label><Input defaultValue="Admin" /></div>
               <div className="space-y-2"><Label>Last Name</Label><Input defaultValue="User" /></div>
-            </div>
-            <div className="space-y-2"><Label>Email</Label><Input defaultValue="admin@smartmeal.com" /></div>
+            </div> */}
+            <div className="space-y-2"><Label>Email</Label><Input defaultValue={user.email} /></div>
             <Button>Save Changes</Button>
           </CardContent>
         </Card>
