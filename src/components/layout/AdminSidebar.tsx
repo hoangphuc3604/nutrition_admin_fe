@@ -1,0 +1,145 @@
+import { NavLink, useLocation } from 'react-router-dom';
+import { 
+  LayoutDashboard, 
+  Users, 
+  UtensilsCrossed, 
+  Carrot, 
+  BarChart3, 
+  Settings,
+  LogOut,
+  ChefHat,
+  Menu,
+  X
+} from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { useSidebarStore } from '@/stores/sidebarStore';
+import { Button } from '@/components/ui/button';
+
+const mainNavItems = [
+  { title: 'Dashboard', icon: LayoutDashboard, path: '/' },
+  { title: 'Users', icon: Users, path: '/users' },
+  { title: 'Recipes', icon: UtensilsCrossed, path: '/recipes' },
+  { title: 'Ingredients', icon: Carrot, path: '/ingredients' },
+];
+
+const secondaryNavItems = [
+  { title: 'Reports', icon: BarChart3, path: '/reports' },
+  { title: 'Settings', icon: Settings, path: '/settings' },
+];
+
+export function AdminSidebar() {
+  const { isCollapsed, isMobileOpen, toggleCollapsed, setMobileOpen } = useSidebarStore();
+  const location = useLocation();
+
+  const isActive = (path: string) => {
+    if (path === '/') return location.pathname === '/';
+    return location.pathname.startsWith(path);
+  };
+
+  const NavItem = ({ item }: { item: typeof mainNavItems[0] }) => (
+    <NavLink
+      to={item.path}
+      onClick={() => setMobileOpen(false)}
+      className={cn(
+        "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200",
+        isActive(item.path)
+          ? "bg-primary text-primary-foreground shadow-md"
+          : "text-sidebar-foreground hover:bg-secondary hover:text-foreground"
+      )}
+    >
+      <item.icon className="h-5 w-5 flex-shrink-0" />
+      {!isCollapsed && <span>{item.title}</span>}
+    </NavLink>
+  );
+
+  const sidebarContent = (
+    <div className="flex flex-col h-full">
+      <div className="flex items-center gap-3 px-4 py-6 border-b border-sidebar-border">
+        <div className="h-10 w-10 rounded-xl bg-primary flex items-center justify-center">
+          <ChefHat className="h-6 w-6 text-primary-foreground" />
+        </div>
+        {!isCollapsed && (
+          <div>
+            <h1 className="text-lg font-bold text-foreground">Smart Meal</h1>
+            <p className="text-xs text-muted-foreground">Admin Dashboard</p>
+          </div>
+        )}
+      </div>
+
+      <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto scrollbar-thin">
+        <div className="space-y-1">
+          {mainNavItems.map((item) => (
+            <NavItem key={item.path} item={item} />
+          ))}
+        </div>
+
+        <div className="pt-6">
+          {!isCollapsed && (
+            <p className="px-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
+              Analytics
+            </p>
+          )}
+          <div className="space-y-1">
+            {secondaryNavItems.map((item) => (
+              <NavItem key={item.path} item={item} />
+            ))}
+          </div>
+        </div>
+      </nav>
+
+      <div className="px-3 py-4 border-t border-sidebar-border">
+        <button className={cn(
+          "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium w-full",
+          "text-destructive hover:bg-destructive/10 transition-colors"
+        )}>
+          <LogOut className="h-5 w-5" />
+          {!isCollapsed && <span>Logout</span>}
+        </button>
+      </div>
+    </div>
+  );
+
+  return (
+    <>
+      {/* Mobile overlay */}
+      {isMobileOpen && (
+        <div 
+          className="fixed inset-0 bg-background/80 backdrop-blur-sm z-40 lg:hidden"
+          onClick={() => setMobileOpen(false)}
+        />
+      )}
+
+      {/* Mobile toggle button */}
+      <Button
+        variant="ghost"
+        size="icon"
+        className="fixed top-4 left-4 z-50 lg:hidden"
+        onClick={() => setMobileOpen(!isMobileOpen)}
+      >
+        {isMobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+      </Button>
+
+      {/* Sidebar */}
+      <aside className={cn(
+        "fixed left-0 top-0 h-full bg-sidebar border-r border-sidebar-border z-40 transition-all duration-300",
+        isCollapsed ? "w-20" : "w-64",
+        isMobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
+      )}>
+        {sidebarContent}
+      </aside>
+
+      {/* Desktop toggle button */}
+      <Button
+        variant="ghost"
+        size="icon"
+        className={cn(
+          "fixed top-6 z-50 hidden lg:flex transition-all duration-300",
+          isCollapsed ? "left-[72px]" : "left-[248px]"
+        )}
+        onClick={toggleCollapsed}
+      >
+        <Menu className="h-5 w-5" />
+      </Button>
+    </>
+  );
+}
