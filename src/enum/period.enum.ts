@@ -18,3 +18,6 @@ export function isValidPeriod(value: string): value is Period {
   return Object.values(Period).includes(value as Period);
 }
 
+
+
+

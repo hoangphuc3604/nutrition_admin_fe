@@ -20,6 +20,28 @@ interface OverviewStats {
   surveyCompletion: MetricWithTrend;
 }
 
+interface TrendingRecipe {
+  id: string;
+  name: string;
+  cuisine_type: string | null;
+  like_count: number;
+  later_count: number;
+  total_interactions: number;
+  description?: string | null;
+  image_url?: string | null;
+  difficulty_level?: 'easy' | 'medium' | 'hard';
+  prep_time_minutes?: number | null;
+  cook_time_minutes?: number | null;
+  servings?: number | null;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
+interface TrendingRecipesResponse {
+  recipes: TrendingRecipe[];
+  count: number;
+}
+
 const dashboardApi = {
   getOverview: async (period: Period = Period.PERIOD_7D): Promise<OverviewStats> => {
     const response = await apiClient.get<OverviewStats>(
@@ -27,6 +49,17 @@ const dashboardApi = {
       { requireAuth: true }
     );
     return response.data!;
+  },
+
+  getTrendingRecipes: async (limit: number = 10): Promise<TrendingRecipesResponse> => {
+    const response = await apiClient.get<{ recipes: TrendingRecipe[]; count: number }>(
+      `/recipes/trending?limit=${limit}`,
+      { requireAuth: true }
+    );
+    return {
+      recipes: response.data?.recipes || [],
+      count: response.data?.count || 0,
+    };
   },
 };
 
@@ -37,5 +70,15 @@ export const useDashboardOverview = (period: Period = Period.PERIOD_7D) => {
   });
 };
 
-export type { OverviewStats, MetricWithTrend, TrendData };
+export const useTrendingRecipes = (limit: number = 10) => {
+  return useQuery({
+    queryKey: ['dashboard', 'trending-recipes', limit],
+    queryFn: () => dashboardApi.getTrendingRecipes(limit),
+  });
+};
+
+export type { OverviewStats, MetricWithTrend, TrendData, TrendingRecipe, TrendingRecipesResponse };
+
+
+
 
