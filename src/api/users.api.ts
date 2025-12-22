@@ -4,27 +4,55 @@ import { apiClient } from '@/lib/api';
 interface User {
   id: string;
   email: string;
+  status: string;
   roles: string[];
-  [key: string]: any;
+  doneSurvey: boolean;
+  isEmailVerified: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface UsersPaginationParams {
+  page?: number;
+  limit?: number;
+  search?: string;
+  status?: string;
+  role?: string;
+}
+
+interface PaginationInfo {
+  total: number;
+  page: number;
+  limit: number;
+  hasNext: boolean;
 }
 
 interface UsersResponse {
+  success: boolean;
   message: string;
   data: {
     users: User[];
-    total: number;
+    pagination: PaginationInfo;
   };
 }
 
-export const usersApi = {
-  getUsers: async (): Promise<UsersResponse> => {
-    const response = await apiClient.get<UsersResponse['data']>('/users', {
+const usersApi = {
+  getUsers: async (params: UsersPaginationParams = {}): Promise<UsersResponse['data']> => {
+    const queryParams = new URLSearchParams();
+    
+    if (params.page) queryParams.append('page', params.page.toString());
+    if (params.limit) queryParams.append('limit', params.limit.toString());
+    if (params.search) queryParams.append('search', params.search);
+    if (params.status) queryParams.append('status', params.status);
+    if (params.role) queryParams.append('role', params.role);
+    
+    const queryString = queryParams.toString();
+    const endpoint = `/admin/users${queryString ? `?${queryString}` : ''}`;
+    
+    const response = await apiClient.get<UsersResponse['data']>(endpoint, {
       requireAuth: true,
     });
-    return {
-      message: response.message,
-      data: response.data!,
-    };
+    return response.data!;
   },
   
   getUserById: async (id: string): Promise<User> => {
@@ -48,10 +76,10 @@ export const usersApi = {
   },
 };
 
-export const useUsers = () => {
+export const useUsers = (params: UsersPaginationParams = {}) => {
   return useQuery({
-    queryKey: ['users'],
-    queryFn: usersApi.getUsers,
+    queryKey: ['users', params],
+    queryFn: () => usersApi.getUsers(params),
   });
 };
 
@@ -69,9 +97,8 @@ export const useUpdateUser = () => {
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: Partial<User> }) =>
       usersApi.updateUser(id, data),
-    onSuccess: (_, variables) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['users'] });
-      queryClient.invalidateQueries({ queryKey: ['user', variables.id] });
     },
   });
 };
@@ -86,4 +113,6 @@ export const useDeleteUser = () => {
     },
   });
 };
+
+export type { User, UsersPaginationParams, PaginationInfo };
 
