@@ -20,12 +20,14 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { cn } from '@/lib/utils';
 import { useUsers } from '@/api/users.api';
+import { useAuthStore } from '@/stores/authStore';
 
 export function UsersPage() {
   const [page, setPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [roleFilter, setRoleFilter] = useState<string>('all');
+  const currentUser = useAuthStore((state) => state.user);
 
   const queryParams = useMemo(() => {
     const params: { page: number; limit: number; search?: string; status?: string; role?: string } = {
@@ -166,10 +168,14 @@ export function UsersPage() {
                 ) : (
                   data?.users.map((user) => {
                     const roles = user.roles || [];
+                    const isCurrentUser = currentUser?.id === user.id;
                     return (
                       <tr key={user.id} className="border-b border-border last:border-0 hover:bg-muted/50 transition-colors">
                         <td className="py-4 px-4 text-sm text-muted-foreground">{user.id.slice(0, 8)}...</td>
-                        <td className="py-4 px-4 text-sm font-medium text-foreground">{user.email}</td>
+                        <td className="py-4 px-4 text-sm font-medium text-foreground">
+                          {user.email}
+                          {isCurrentUser && <span className="text-muted-foreground text-xs ml-2">(You)</span>}
+                        </td>
                         <td className="py-4 px-4 text-sm text-muted-foreground">{formatDate(user.createdAt)}</td>
                         <td className="py-4 px-4">
                           <div className="flex flex-wrap gap-1.5">

@@ -9,7 +9,8 @@ import {
   LogOut,
   ChefHat,
   Menu,
-  X
+  X,
+  Mail
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useSidebarStore } from '@/stores/sidebarStore';
@@ -25,6 +26,7 @@ const mainNavItems = [
 
 const secondaryNavItems = [
   { title: 'Reports', icon: BarChart3, path: '/reports' },
+  { title: 'Gmail Auth', icon: Mail, path: '/gmail-auth' },
   { title: 'Settings', icon: Settings, path: '/settings' },
 ];
 

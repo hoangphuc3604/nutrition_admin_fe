@@ -10,6 +10,7 @@ import { RecipesPage } from "./features/recipes/RecipesPage";
 import { IngredientsPage } from "./features/ingredients/IngredientsPage";
 import { ReportsPage } from "./features/reports/ReportsPage";
 import { SettingsPage } from "./features/settings/SettingsPage";
+import { GmailAuthPage } from "./features/settings/GmailAuthPage";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import NotFound from "./pages/NotFound";
 import { queryClient } from "./lib/queryClient";
@@ -67,6 +68,14 @@ const App = () => (
             element={
               <ProtectedRoute>
                 <SettingsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/gmail-auth"
+            element={
+              <ProtectedRoute>
+                <GmailAuthPage />
               </ProtectedRoute>
             }
           />

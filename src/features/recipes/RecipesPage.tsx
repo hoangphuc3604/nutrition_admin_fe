@@ -21,34 +21,23 @@ import {
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils';
-
-interface Recipe {
-  id: string;
-  name: string;
-  category: string;
-  calories: number;
-  prepTime: number;
-  tags: string[];
-  imageUrl: string;
-}
-
-const mockRecipes: Recipe[] = [
-  { id: '1', name: 'Grilled Chicken Salad', category: 'Lunch', calories: 350, prepTime: 20, tags: ['High Protein', 'Low Carb'], imageUrl: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=100&h=100&fit=crop' },
-  { id: '2', name: 'Overnight Oats', category: 'Breakfast', calories: 280, prepTime: 10, tags: ['Fiber Rich', 'Easy'], imageUrl: 'https://images.unsplash.com/photo-1517673400267-0251440c45dc?w=100&h=100&fit=crop' },
-  { id: '3', name: 'Quinoa Buddha Bowl', category: 'Dinner', calories: 420, prepTime: 30, tags: ['Vegan', 'Healthy'], imageUrl: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=100&h=100&fit=crop' },
-  { id: '4', name: 'Avocado Toast', category: 'Breakfast', calories: 310, prepTime: 5, tags: ['Quick', 'Vegetarian'], imageUrl: 'https://images.unsplash.com/photo-1541519227354-08fa5d50c44d?w=100&h=100&fit=crop' },
-  { id: '5', name: 'Salmon Teriyaki', category: 'Dinner', calories: 480, prepTime: 25, tags: ['Omega-3', 'Asian'], imageUrl: 'https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=100&h=100&fit=crop' },
-  { id: '6', name: 'Green Smoothie', category: 'Breakfast', calories: 180, prepTime: 5, tags: ['Detox', 'Quick'], imageUrl: 'https://images.unsplash.com/photo-1610970881699-44a5587cabec?w=100&h=100&fit=crop' },
-];
+import { useRecipes } from '@/api/recipes.api';
 
 export function RecipesPage() {
+  const [page, setPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  const filteredRecipes = mockRecipes.filter(recipe =>
-    recipe.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    recipe.category.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const { data, isLoading, error } = useRecipes({
+    page,
+    limit: 10,
+    search: searchQuery
+  });
+
+  const handleSearchChange = (value: string) => {
+    setSearchQuery(value);
+    setPage(1);
+  };
 
   return (
     <AdminLayout title="Recipes">
@@ -67,41 +56,22 @@ export function RecipesPage() {
                 <DialogTitle>Add New Recipe</DialogTitle>
               </DialogHeader>
               <div className="grid gap-4 py-4">
+                {/* Form content kept as placeholder */}
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="name">Recipe Name</Label>
                     <Input id="name" placeholder="Enter recipe name" />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="category">Category</Label>
-                    <Input id="category" placeholder="e.g., Breakfast, Lunch" />
+                    <Label htmlFor="category">Cuisine Type</Label>
+                    <Input id="category" placeholder="e.g., Italian, Asian" />
                   </div>
                 </div>
-                <div className="grid grid-cols-3 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="calories">Calories</Label>
-                    <Input id="calories" type="number" placeholder="350" />
-                  </div>
+                <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="prepTime">Prep Time (min)</Label>
                     <Input id="prepTime" type="number" placeholder="20" />
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="servings">Servings</Label>
-                    <Input id="servings" type="number" placeholder="2" />
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="tags">Tags (comma separated)</Label>
-                  <Input id="tags" placeholder="High Protein, Low Carb, Easy" />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="description">Description</Label>
-                  <Textarea id="description" placeholder="Recipe description..." rows={3} />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="ingredients">Ingredients</Label>
-                  <Textarea id="ingredients" placeholder="List ingredients..." rows={4} />
                 </div>
                 <div className="flex justify-end gap-2 pt-4">
                   <Button variant="outline" onClick={() => setIsDialogOpen(false)}>Cancel</Button>
@@ -118,7 +88,7 @@ export function RecipesPage() {
               <Input
                 placeholder="Search recipes..."
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={(e) => handleSearchChange(e.target.value)}
                 className="pl-10"
               />
             </div>
@@ -130,64 +100,89 @@ export function RecipesPage() {
                 <tr className="border-b border-border bg-secondary/30">
                   <th className="text-left py-4 px-4 text-sm font-semibold text-muted-foreground">Image</th>
                   <th className="text-left py-4 px-4 text-sm font-semibold text-muted-foreground">Recipe Name</th>
-                  <th className="text-left py-4 px-4 text-sm font-semibold text-muted-foreground">Category</th>
-                  <th className="text-left py-4 px-4 text-sm font-semibold text-muted-foreground">Calories</th>
+                  <th className="text-left py-4 px-4 text-sm font-semibold text-muted-foreground">Cuisine Type</th>
                   <th className="text-left py-4 px-4 text-sm font-semibold text-muted-foreground">Prep Time</th>
-                  <th className="text-left py-4 px-4 text-sm font-semibold text-muted-foreground">Tags</th>
                   <th className="text-left py-4 px-4 text-sm font-semibold text-muted-foreground">Actions</th>
                 </tr>
               </thead>
               <tbody>
-                {filteredRecipes.map((recipe) => (
-                  <tr key={recipe.id} className="border-b border-border last:border-0 hover:bg-muted/50 transition-colors">
-                    <td className="py-3 px-4">
-                      <img 
-                        src={recipe.imageUrl} 
-                        alt={recipe.name}
-                        className="h-14 w-14 rounded-lg object-cover"
-                      />
-                    </td>
-                    <td className="py-4 px-4 text-sm font-medium text-foreground">{recipe.name}</td>
-                    <td className="py-4 px-4 text-sm text-muted-foreground">{recipe.category}</td>
-                    <td className="py-4 px-4">
-                      <div className="flex items-center gap-1.5 text-sm">
-                        <Flame className="h-4 w-4 text-warning" />
-                        {recipe.calories} kcal
-                      </div>
-                    </td>
-                    <td className="py-4 px-4 text-sm text-muted-foreground">{recipe.prepTime} min</td>
-                    <td className="py-4 px-4">
-                      <div className="flex flex-wrap gap-1">
-                        {recipe.tags.slice(0, 2).map((tag) => (
-                          <Badge key={tag} variant="secondary" className="text-xs">
-                            {tag}
-                          </Badge>
-                        ))}
-                      </div>
-                    </td>
-                    <td className="py-4 px-4">
-                      <div className="flex items-center gap-1">
-                        <Button variant="ghost" size="icon" className="h-8 w-8 text-primary">
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                        <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive">
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
+                {isLoading ? (
+                  <tr>
+                    <td colSpan={5} className="py-8 px-4 text-center text-sm text-muted-foreground">
+                      Loading recipes...
                     </td>
                   </tr>
-                ))}
+                ) : error ? (
+                  <tr>
+                    <td colSpan={5} className="py-8 px-4 text-center text-sm text-destructive">
+                      Failed to load recipes. Please try again.
+                    </td>
+                  </tr>
+                ) : data?.recipes.length === 0 ? (
+                  <tr>
+                    <td colSpan={5} className="py-8 px-4 text-center text-sm text-muted-foreground">
+                      No recipes found
+                    </td>
+                  </tr>
+                ) : (
+                  data?.recipes.map((recipe) => (
+                    <tr key={recipe.id} className="border-b border-border last:border-0 hover:bg-muted/50 transition-colors">
+                      <td className="py-3 px-4">
+                        <img 
+                          src={recipe.image_url || 'https://placehold.co/100x100?text=No+Image'} 
+                          alt={recipe.name}
+                          className="h-14 w-14 rounded-lg object-cover"
+                        />
+                      </td>
+                      <td className="py-4 px-4 text-sm font-medium text-foreground">{recipe.name}</td>
+                      <td className="py-4 px-4 text-sm text-muted-foreground">{recipe.cuisine_type || 'N/A'}</td>
+                      <td className="py-4 px-4 text-sm text-muted-foreground">{recipe.prep_time_minutes ? `${recipe.prep_time_minutes} min` : 'N/A'}</td>
+                      <td className="py-4 px-4">
+                        <div className="flex items-center gap-1">
+                          <Button variant="ghost" size="icon" className="h-8 w-8 text-primary">
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive">
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>
 
           <div className="flex items-center justify-between mt-6 pt-4 border-t border-border">
             <p className="text-sm text-muted-foreground">
-              Showing {filteredRecipes.length} of {mockRecipes.length} recipes
+              {data ? (
+                <>
+                  Showing {((data.pagination.page - 1) * data.pagination.limit) + 1} to{' '}
+                  {Math.min(data.pagination.page * data.pagination.limit, data.pagination.total)} of{' '}
+                  {data.pagination.total} recipes
+                </>
+              ) : (
+                'Loading...'
+              )}
             </p>
             <div className="flex items-center gap-2">
-              <Button variant="outline" size="sm">Previous</Button>
-              <Button variant="outline" size="sm">Next</Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                disabled={!data || data.pagination.page === 1 || isLoading}
+              >
+                Previous
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setPage((p) => p + 1)}
+                disabled={!data || !data.pagination.hasNext || isLoading}
+              >
+                Next
+              </Button>
             </div>
           </div>
         </CardContent>
@@ -195,3 +190,4 @@ export function RecipesPage() {
     </AdminLayout>
   );
 }
+
