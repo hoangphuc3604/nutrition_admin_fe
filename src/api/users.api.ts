@@ -12,6 +12,44 @@ interface User {
   updatedAt: string;
 }
 
+interface UserProfile {
+  age: number | null;
+  height: number;
+  weight: number;
+  activity_level: string;
+  health_goal: string;
+  target_weight: number | null;
+  medical_conditions: string[] | null;
+  allergies: string[] | null;
+  dietary_restrictions: string[] | null;
+  dietary_preferences: string[] | null;
+  daily_calorie_target: number | null;
+  preferences: {
+    cuisines: string[];
+    spiceLevel: number;
+    cookingTime: number;
+    mealTypes: string[];
+  } | null;
+}
+
+interface UserStats {
+  completedMeals: number;
+  likedMeals: number;
+  daysUsingApp: number;
+}
+
+interface UserCounts {
+  totalMealPlans: number;
+  totalFridgeItems: number;
+}
+
+interface UserDetail {
+  user: User;
+  profile: UserProfile | null;
+  stats: UserStats;
+  counts: UserCounts;
+}
+
 interface UsersPaginationParams {
   page?: number;
   limit?: number;
@@ -36,6 +74,44 @@ interface UsersResponse {
   };
 }
 
+interface UserProfile {
+  age: number | null;
+  height: number;
+  weight: number;
+  activity_level: string;
+  health_goal: string;
+  target_weight: number | null;
+  medical_conditions: string[] | null;
+  allergies: string[] | null;
+  dietary_restrictions: string[] | null;
+  dietary_preferences: string[] | null;
+  daily_calorie_target: number | null;
+  preferences: {
+    cuisines: string[];
+    spiceLevel: number;
+    cookingTime: number;
+    mealTypes: string[];
+  } | null;
+}
+
+interface UserStats {
+  completedMeals: number;
+  likedMeals: number;
+  daysUsingApp: number;
+}
+
+interface UserCounts {
+  totalMealPlans: number;
+  totalFridgeItems: number;
+}
+
+interface UserDetail {
+  user: User;
+  profile: UserProfile | null;
+  stats: UserStats;
+  counts: UserCounts;
+}
+
 const usersApi = {
   getUsers: async (params: UsersPaginationParams = {}): Promise<UsersResponse['data']> => {
     const queryParams = new URLSearchParams();
@@ -57,6 +133,13 @@ const usersApi = {
   
   getUserById: async (id: string): Promise<User> => {
     const response = await apiClient.get<User>(`/users/${id}`, {
+      requireAuth: true,
+    });
+    return response.data!;
+  },
+
+  getUserDetail: async (id: string): Promise<UserDetail> => {
+    const response = await apiClient.get<UserDetail>(`/admin/users/${id}`, {
       requireAuth: true,
     });
     return response.data!;
@@ -114,5 +197,13 @@ export const useDeleteUser = () => {
   });
 };
 
-export type { User, UsersPaginationParams, PaginationInfo };
+export const useUserDetail = (id: string) => {
+  return useQuery({
+    queryKey: ['userDetail', id],
+    queryFn: () => usersApi.getUserDetail(id),
+    enabled: !!id,
+  });
+};
+
+export type { User, UserDetail, UserProfile, UserStats, UserCounts, UsersPaginationParams, PaginationInfo };
 

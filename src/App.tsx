@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { LoginPage } from "./features/auth/LoginPage";
 import { DashboardPage } from "./features/dashboard/DashboardPage";
 import { UsersPage } from "./features/users/UsersPage";
+import { UserDetailPage } from "./features/users/UserDetailPage";
 import { RecipesPage } from "./features/recipes/RecipesPage";
 import { IngredientsPage } from "./features/ingredients/IngredientsPage";
 import { ReportsPage } from "./features/reports/ReportsPage";
@@ -36,6 +37,14 @@ const App = () => (
             element={
               <ProtectedRoute>
                 <UsersPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/users/:id"
+            element={
+              <ProtectedRoute>
+                <UserDetailPage />
               </ProtectedRoute>
             }
           />

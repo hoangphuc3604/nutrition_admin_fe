@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Search, Filter, MoreHorizontal, Edit, Trash2, Ban, CheckCircle } from 'lucide-react';
 import { AdminLayout } from '@/components/layout/AdminLayout';
 import { Input } from '@/components/ui/input';
@@ -28,6 +29,7 @@ export function UsersPage() {
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [roleFilter, setRoleFilter] = useState<string>('all');
   const currentUser = useAuthStore((state) => state.user);
+  const navigate = useNavigate();
 
   const queryParams = useMemo(() => {
     const params: { page: number; limit: number; search?: string; status?: string; role?: string } = {
@@ -214,8 +216,11 @@ export function UsersPage() {
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
-                              <DropdownMenuItem className="gap-2">
-                                <Edit className="h-4 w-4" /> Edit
+                              <DropdownMenuItem 
+                                className="gap-2"
+                                onClick={() => navigate(`/users/${user.id}`)}
+                              >
+                                <Edit className="h-4 w-4" /> View Details
                               </DropdownMenuItem>
                               <DropdownMenuItem className="gap-2">
                                 {user.status === 'active' ? (
