@@ -1,10 +1,9 @@
-import { Mail, CheckCircle, XCircle, RefreshCw, ExternalLink } from 'lucide-react';
+import { CheckCircle, XCircle, RefreshCw, ExternalLink } from 'lucide-react';
 import { AdminLayout } from '@/components/layout/AdminLayout';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { useGmailStatus, gmailApi } from '@/api/gmail.api';
-import { Badge } from '@/components/ui/badge';
 
 export function GmailAuthPage() {
   const { data: status, isLoading, error, refetch } = useGmailStatus();
@@ -15,22 +14,20 @@ export function GmailAuthPage() {
 
   return (
     <AdminLayout title="Gmail Integration">
-      <div className="max-w-3xl mx-auto space-y-6">
-        <Card>
-          <CardHeader>
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-red-100 rounded-lg">
-                <Mail className="h-6 w-6 text-red-600" />
-              </div>
-              <div>
-                <CardTitle>Gmail API Connection</CardTitle>
-                <CardDescription>
-                  Manage the connection to Google Gmail API for sending emails and notifications.
-                </CardDescription>
-              </div>
-            </div>
+      <div className="space-y-6">
+        <Card className="shadow-sm">
+          <CardHeader className="flex flex-row items-center justify-between pb-4">
+            <CardTitle className="text-2xl font-bold">Gmail API Connection</CardTitle>
+            <Button 
+              onClick={handleConnect} 
+              className="gap-2"
+              variant={status?.isAuthenticated ? "outline" : "default"}
+            >
+              <ExternalLink className="h-4 w-4" />
+              {status?.isAuthenticated ? 'Reconnect / Switch Account' : 'Connect Gmail Account'}
+            </Button>
           </CardHeader>
-          <CardContent className="space-y-6">
+          <CardContent>
             {isLoading ? (
               <div className="flex items-center justify-center py-8">
                 <RefreshCw className="h-6 w-6 animate-spin text-muted-foreground" />
@@ -78,15 +75,6 @@ export function GmailAuthPage() {
                 )}
 
                 <div className="flex items-center gap-4 pt-4 border-t">
-                  <Button 
-                    onClick={handleConnect} 
-                    className="gap-2"
-                    variant={status?.isAuthenticated ? "outline" : "default"}
-                  >
-                    <ExternalLink className="h-4 w-4" />
-                    {status?.isAuthenticated ? 'Reconnect / Switch Account' : 'Connect Gmail Account'}
-                  </Button>
-                  
                   <Button variant="ghost" onClick={() => refetch()} className="gap-2">
                     <RefreshCw className="h-4 w-4" />
                     Refresh Status
