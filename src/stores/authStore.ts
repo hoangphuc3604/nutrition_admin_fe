@@ -1,10 +1,11 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { UserRole } from '@/enum/role.enum';
 
 interface AuthUser {
   id: string;
   email: string;
-  roles: string[];
+  roles: UserRole[];
   [key: string]: any;
 }
 
@@ -43,7 +44,7 @@ export const useAuthStore = create<AuthState>()(
       },
       isAdmin: () => {
         const user = get().user;
-        return user?.roles?.includes('admin') || false;
+        return user?.roles?.includes(UserRole.ADMIN) || false;
       },
     }),
     {

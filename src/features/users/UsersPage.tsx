@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, Filter, MoreHorizontal, Edit, Trash2, Ban, CheckCircle } from 'lucide-react';
+import { Search, Filter, MoreHorizontal, Edit, Trash2, Ban, CheckCircle, Shield } from 'lucide-react';
 import { AdminLayout } from '@/components/layout/AdminLayout';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -20,16 +20,21 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from '@/lib/utils';
-import { useUsers } from '@/api/users.api';
+import { useUsers, useUpdateUserRoles } from '@/api/users.api';
 import { useAuthStore } from '@/stores/authStore';
+import { UserRole, RoleLabels, getRoleVariant } from '@/enum/role.enum';
+import { EditUserRolesDialog } from './components/EditUserRolesDialog';
 
 export function UsersPage() {
   const [page, setPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [roleFilter, setRoleFilter] = useState<string>('all');
+  const [editingUser, setEditingUser] = useState<{ id: string; email: string; roles: UserRole[] } | null>(null);
   const currentUser = useAuthStore((state) => state.user);
+  const isAdmin = useAuthStore((state) => state.isAdmin());
   const navigate = useNavigate();
+  const updateUserRolesMutation = useUpdateUserRoles();
 
   const queryParams = useMemo(() => {
     const params: { page: number; limit: number; search?: string; status?: string; role?: string } = {
@@ -81,9 +86,15 @@ export function UsersPage() {
     return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
   };
 
-  const getRoleVariant = (role: string): 'default' | 'secondary' => {
-    return role === 'admin' ? 'default' : 'secondary';
+  const handleEditRoles = (user: { id: string; email: string; roles: UserRole[] }) => {
+    setEditingUser(user);
   };
+
+  const handleSaveRoles = async (userId: string, roles: UserRole[]) => {
+    await updateUserRolesMutation.mutateAsync({ id: userId, roles });
+    setEditingUser(null);
+  };
+
 
   return (
     <AdminLayout title="Users">
@@ -115,9 +126,10 @@ export function UsersPage() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Roles</SelectItem>
-                <SelectItem value="user">User</SelectItem>
-                <SelectItem value="admin">Admin</SelectItem>
-                <SelectItem value="moderator">Moderator</SelectItem>
+                <SelectItem value={UserRole.USER}>{RoleLabels[UserRole.USER]}</SelectItem>
+                <SelectItem value={UserRole.ADMIN}>{RoleLabels[UserRole.ADMIN]}</SelectItem>
+                <SelectItem value={UserRole.MODERATOR}>{RoleLabels[UserRole.MODERATOR]}</SelectItem>
+                <SelectItem value={UserRole.GUEST}>{RoleLabels[UserRole.GUEST]}</SelectItem>
               </SelectContent>
             </Select>
 
@@ -222,6 +234,18 @@ export function UsersPage() {
                               >
                                 <Edit className="h-4 w-4" /> View Details
                               </DropdownMenuItem>
+                              {isAdmin && (
+                                <DropdownMenuItem 
+                                  className="gap-2"
+                                  onClick={() => handleEditRoles({
+                                    id: user.id,
+                                    email: user.email,
+                                    roles: roles.length > 0 ? roles as UserRole[] : [UserRole.USER]
+                                  })}
+                                >
+                                  <Shield className="h-4 w-4" /> Edit Roles
+                                </DropdownMenuItem>
+                              )}
                               <DropdownMenuItem className="gap-2">
                                 {user.status === 'active' ? (
                                   <><Ban className="h-4 w-4" /> Ban User</>
@@ -276,6 +300,17 @@ export function UsersPage() {
           </div>
         </CardContent>
       </Card>
+
+      {editingUser && (
+        <EditUserRolesDialog
+          open={!!editingUser}
+          onOpenChange={(open) => !open && setEditingUser(null)}
+          userId={editingUser.id}
+          userEmail={editingUser.email}
+          currentRoles={editingUser.roles}
+          onSave={handleSaveRoles}
+        />
+      )}
     </AdminLayout>
   );
 }

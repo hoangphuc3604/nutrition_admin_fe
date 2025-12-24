@@ -1,8 +1,10 @@
+import { UserRole } from '@/enum/role.enum';
+
 export interface User {
   id: string;
   name: string;
   email: string;
-  role: 'user' | 'admin';
+  role: UserRole;
   status: 'active' | 'banned';
   createdAt: string;
   mealPlansCount: number;

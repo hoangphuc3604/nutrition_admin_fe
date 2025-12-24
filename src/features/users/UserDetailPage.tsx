@@ -1,16 +1,23 @@
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft } from 'lucide-react';
+import { useState } from 'react';
+import { ArrowLeft, Shield } from 'lucide-react';
 import { AdminLayout } from '@/components/layout/AdminLayout';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useUserDetail } from '@/api/users.api';
+import { useUserDetail, useUpdateUserRoles } from '@/api/users.api';
+import { useAuthStore } from '@/stores/authStore';
 import { cn } from '@/lib/utils';
+import { UserRole, getRoleVariant } from '@/enum/role.enum';
+import { EditUserRolesDialog } from './components/EditUserRolesDialog';
 
 export function UserDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { data, isLoading, error } = useUserDetail(id || '');
+  const isAdmin = useAuthStore((state) => state.isAdmin());
+  const [isEditingRoles, setIsEditingRoles] = useState(false);
+  const updateUserRolesMutation = useUpdateUserRoles();
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -23,9 +30,14 @@ export function UserDetailPage() {
     });
   };
 
-  const getRoleVariant = (role: string): 'default' | 'secondary' => {
-    return role === 'admin' ? 'default' : 'secondary';
+  const handleEditRoles = () => {
+    setIsEditingRoles(true);
   };
+
+  const handleSaveRoles = async (userId: string, roles: UserRole[]) => {
+    await updateUserRolesMutation.mutateAsync({ id: userId, roles });
+  };
+
 
   if (isLoading) {
     return (
@@ -64,11 +76,17 @@ export function UserDetailPage() {
   return (
     <AdminLayout title="User Details">
       <div className="space-y-6">
-        <div className="flex items-center gap-4">
+        <div className="flex items-center justify-between">
           <Button variant="outline" onClick={() => navigate('/users')}>
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Users
           </Button>
+          {isAdmin && (
+            <Button variant="default" onClick={handleEditRoles}>
+              <Shield className="h-4 w-4 mr-2" />
+              Edit Roles
+            </Button>
+          )}
         </div>
 
         <Card className="shadow-sm">
@@ -97,8 +115,8 @@ export function UserDetailPage() {
                 </Badge>
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Roles</p>
-                <div className="flex flex-wrap gap-1.5 mt-1">
+                <p className="text-sm text-muted-foreground mb-1">Roles</p>
+                <div className="flex flex-wrap gap-1.5">
                   {user.roles && user.roles.length > 0 ? (
                     user.roles.map((role) => (
                       <Badge
@@ -303,6 +321,17 @@ export function UserDetailPage() {
           </CardContent>
         </Card>
       </div>
+
+      {isEditingRoles && data && (
+        <EditUserRolesDialog
+          open={isEditingRoles}
+          onOpenChange={setIsEditingRoles}
+          userId={data.user.id}
+          userEmail={data.user.email}
+          currentRoles={data.user.roles && data.user.roles.length > 0 ? data.user.roles as UserRole[] : [UserRole.USER]}
+          onSave={handleSaveRoles}
+        />
+      )}
     </AdminLayout>
   );
 }

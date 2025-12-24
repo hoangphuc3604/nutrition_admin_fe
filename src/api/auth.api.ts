@@ -1,6 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 import { apiClient } from '@/lib/api';
 import { useAuthStore } from '@/stores/authStore';
+import { UserRole } from '@/enum/role.enum';
 
 interface LoginRequest {
   email: string;
@@ -15,7 +16,7 @@ interface LoginResponse {
     user: {
       id: string;
       email: string;
-      roles: string[];
+      roles: UserRole[];
       [key: string]: any;
     };
   };

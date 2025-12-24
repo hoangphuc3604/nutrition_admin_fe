@@ -1,11 +1,12 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '@/lib/api';
+import { UserRole } from '@/enum/role.enum';
 
 interface User {
   id: string;
   email: string;
   status: string;
-  roles: string[];
+  roles: UserRole[];
   doneSurvey: boolean;
   isEmailVerified: boolean;
   createdAt: string;
@@ -55,7 +56,7 @@ interface UsersPaginationParams {
   limit?: number;
   search?: string;
   status?: string;
-  role?: string;
+  role?: UserRole | string;
 }
 
 interface PaginationInfo {
@@ -157,6 +158,17 @@ const usersApi = {
       requireAuth: true,
     });
   },
+
+  updateUserRoles: async (id: string, roles: UserRole[]): Promise<User> => {
+    const response = await apiClient.put<User>(
+      `/admin/users/${id}/roles`,
+      { roles },
+      {
+        requireAuth: true,
+      }
+    );
+    return response.data!;
+  },
 };
 
 export const useUsers = (params: UsersPaginationParams = {}) => {
@@ -202,6 +214,20 @@ export const useUserDetail = (id: string) => {
     queryKey: ['userDetail', id],
     queryFn: () => usersApi.getUserDetail(id),
     enabled: !!id,
+  });
+};
+
+export const useUpdateUserRoles = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, roles }: { id: string; roles: UserRole[] }) =>
+      usersApi.updateUserRoles(id, roles),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['users'] });
+      queryClient.invalidateQueries({ queryKey: ['userDetail', variables.id] });
+      queryClient.invalidateQueries({ queryKey: ['user', variables.id] });
+    },
   });
 };
 
