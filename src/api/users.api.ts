@@ -145,6 +145,13 @@ const usersApi = {
     });
     return response.data!;
   },
+
+  updateUserStatus: async (id: string, status: string): Promise<{ user: User; message: string }> => {
+    const response = await apiClient.patch<User>(`/admin/users/${id}/status`, { status }, {
+      requireAuth: true,
+    });
+    return { user: response.data!, message: response.message };
+  },
   
   updateUser: async (id: string, data: Partial<User>): Promise<User> => {
     const response = await apiClient.put<User>(`/users/${id}`, data, {
@@ -159,7 +166,7 @@ const usersApi = {
     });
   },
 
-  updateUserRoles: async (id: string, roles: UserRole[]): Promise<User> => {
+  updateUserRoles: async (id: string, roles: UserRole[]): Promise<{ user: User; message: string }> => {
     const response = await apiClient.put<User>(
       `/admin/users/${id}/roles`,
       { roles },
@@ -167,7 +174,7 @@ const usersApi = {
         requireAuth: true,
       }
     );
-    return response.data!;
+    return { user: response.data!, message: response.message };
   },
 };
 
@@ -223,6 +230,20 @@ export const useUpdateUserRoles = () => {
   return useMutation({
     mutationFn: ({ id, roles }: { id: string; roles: UserRole[] }) =>
       usersApi.updateUserRoles(id, roles),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['users'] });
+      queryClient.invalidateQueries({ queryKey: ['userDetail', variables.id] });
+      queryClient.invalidateQueries({ queryKey: ['user', variables.id] });
+    },
+  });
+};
+
+export const useUpdateUserStatus = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, status }: { id: string; status: string }) =>
+      usersApi.updateUserStatus(id, status),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['users'] });
       queryClient.invalidateQueries({ queryKey: ['userDetail', variables.id] });

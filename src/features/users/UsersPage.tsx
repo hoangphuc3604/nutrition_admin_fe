@@ -20,10 +20,11 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from '@/lib/utils';
-import { useUsers, useUpdateUserRoles } from '@/api/users.api';
+import { useUsers, useUpdateUserRoles, useUpdateUserStatus } from '@/api/users.api';
 import { useAuthStore } from '@/stores/authStore';
 import { UserRole, RoleLabels, getRoleVariant } from '@/enum/role.enum';
 import { EditUserRolesDialog } from './components/EditUserRolesDialog';
+import { useToast } from '@/hooks/use-toast';
 
 export function UsersPage() {
   const [page, setPage] = useState(1);
@@ -34,7 +35,9 @@ export function UsersPage() {
   const currentUser = useAuthStore((state) => state.user);
   const isAdmin = useAuthStore((state) => state.isAdmin());
   const navigate = useNavigate();
+  const { toast } = useToast();
   const updateUserRolesMutation = useUpdateUserRoles();
+  const updateUserStatusMutation = useUpdateUserStatus();
 
   const queryParams = useMemo(() => {
     const params: { page: number; limit: number; search?: string; status?: string; role?: string } = {
@@ -91,8 +94,40 @@ export function UsersPage() {
   };
 
   const handleSaveRoles = async (userId: string, roles: UserRole[]) => {
-    await updateUserRolesMutation.mutateAsync({ id: userId, roles });
-    setEditingUser(null);
+    try {
+      const result = await updateUserRolesMutation.mutateAsync({ id: userId, roles });
+      setEditingUser(null);
+      toast({
+        title: "Thành công",
+        description: result.message,
+        variant: "default",
+        className: "bg-green-500 text-white border-none",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Lỗi",
+        description: error.message || "Không thể cập nhật roles người dùng",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleUpdateStatus = async (userId: string, newStatus: string) => {
+    try {
+      const result = await updateUserStatusMutation.mutateAsync({ id: userId, status: newStatus });
+      toast({
+        title: "Thành công",
+        description: result.message,
+        variant: "default",
+        className: "bg-green-500 text-white border-none",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Lỗi",
+        description: error.message || "Không thể cập nhật trạng thái người dùng",
+        variant: "destructive",
+      });
+    }
   };
 
 
@@ -246,13 +281,18 @@ export function UsersPage() {
                                   <Shield className="h-4 w-4" /> Edit Roles
                                 </DropdownMenuItem>
                               )}
-                              <DropdownMenuItem className="gap-2">
-                                {user.status === 'active' ? (
-                                  <><Ban className="h-4 w-4" /> Ban User</>
-                                ) : (
-                                  <><CheckCircle className="h-4 w-4" /> Activate</>
-                                )}
-                              </DropdownMenuItem>
+                              {isAdmin && (
+                                <DropdownMenuItem 
+                                  className="gap-2"
+                                  onClick={() => handleUpdateStatus(user.id, user.status === 'active' ? 'banned' : 'active')}
+                                >
+                                  {user.status === 'active' ? (
+                                    <><Ban className="h-4 w-4" /> Ban User</>
+                                  ) : (
+                                    <><CheckCircle className="h-4 w-4" /> Activate</>
+                                  )}
+                                </DropdownMenuItem>
+                              )}
                               <DropdownMenuItem className="gap-2 text-destructive">
                                 <Trash2 className="h-4 w-4" /> Delete
                               </DropdownMenuItem>
