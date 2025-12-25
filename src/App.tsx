@@ -8,6 +8,7 @@ import { DashboardPage } from "./features/dashboard/DashboardPage";
 import { UsersPage } from "./features/users/UsersPage";
 import { UserDetailPage } from "./features/users/UserDetailPage";
 import { RecipesPage } from "./features/recipes/RecipesPage";
+import { RecipeDetailPage } from "./features/recipes/RecipeDetailPage";
 import { IngredientsPage } from "./features/ingredients/IngredientsPage";
 import { ReportsPage } from "./features/reports/ReportsPage";
 import { SettingsPage } from "./features/settings/SettingsPage";
@@ -53,6 +54,14 @@ const App = () => (
             element={
               <ProtectedRoute>
                 <RecipesPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/recipes/:id"
+            element={
+              <ProtectedRoute>
+                <RecipeDetailPage />
               </ProtectedRoute>
             }
           />

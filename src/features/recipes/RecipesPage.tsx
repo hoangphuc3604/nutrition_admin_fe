@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Search, Plus, Edit, Trash2, MoreHorizontal, Flame } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Search, Plus, Edit, Trash2, MoreHorizontal, Flame, Eye } from 'lucide-react';
 import { AdminLayout } from '@/components/layout/AdminLayout';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -24,6 +25,7 @@ import { cn } from '@/lib/utils';
 import { useRecipes } from '@/api/recipes.api';
 
 export function RecipesPage() {
+  const navigate = useNavigate();
   const [page, setPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -139,6 +141,14 @@ export function RecipesPage() {
                       <td className="py-4 px-4 text-sm text-muted-foreground">{recipe.prep_time_minutes ? `${recipe.prep_time_minutes} min` : 'N/A'}</td>
                       <td className="py-4 px-4">
                         <div className="flex items-center gap-1">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 text-blue-600"
+                            onClick={() => navigate(`/recipes/${recipe.id}`)}
+                          >
+                            <Eye className="h-4 w-4" />
+                          </Button>
                           <Button variant="ghost" size="icon" className="h-8 w-8 text-primary">
                             <Edit className="h-4 w-4" />
                           </Button>
