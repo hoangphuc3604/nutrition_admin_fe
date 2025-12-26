@@ -1,34 +1,16 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, Plus, Edit, Trash2, MoreHorizontal, Flame, Eye } from 'lucide-react';
+import { Search, Plus, Edit, Trash2, Eye } from 'lucide-react';
 import { AdminLayout } from '@/components/layout/AdminLayout';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { cn } from '@/lib/utils';
-import { useRecipes } from '@/api/recipes.api';
+import { useRecipes, useDeleteRecipe } from '@/api/recipes.api';
 
 export function RecipesPage() {
   const navigate = useNavigate();
   const [page, setPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const { data, isLoading, error } = useRecipes({
     page,
@@ -36,9 +18,33 @@ export function RecipesPage() {
     search: searchQuery
   });
 
+  const deleteRecipe = useDeleteRecipe();
+
   const handleSearchChange = (value: string) => {
     setSearchQuery(value);
     setPage(1);
+  };
+
+  const handleView = (recipeId: string) => {
+    navigate(`/recipes/${recipeId}`);
+  };
+
+  const handleEdit = (recipeId: string) => {
+    navigate(`/recipes/${recipeId}/edit`);
+  };
+
+  const handleCreate = () => {
+    navigate('/recipes/create');
+  };
+
+  const handleDelete = async (recipeId: string) => {
+    if (window.confirm('Are you sure you want to delete this recipe?')) {
+      try {
+        await deleteRecipe.mutateAsync(recipeId);
+      } catch (error) {
+        console.error('Failed to delete recipe:', error);
+      }
+    }
   };
 
   return (
@@ -46,42 +52,10 @@ export function RecipesPage() {
       <Card className="shadow-sm">
         <CardHeader className="flex flex-row items-center justify-between pb-4">
           <CardTitle className="text-2xl font-bold">Recipe Management</CardTitle>
-          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-            <DialogTrigger asChild>
-              <Button className="gap-2">
-                <Plus className="h-4 w-4" />
-                Add Recipe
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-2xl">
-              <DialogHeader>
-                <DialogTitle>Add New Recipe</DialogTitle>
-              </DialogHeader>
-              <div className="grid gap-4 py-4">
-                {/* Form content kept as placeholder */}
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="name">Recipe Name</Label>
-                    <Input id="name" placeholder="Enter recipe name" />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="category">Cuisine Type</Label>
-                    <Input id="category" placeholder="e.g., Italian, Asian" />
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="prepTime">Prep Time (min)</Label>
-                    <Input id="prepTime" type="number" placeholder="20" />
-                  </div>
-                </div>
-                <div className="flex justify-end gap-2 pt-4">
-                  <Button variant="outline" onClick={() => setIsDialogOpen(false)}>Cancel</Button>
-                  <Button onClick={() => setIsDialogOpen(false)}>Save Recipe</Button>
-                </div>
-              </div>
-            </DialogContent>
-          </Dialog>
+          <Button className="gap-2" onClick={handleCreate}>
+            <Plus className="h-4 w-4" />
+            Add Recipe
+          </Button>
         </CardHeader>
         <CardContent>
           <div className="flex items-center justify-between mb-6">
@@ -130,8 +104,8 @@ export function RecipesPage() {
                   data?.recipes.map((recipe) => (
                     <tr key={recipe.id} className="border-b border-border last:border-0 hover:bg-muted/50 transition-colors">
                       <td className="py-3 px-4">
-                        <img 
-                          src={recipe.image_url || 'https://placehold.co/100x100?text=No+Image'} 
+                        <img
+                          src={recipe.image_url || 'https://placehold.co/100x100?text=No+Image'}
                           alt={recipe.name}
                           className="h-14 w-14 rounded-lg object-cover"
                         />
@@ -144,15 +118,26 @@ export function RecipesPage() {
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-8 w-8 text-blue-600"
-                            onClick={() => navigate(`/recipes/${recipe.id}`)}
+                            className="h-8 w-8 text-primary"
+                            onClick={() => handleView(recipe.id)}
                           >
                             <Eye className="h-4 w-4" />
                           </Button>
-                          <Button variant="ghost" size="icon" className="h-8 w-8 text-primary">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 text-primary"
+                            onClick={() => handleEdit(recipe.id)}
+                          >
                             <Edit className="h-4 w-4" />
                           </Button>
-                          <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 text-destructive"
+                            onClick={() => handleDelete(recipe.id)}
+                            disabled={deleteRecipe.isPending}
+                          >
                             <Trash2 className="h-4 w-4" />
                           </Button>
                         </div>

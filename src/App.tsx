@@ -9,6 +9,8 @@ import { UsersPage } from "./features/users/UsersPage";
 import { UserDetailPage } from "./features/users/UserDetailPage";
 import { RecipesPage } from "./features/recipes/RecipesPage";
 import { RecipeDetailPage } from "./features/recipes/RecipeDetailPage";
+import { RecipeCreatePage } from "./features/recipes/RecipeCreatePage";
+import { RecipeEditPage } from "./features/recipes/RecipeEditPage";
 import { IngredientsPage } from "./features/ingredients/IngredientsPage";
 import { ReportsPage } from "./features/reports/ReportsPage";
 import { SettingsPage } from "./features/settings/SettingsPage";
@@ -58,10 +60,26 @@ const App = () => (
             }
           />
           <Route
+            path="/recipes/create"
+            element={
+              <ProtectedRoute>
+                <RecipeCreatePage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
             path="/recipes/:id"
             element={
               <ProtectedRoute>
                 <RecipeDetailPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/recipes/:id/edit"
+            element={
+              <ProtectedRoute>
+                <RecipeEditPage />
               </ProtectedRoute>
             }
           />

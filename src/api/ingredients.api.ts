@@ -8,6 +8,7 @@ export interface Ingredient {
   category: string | null;
   common_unit: string | null;
   storage_temperature: string | null;
+  caloriesPerUnit?: number;
   created_at: string;
 }
 
