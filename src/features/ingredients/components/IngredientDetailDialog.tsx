@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Package, Flame, Scale, Tag, Save, X, Edit2 } from 'lucide-react';
+import { Package, Scale, Tag, Save, X, Edit2, Image } from 'lucide-react';
+import { useCreateIngredient, useUpdateIngredient } from '@/api/ingredients.api';
+import { useToast } from '@/hooks/use-toast';
 import {
   Dialog,
   DialogContent,
@@ -22,47 +24,63 @@ import { Textarea } from '@/components/ui/textarea';
 interface IngredientData {
   id: string;
   name: string;
-  category: string;
-  unit: string;
-  caloriesPerUnit: number;
+  category?: string;
+  category_id?: string;
+  common_unit?: string;
+  storage_temperature?: "frozen" | "refrigerated" | "room_temp";
+  shelf_life_days?: number;
   description?: string;
-  protein?: number;
-  carbs?: number;
-  fat?: number;
+  image_url?: string;
 }
 
 interface IngredientDetailDialogProps {
   ingredient: IngredientData | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSave?: (ingredient: IngredientData) => void;
   mode?: 'view' | 'edit' | 'create';
 }
 
-const categories = ['Protein', 'Vegetables', 'Fruits', 'Grains', 'Dairy', 'Oils', 'Spices', 'Other'];
+const categories = [
+  { id: '1', name: 'Protein' },
+  { id: '2', name: 'Vegetables' },
+  { id: '3', name: 'Fruits' },
+  { id: '4', name: 'Grains' },
+  { id: '5', name: 'Dairy' },
+  { id: '6', name: 'Oils' },
+  { id: '7', name: 'Spices' },
+  { id: '8', name: 'Other' },
+];
 const units = ['gram', 'kg', 'piece', 'tbsp', 'tsp', 'cup', 'ml', 'liter'];
+const storageTemperatures = [
+  { value: 'frozen', label: 'Frozen' },
+  { value: 'refrigerated', label: 'Refrigerated' },
+  { value: 'room_temp', label: 'Room Temperature' },
+];
 
 const emptyIngredient: IngredientData = {
   id: '',
   name: '',
-  category: 'Protein',
-  unit: 'gram',
-  caloriesPerUnit: 0,
+  category: '',
+  category_id: '',
+  common_unit: 'gram',
+  storage_temperature: 'room_temp',
+  shelf_life_days: 0,
   description: '',
-  protein: 0,
-  carbs: 0,
-  fat: 0,
+  image_url: '',
 };
 
 export function IngredientDetailDialog({
   ingredient,
   open,
   onOpenChange,
-  onSave,
   mode = 'view'
 }: IngredientDetailDialogProps) {
   const [isEditing, setIsEditing] = useState(mode === 'edit' || mode === 'create');
   const [formData, setFormData] = useState<IngredientData>(emptyIngredient);
+  const { toast } = useToast();
+
+  const createIngredient = useCreateIngredient();
+  const updateIngredient = useUpdateIngredient();
 
   useEffect(() => {
     if (mode === 'create') {
@@ -85,12 +103,56 @@ export function IngredientDetailDialog({
     }
   };
 
-  const handleSave = () => {
-    if (onSave) {
-      onSave(formData);
+  const handleSave = async () => {
+    try {
+      if (mode === 'create') {
+        await createIngredient.mutateAsync({
+          name: formData.name,
+          description: formData.description,
+          image_url: formData.image_url,
+          category_id: formData.category_id,
+          shelf_life_days: formData.shelf_life_days,
+          storage_temperature: formData.storage_temperature,
+          common_unit: formData.common_unit,
+        });
+        toast({
+          title: "Thành công",
+          description: "Tạo nguyên liệu thành công",
+          variant: "default",
+          className: "bg-green-500 text-white border-none",
+        });
+      } else if (mode === 'edit' && ingredient) {
+        await updateIngredient.mutateAsync({
+          id: ingredient.id,
+          data: {
+            name: formData.name,
+            description: formData.description,
+            image_url: formData.image_url,
+            category_id: formData.category_id,
+            shelf_life_days: formData.shelf_life_days,
+            storage_temperature: formData.storage_temperature,
+            common_unit: formData.common_unit,
+          }
+        });
+        toast({
+          title: "Thành công",
+          description: "Cập nhật nguyên liệu thành công",
+          variant: "default",
+          className: "bg-green-500 text-white border-none",
+        });
+      }
+
+      setIsEditing(false);
+      onOpenChange(false);
+    } catch (error: any) {
+      console.error('Failed to save ingredient:', error);
+      const errorMessage = error?.response?.data?.message || 'Không thể lưu nguyên liệu. Vui lòng thử lại.';
+      toast({
+        title: "Lỗi",
+        description: errorMessage,
+        variant: "destructive",
+      });
     }
-    setIsEditing(false);
-    onOpenChange(false);
   };
 
   const handleChange = (field: keyof IngredientData, value: string | number) => {
@@ -130,7 +192,7 @@ export function IngredientDetailDialog({
               ) : (
                 <>
                   <h3 className="text-lg font-semibold text-foreground">{formData.name}</h3>
-                  <Badge variant="secondary">{formData.category}</Badge>
+                  <Badge variant="secondary">{formData.category || 'Uncategorized'}</Badge>
                 </>
               )}
             </div>
@@ -142,27 +204,27 @@ export function IngredientDetailDialog({
                 <Tag className="h-3.5 w-3.5" /> Category
               </Label>
               {isEditing ? (
-                <Select value={formData.category} onValueChange={(v) => handleChange('category', v)}>
+                <Select value={formData.category_id} onValueChange={(v) => handleChange('category_id', v)}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
                     {categories.map((cat) => (
-                      <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                      <SelectItem key={cat.id} value={cat.id}>{cat.name}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               ) : (
-                <p className="text-foreground font-medium">{formData.category}</p>
+                <p className="text-foreground font-medium">{formData.category || 'Uncategorized'}</p>
               )}
             </div>
 
             <div className="space-y-2">
               <Label className="text-muted-foreground text-xs uppercase tracking-wider flex items-center gap-2">
-                <Scale className="h-3.5 w-3.5" /> Unit
+                <Scale className="h-3.5 w-3.5" /> Common Unit
               </Label>
               {isEditing ? (
-                <Select value={formData.unit} onValueChange={(v) => handleChange('unit', v)}>
+                <Select value={formData.common_unit} onValueChange={(v) => handleChange('common_unit', v)}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
@@ -173,85 +235,76 @@ export function IngredientDetailDialog({
                   </SelectContent>
                 </Select>
               ) : (
-                <p className="text-foreground font-medium">{formData.unit}</p>
+                <p className="text-foreground font-medium">{formData.common_unit || 'N/A'}</p>
               )}
             </div>
           </div>
 
-          <div className="space-y-2">
-            <Label className="text-muted-foreground text-xs uppercase tracking-wider flex items-center gap-2">
-              <Flame className="h-3.5 w-3.5" /> Calories per {formData.unit}
-            </Label>
-            {isEditing ? (
-              <Input
-                type="number"
-                step="0.01"
-                value={formData.caloriesPerUnit}
-                onChange={(e) => handleChange('caloriesPerUnit', parseFloat(e.target.value) || 0)}
-              />
-            ) : (
-              <p className="text-foreground font-medium">{formData.caloriesPerUnit} kcal</p>
-            )}
-          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label className="text-muted-foreground text-xs uppercase tracking-wider">
+                Storage Temperature
+              </Label>
+              {isEditing ? (
+                <Select value={formData.storage_temperature} onValueChange={(v: any) => handleChange('storage_temperature', v)}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {storageTemperatures.map((temp) => (
+                      <SelectItem key={temp.value} value={temp.value}>{temp.label}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              ) : (
+                <p className="text-foreground font-medium capitalize">
+                  {formData.storage_temperature?.replace('_', ' ') || 'Room Temperature'}
+                </p>
+              )}
+            </div>
 
-          <div className="bg-secondary/50 rounded-xl p-4">
-            <h4 className="font-semibold text-foreground mb-3 text-sm">Macros (per {formData.unit})</h4>
-            <div className="grid grid-cols-3 gap-4">
-              <div className="text-center">
-                <div className="text-xs text-muted-foreground mb-1">Protein</div>
-                {isEditing ? (
-                  <Input
-                    type="number"
-                    step="0.1"
-                    value={formData.protein || 0}
-                    onChange={(e) => handleChange('protein', parseFloat(e.target.value) || 0)}
-                    className="text-center"
-                  />
-                ) : (
-                  <p className="text-lg font-bold text-foreground">{formData.protein || 0}g</p>
-                )}
-              </div>
-              <div className="text-center">
-                <div className="text-xs text-muted-foreground mb-1">Carbs</div>
-                {isEditing ? (
-                  <Input
-                    type="number"
-                    step="0.1"
-                    value={formData.carbs || 0}
-                    onChange={(e) => handleChange('carbs', parseFloat(e.target.value) || 0)}
-                    className="text-center"
-                  />
-                ) : (
-                  <p className="text-lg font-bold text-foreground">{formData.carbs || 0}g</p>
-                )}
-              </div>
-              <div className="text-center">
-                <div className="text-xs text-muted-foreground mb-1">Fat</div>
-                {isEditing ? (
-                  <Input
-                    type="number"
-                    step="0.1"
-                    value={formData.fat || 0}
-                    onChange={(e) => handleChange('fat', parseFloat(e.target.value) || 0)}
-                    className="text-center"
-                  />
-                ) : (
-                  <p className="text-lg font-bold text-foreground">{formData.fat || 0}g</p>
-                )}
-              </div>
+            <div className="space-y-2">
+              <Label className="text-muted-foreground text-xs uppercase tracking-wider">
+                Shelf Life (days)
+              </Label>
+              {isEditing ? (
+                <Input
+                  type="number"
+                  min="0"
+                  value={formData.shelf_life_days || 0}
+                  onChange={(e) => handleChange('shelf_life_days', parseInt(e.target.value) || 0)}
+                />
+              ) : (
+                <p className="text-foreground font-medium">
+                  {formData.shelf_life_days || 0} days
+                </p>
+              )}
             </div>
           </div>
 
           {isEditing && (
-            <div className="space-y-2">
-              <Label className="text-muted-foreground text-xs uppercase tracking-wider">Description</Label>
-              <Textarea
-                value={formData.description || ''}
-                onChange={(e) => handleChange('description', e.target.value)}
-                placeholder="Optional description..."
-                rows={3}
-              />
-            </div>
+            <>
+              <div className="space-y-2">
+                <Label className="text-muted-foreground text-xs uppercase tracking-wider flex items-center gap-2">
+                  <Image className="h-3.5 w-3.5" /> Image URL
+                </Label>
+                <Input
+                  value={formData.image_url || ''}
+                  onChange={(e) => handleChange('image_url', e.target.value)}
+                  placeholder="https://example.com/image.jpg"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-muted-foreground text-xs uppercase tracking-wider">Description</Label>
+                <Textarea
+                  value={formData.description || ''}
+                  onChange={(e) => handleChange('description', e.target.value)}
+                  placeholder="Optional description..."
+                  rows={3}
+                />
+              </div>
+            </>
           )}
 
           {isEditing && (

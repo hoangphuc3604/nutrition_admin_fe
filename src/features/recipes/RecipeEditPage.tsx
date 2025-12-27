@@ -9,9 +9,11 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { DynamicIngredientTable, AvailableIngredient } from './components/DynamicIngredientTable';
+import { DynamicInstructionsTable } from './components/DynamicInstructionsTable';
 import { useRecipe, useUpdateRecipe } from '@/api/recipes.api';
 import { useIngredients } from '@/api/ingredients.api';
 import { useToast } from '@/hooks/use-toast';
+import { InstructionStep, parseInstructionsToSteps, formatStepsToInstructions } from '@/lib/recipe-instructions.utils';
 
 interface RecipeFormData {
   name: string;
@@ -23,10 +25,12 @@ interface RecipeFormData {
   cook_time_minutes?: number;
   servings?: number;
   instructions?: string;
+  instructionSteps: InstructionStep[];
   ingredients: RecipeIngredientForm[];
 }
 
 interface RecipeIngredientForm {
+  id: string;
   ingredientId: string;
   quantity: number;
   unit: string;
@@ -49,6 +53,7 @@ export function RecipeEditPage() {
     cook_time_minutes: 0,
     servings: 1,
     instructions: '',
+    instructionSteps: [],
     ingredients: [],
   });
 
@@ -60,6 +65,7 @@ export function RecipeEditPage() {
 
   useEffect(() => {
     if (recipe) {
+      const instructionSteps = parseInstructionsToSteps(recipe.instructions || '');
       setFormData({
         name: recipe.name,
         description: recipe.description || '',
@@ -70,13 +76,15 @@ export function RecipeEditPage() {
         cook_time_minutes: recipe.cook_time_minutes || 0,
         servings: recipe.servings || 1,
         instructions: recipe.instructions || '',
-        ingredients: recipe.recipeIngredients?.map(ri => ({
-          ingredientId: ri.ingredient_id,
+        instructionSteps,
+        ingredients: recipe.ingredients?.map((ri: any) => ({
+          id: `ingredient-${ri.ingredientId}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+          ingredientId: ri.ingredientId,
           quantity: ri.quantity,
           unit: ri.unit,
-          preparationMethod: ri.preparation_method,
-          isOptional: ri.is_optional,
-          sortOrder: ri.sort_order,
+          preparationMethod: ri.preparationMethod,
+          isOptional: ri.isOptional,
+          sortOrder: ri.sortOrder,
         })) || [],
       });
     }
@@ -88,6 +96,11 @@ export function RecipeEditPage() {
 
   const handleIngredientsChange = (ingredients: RecipeIngredientForm[]) => {
     setFormData({ ...formData, ingredients });
+  };
+
+  const handleInstructionsChange = (steps: InstructionStep[]) => {
+    const instructions = formatStepsToInstructions(steps);
+    setFormData({ ...formData, instructionSteps: steps, instructions });
   };
 
   const validateForm = (): string | null => {
@@ -132,7 +145,8 @@ export function RecipeEditPage() {
     }
 
     try {
-      await updateRecipe.mutateAsync({ id, data: formData });
+      const { instructionSteps, ...dataToSend } = formData;
+      await updateRecipe.mutateAsync({ id, data: dataToSend });
       toast({
         title: "Thành công",
         description: "Cập nhật công thức thành công",
@@ -323,16 +337,10 @@ export function RecipeEditPage() {
               </TabsContent>
 
               <TabsContent value="instructions" className="mt-6">
-                <div className="space-y-2">
-                  <Label htmlFor="instructions">Cooking Instructions</Label>
-                  <Textarea
-                    id="instructions"
-                    value={formData.instructions || ''}
-                    onChange={(e) => handleChange('instructions', e.target.value)}
-                    placeholder="Step by step cooking instructions..."
-                    rows={12}
-                  />
-                </div>
+                <DynamicInstructionsTable
+                  steps={formData.instructionSteps}
+                  onChange={handleInstructionsChange}
+                />
               </TabsContent>
             </Tabs>
           </CardContent>

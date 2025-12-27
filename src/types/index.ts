@@ -27,7 +27,7 @@ export interface Recipe {
   is_active: boolean; // Changed from optional to required to match backend
   is_public: boolean; // Changed from optional to required to match backend
   ai_generated: boolean; // Changed from optional to required to match backend
-  recipeIngredients?: RecipeIngredient[];
+  ingredients?: RecipeIngredientDetail[];
 }
 
 export interface RecipeIngredient {
@@ -39,6 +39,18 @@ export interface RecipeIngredient {
   preparation_method?: string;
   is_optional?: boolean;
   sort_order?: number;
+}
+
+export interface RecipeIngredientDetail {
+  ingredientId: string;
+  name: string;
+  imageUrl?: string | null;
+  quantity?: number | null;
+  rawQuantity?: string | null;
+  unit?: string | null;
+  preparationMethod?: string | null;
+  isOptional?: boolean;
+  sortOrder?: number | null;
 }
 
 export interface Ingredient {

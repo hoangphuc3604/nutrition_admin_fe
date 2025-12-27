@@ -9,9 +9,11 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { DynamicIngredientTable, AvailableIngredient } from './components/DynamicIngredientTable';
+import { DynamicInstructionsTable } from './components/DynamicInstructionsTable';
 import { useCreateRecipe } from '@/api/recipes.api';
 import { useIngredients } from '@/api/ingredients.api';
 import { useToast } from '@/hooks/use-toast';
+import { InstructionStep, parseInstructionsToSteps, formatStepsToInstructions } from '@/lib/recipe-instructions.utils';
 
 interface RecipeFormData {
   name: string;
@@ -23,10 +25,12 @@ interface RecipeFormData {
   cook_time_minutes?: number;
   servings?: number;
   instructions?: string;
+  instructionSteps: InstructionStep[];
   ingredients: RecipeIngredientForm[];
 }
 
 interface RecipeIngredientForm {
+  id: string;
   ingredientId: string;
   quantity: number;
   unit: string;
@@ -44,8 +48,11 @@ const emptyRecipe: RecipeFormData = {
   cook_time_minutes: 0,
   servings: 1,
   instructions: '',
+  instructionSteps: [],
   ingredients: [],
 };
+
+const createIngredientId = () => `ingredient-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
 export function RecipeCreatePage() {
   const navigate = useNavigate();
@@ -64,6 +71,11 @@ export function RecipeCreatePage() {
 
   const handleIngredientsChange = (ingredients: RecipeIngredientForm[]) => {
     setFormData({ ...formData, ingredients });
+  };
+
+  const handleInstructionsChange = (steps: InstructionStep[]) => {
+    const instructions = formatStepsToInstructions(steps);
+    setFormData({ ...formData, instructionSteps: steps, instructions });
   };
 
   const validateForm = (): string | null => {
@@ -106,7 +118,8 @@ export function RecipeCreatePage() {
     }
 
     try {
-      await createRecipe.mutateAsync(formData);
+      const { instructionSteps, ...dataToSend } = formData;
+      await createRecipe.mutateAsync(dataToSend);
       toast({
         title: "Thành công",
         description: "Tạo công thức thành công",
@@ -273,16 +286,10 @@ export function RecipeCreatePage() {
               </TabsContent>
 
               <TabsContent value="instructions" className="mt-6">
-                <div className="space-y-2">
-                  <Label htmlFor="instructions">Cooking Instructions</Label>
-                  <Textarea
-                    id="instructions"
-                    value={formData.instructions || ''}
-                    onChange={(e) => handleChange('instructions', e.target.value)}
-                    placeholder="Step by step cooking instructions..."
-                    rows={12}
-                  />
-                </div>
+                <DynamicInstructionsTable
+                  steps={formData.instructionSteps}
+                  onChange={handleInstructionsChange}
+                />
               </TabsContent>
             </Tabs>
           </CardContent>

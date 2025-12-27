@@ -174,18 +174,23 @@ export function RecipeDetailPage() {
                 <CardTitle>Ingredients {recipe.servings && `(${recipe.servings} servings)`}</CardTitle>
               </CardHeader>
               <CardContent>
-                {recipe.recipeIngredients && recipe.recipeIngredients.length > 0 ? (
+                {recipe.ingredients && recipe.ingredients.length > 0 ? (
                   <div className="space-y-3">
-                    {recipe.recipeIngredients.map((item, index) => (
-                      <div key={index} className="flex items-center justify-between py-2 border-b border-border last:border-0">
-                        <div className="flex-1">
-                          <span className="font-medium">{item.ingredient?.name || 'Unknown ingredient'}</span>
+                    {recipe.ingredients.map((item: any, index: number) => {
+                      const name = item?.name ?? 'Unknown ingredient';
+                      const quantity = item?.quantity ?? '';
+                      const unit = item?.unit ?? '';
+                      return (
+                        <div key={index} className="flex items-center justify-between py-2 border-b border-border last:border-0">
+                          <div className="flex-1">
+                            <span className="font-medium">{name}</span>
+                          </div>
+                          <div className="text-muted-foreground font-medium">
+                            {quantity} {unit}
+                          </div>
                         </div>
-                        <div className="text-muted-foreground font-medium">
-                          {item.quantity} {item.unit}
-                        </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 ) : (
                   <p className="text-center text-muted-foreground py-8">No ingredients added</p>

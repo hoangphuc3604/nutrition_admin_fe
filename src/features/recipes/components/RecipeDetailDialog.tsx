@@ -93,13 +93,13 @@ export function RecipeDetailDialog({
         cook_time_minutes: recipe.cook_time_minutes || 0,
         servings: recipe.servings || 1,
         instructions: recipe.instructions || '',
-        ingredients: recipe.recipeIngredients?.map(ri => ({
-          ingredientId: ri.ingredient_id,
+        ingredients: recipe.ingredients?.map((ri: any) => ({
+          ingredientId: ri.ingredientId,
           quantity: ri.quantity,
           unit: ri.unit,
-          preparationMethod: ri.preparation_method,
-          isOptional: ri.is_optional,
-          sortOrder: ri.sort_order,
+          preparationMethod: ri.preparationMethod,
+          isOptional: ri.isOptional,
+          sortOrder: ri.sortOrder,
         })) || [],
       });
       setIsEditing(mode === 'edit');

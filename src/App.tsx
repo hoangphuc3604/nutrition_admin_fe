@@ -12,6 +12,9 @@ import { RecipeDetailPage } from "./features/recipes/RecipeDetailPage";
 import { RecipeCreatePage } from "./features/recipes/RecipeCreatePage";
 import { RecipeEditPage } from "./features/recipes/RecipeEditPage";
 import { IngredientsPage } from "./features/ingredients/IngredientsPage";
+import { IngredientDetailPage } from "./features/ingredients/IngredientDetailPage";
+import { IngredientCreatePage } from "./features/ingredients/IngredientCreatePage";
+import { IngredientEditPage } from "./features/ingredients/IngredientEditPage";
 import { ReportsPage } from "./features/reports/ReportsPage";
 import { SettingsPage } from "./features/settings/SettingsPage";
 import { GmailAuthPage } from "./features/settings/GmailAuthPage";
@@ -88,6 +91,30 @@ const App = () => (
             element={
               <ProtectedRoute>
                 <IngredientsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/ingredients/create"
+            element={
+              <ProtectedRoute>
+                <IngredientCreatePage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/ingredients/:id"
+            element={
+              <ProtectedRoute>
+                <IngredientDetailPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/ingredients/:id/edit"
+            element={
+              <ProtectedRoute>
+                <IngredientEditPage />
               </ProtectedRoute>
             }
           />

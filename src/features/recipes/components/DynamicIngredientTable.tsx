@@ -32,6 +32,7 @@ import {
 import { CSS } from '@dnd-kit/utilities';
 
 interface IngredientItem {
+  id: string;
   ingredientId: string;
   quantity: number;
   unit: string;
@@ -62,20 +63,20 @@ interface DynamicIngredientTableProps {
 
 const units = ['gram', 'kg', 'piece', 'tbsp', 'tsp', 'cup', 'ml', 'liter'];
 
+const createIngredientId = () => `ingredient-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+
 interface SortableItemProps {
   item: IngredientItem;
-  index: number;
   availableIngredients: AvailableIngredient[];
   hoveredRow: string | null;
   setHoveredRow: (id: string | null) => void;
-  onIngredientSelect: (index: number, ingredient: AvailableIngredient | null) => void;
-  onUpdateItem: (index: number, field: keyof IngredientItem, value: string | number | boolean) => void;
-  onDeleteItem: (index: number) => void;
+  onIngredientSelect: (itemId: string, ingredient: AvailableIngredient | null) => void;
+  onUpdateItem: (itemId: string, field: keyof IngredientItem, value: string | number | boolean) => void;
+  onDeleteItem: (itemId: string) => void;
 }
 
 function SortableItem({
   item,
-  index,
   availableIngredients,
   hoveredRow,
   setHoveredRow,
@@ -90,7 +91,7 @@ function SortableItem({
     transform,
     transition,
     isDragging,
-  } = useSortable({ id: index.toString() });
+  } = useSortable({ id: item.id });
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -105,10 +106,10 @@ function SortableItem({
       style={style}
       className={cn(
         "border-t border-border transition-all duration-200",
-        hoveredRow === index.toString() && "bg-muted/50",
+        hoveredRow === item.id && "bg-muted/50",
         isDragging && "opacity-50 shadow-lg bg-background z-10"
       )}
-      onMouseEnter={() => setHoveredRow(index.toString())}
+      onMouseEnter={() => setHoveredRow(item.id)}
       onMouseLeave={() => setHoveredRow(null)}
     >
       <td className="w-8 px-2">
@@ -124,7 +125,7 @@ function SortableItem({
                       <IngredientAutocomplete
                         ingredients={availableIngredients}
                         value={item.ingredientId}
-                        onSelect={(ing) => onIngredientSelect(index, ing)}
+                        onSelect={(ing) => onIngredientSelect(item.id, ing)}
                         placeholder="Select ingredient..."
                       />
       </td>
@@ -134,7 +135,7 @@ function SortableItem({
                         min="0"
                         step="0.1"
                         value={item.quantity || ''}
-                        onChange={(e) => onUpdateItem(index, 'quantity', parseFloat(e.target.value) || 0)}
+                        onChange={(e) => onUpdateItem(item.id, 'quantity', parseFloat(e.target.value) || 0)}
                         className="w-full"
                         placeholder="0"
                       />
@@ -142,7 +143,7 @@ function SortableItem({
       <td className="py-3 px-3">
                       <Select
                         value={item.unit}
-                        onValueChange={(v) => onUpdateItem(index, 'unit', v)}
+                        onValueChange={(v) => onUpdateItem(item.id, 'unit', v)}
                       >
           <SelectTrigger className="w-24">
             <SelectValue placeholder="Unit" />
@@ -157,11 +158,11 @@ function SortableItem({
         </Select>
       </td>
       <td className="w-12 px-2">
-        {hoveredRow === index.toString() && (
+        {hoveredRow === item.id && (
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => onDeleteItem(index)}
+            onClick={() => onDeleteItem(item.id)}
             className="h-8 w-8 p-0 text-destructive hover:text-destructive hover:bg-destructive/10"
           >
             <Trash2 className="h-4 w-4" />
@@ -177,6 +178,7 @@ export function DynamicIngredientTable({ items, onChange, availableIngredients }
 
   const addRow = () => {
     const newItem: IngredientItem = {
+      id: createIngredientId(),
       ingredientId: '',
       quantity: 0,
       unit: 'gram',
@@ -184,20 +186,20 @@ export function DynamicIngredientTable({ items, onChange, availableIngredients }
     onChange([...items, newItem]);
   };
 
-  const removeRow = (index: number) => {
-    onChange(items.filter((_, i) => i !== index));
+  const removeRow = (itemId: string) => {
+    onChange(items.filter((item) => item.id !== itemId));
   };
 
-  const updateRow = (index: number, field: keyof IngredientItem, value: string | number | boolean) => {
-    onChange(items.map((item, i) =>
-      i === index ? { ...item, [field]: value } : item
+  const updateRow = (itemId: string, field: keyof IngredientItem, value: string | number | boolean) => {
+    onChange(items.map((item) =>
+      item.id === itemId ? { ...item, [field]: value } : item
     ));
   };
 
-  const handleIngredientSelect = (rowIndex: number, ingredient: AvailableIngredient | null) => {
+  const handleIngredientSelect = (itemId: string, ingredient: AvailableIngredient | null) => {
     if (ingredient) {
-      onChange(items.map((item, i) =>
-        i === rowIndex
+      onChange(items.map((item) =>
+        item.id === itemId
           ? {
               ...item,
               ingredientId: ingredient.id,
@@ -206,8 +208,8 @@ export function DynamicIngredientTable({ items, onChange, availableIngredients }
           : item
       ));
     } else {
-      onChange(items.map((item, i) =>
-        i === rowIndex
+      onChange(items.map((item) =>
+        item.id === itemId
           ? { ...item, ingredientId: '' }
           : item
       ));
@@ -229,8 +231,8 @@ export function DynamicIngredientTable({ items, onChange, availableIngredients }
     const { active, over } = event;
 
     if (over && active.id !== over.id) {
-      const oldIndex = parseInt(active.id as string);
-      const newIndex = parseInt(over.id as string);
+      const oldIndex = items.findIndex(item => item.id === active.id);
+      const newIndex = items.findIndex(item => item.id === over.id);
 
       const reorderedItems = arrayMove(items, oldIndex, newIndex);
 
@@ -268,7 +270,7 @@ export function DynamicIngredientTable({ items, onChange, availableIngredients }
               </tr>
             </thead>
             <tbody>
-              <SortableContext items={items.map((_, index) => index.toString())} strategy={verticalListSortingStrategy}>
+              <SortableContext items={items.map(item => item.id)} strategy={verticalListSortingStrategy}>
                 {items.length === 0 ? (
                   <tr>
                     <td colSpan={5} className="py-8 text-center text-muted-foreground">
@@ -276,11 +278,10 @@ export function DynamicIngredientTable({ items, onChange, availableIngredients }
                     </td>
                   </tr>
                 ) : (
-                  items.map((item, index) => (
+                  items.map((item) => (
                     <SortableItem
-                      key={index}
+                      key={item.id}
                       item={item}
-                      index={index}
                       availableIngredients={availableIngredients}
                       hoveredRow={hoveredRow}
                       setHoveredRow={setHoveredRow}

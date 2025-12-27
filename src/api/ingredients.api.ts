@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '@/lib/api';
 
 export interface Ingredient {
@@ -31,6 +31,26 @@ interface IngredientsResponse {
   pagination: PaginationInfo;
 }
 
+export interface CreateIngredientRequest {
+  name: string;
+  description?: string;
+  image_url?: string;
+  category_id: string;
+  shelf_life_days?: number;
+  storage_temperature?: "frozen" | "refrigerated" | "room_temp";
+  common_unit?: string;
+}
+
+export interface UpdateIngredientRequest {
+  name?: string;
+  description?: string;
+  image_url?: string;
+  category_id?: string;
+  shelf_life_days?: number;
+  storage_temperature?: "frozen" | "refrigerated" | "room_temp";
+  common_unit?: string;
+}
+
 const ingredientsApi = {
   getIngredients: async (params: IngredientsPaginationParams = {}): Promise<IngredientsResponse> => {
     const queryParams = new URLSearchParams();
@@ -43,6 +63,25 @@ const ingredientsApi = {
 
     const response = await apiClient.get<IngredientsResponse>(endpoint, { requireAuth: true });
     return response.data!;
+  },
+
+  createIngredient: async (data: CreateIngredientRequest): Promise<Ingredient> => {
+    const response = await apiClient.post<Ingredient>('/admin/ingredients', data, { requireAuth: true });
+    return response.data!;
+  },
+
+  updateIngredient: async (id: string, data: UpdateIngredientRequest): Promise<Ingredient> => {
+    const response = await apiClient.put<Ingredient>(`/admin/ingredients/${id}`, data, { requireAuth: true });
+    return response.data!;
+  },
+
+  getIngredientById: async (id: string): Promise<Ingredient> => {
+    const response = await apiClient.get<Ingredient>(`/admin/ingredients/${id}`, { requireAuth: true });
+    return response.data!;
+  },
+
+  deleteIngredient: async (id: string): Promise<void> => {
+    await apiClient.delete(`/admin/ingredients/${id}`, { requireAuth: true });
   }
 };
 
@@ -50,6 +89,45 @@ export const useIngredients = (params: IngredientsPaginationParams) => {
   return useQuery({
     queryKey: ['ingredients', params],
     queryFn: () => ingredientsApi.getIngredients(params),
+  });
+};
+
+export const useIngredient = (id: string) => {
+  return useQuery({
+    queryKey: ['ingredient', id],
+    queryFn: () => ingredientsApi.getIngredientById(id),
+    enabled: !!id,
+  });
+};
+
+export const useCreateIngredient = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ingredientsApi.createIngredient,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['ingredients'] });
+    },
+  });
+};
+
+export const useUpdateIngredient = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: UpdateIngredientRequest }) =>
+      ingredientsApi.updateIngredient(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['ingredients'] });
+    },
+  });
+};
+
+export const useDeleteIngredient = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ingredientsApi.deleteIngredient,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['ingredients'] });
+    },
   });
 };
 
