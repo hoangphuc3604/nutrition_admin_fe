@@ -8,6 +8,11 @@ export default defineConfig({
     host: "::",
     port: 8080,
   },
+  preview: {
+    host: "::",
+    port: 4173,
+    allowedHosts: ["nutrition-admin-fe.onrender.com"],
+  },
   plugins: [react()],
   resolve: {
     alias: {
