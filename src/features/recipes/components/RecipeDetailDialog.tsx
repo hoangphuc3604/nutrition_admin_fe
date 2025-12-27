@@ -35,6 +35,7 @@ interface RecipeFormData {
 }
 
 interface RecipeIngredientForm {
+  id: string;
   ingredientId: string;
   quantity: number;
   unit: string;
@@ -93,7 +94,8 @@ export function RecipeDetailDialog({
         cook_time_minutes: recipe.cook_time_minutes || 0,
         servings: recipe.servings || 1,
         instructions: recipe.instructions || '',
-        ingredients: recipe.ingredients?.map((ri: any) => ({
+        ingredients: recipe.ingredients?.map((ri: any, index: number) => ({
+          id: `ingredient-${index}`,
           ingredientId: ri.ingredientId,
           quantity: ri.quantity,
           unit: ri.unit,

@@ -80,7 +80,7 @@ export function IngredientEditPage() {
       name: ingredient.name,
       category_id: categoryId,
       common_unit: ingredient.common_unit || 'gram',
-      storage_temperature: ingredient.storage_temperature || 'room_temp',
+      storage_temperature: (ingredient.storage_temperature as "frozen" | "refrigerated" | "room_temp") || 'room_temp',
       shelf_life_days: ingredient.shelf_life_days || 0,
       description: ingredient.description || '',
       image_url: ingredient.image_url || '',

@@ -5,6 +5,7 @@ interface GmailTokenStatus {
   isAuthenticated: boolean;
   hasToken: boolean;
   hasRefreshToken?: boolean;
+  email?: string;
   createdAt?: string;
   updatedAt?: string;
   expiresAt?: string;

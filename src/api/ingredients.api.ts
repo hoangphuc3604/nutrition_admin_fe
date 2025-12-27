@@ -7,8 +7,10 @@ export interface Ingredient {
   image_url: string | null;
   category: string | null;
   common_unit: string | null;
-  storage_temperature: string | null;
+  storage_temperature: "frozen" | "refrigerated" | "room_temp" | null;
   caloriesPerUnit?: number;
+  description?: string;
+  shelf_life_days?: number;
   created_at: string;
 }
 
@@ -115,8 +117,9 @@ export const useUpdateIngredient = () => {
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: UpdateIngredientRequest }) =>
       ingredientsApi.updateIngredient(id, data),
-    onSuccess: () => {
+    onSuccess: (_, { id }) => {
       queryClient.invalidateQueries({ queryKey: ['ingredients'] });
+      queryClient.invalidateQueries({ queryKey: ['ingredient', id] });
     },
   });
 };
