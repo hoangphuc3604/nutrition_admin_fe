@@ -12,6 +12,7 @@ interface ApiResponse<T> {
 
 interface RequestOptions extends RequestInit {
   requireAuth?: boolean;
+  skipRetry?: boolean; 
 }
 
 class ApiClient {
@@ -22,29 +23,89 @@ class ApiClient {
   }
 
   private getAuthHeaders(): HeadersInit {
-    const token = useAuthStore.getState().accessToken;
+    const stored = localStorage.getItem('auth-storage');
+    const token = stored ? JSON.parse(stored).state?.accessToken : null;
     return {
       'Content-Type': 'application/json',
-      ...(token && { Authorization: `Bearer ${token}` }),
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
     };
+  }
+
+  private async refreshTokens(): Promise<boolean> {
+    try {
+      const stored = localStorage.getItem('auth-storage');
+      const refreshToken = stored ? JSON.parse(stored).state?.refreshToken : null;
+      if (!refreshToken) {
+        console.error('[API] No refresh token available');
+        return false;
+      }
+
+      const response = await fetch(`${this.baseURL}/auth/refresh`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ refreshToken }),
+      });
+
+      if (!response.ok) {
+        console.error('[API] Refresh token failed:', response.status);
+        return false;
+      }
+
+      const data: ApiResponse<any> = await response.json();
+
+      if (data.accessToken && data.refreshToken && data.data?.user) {
+        useAuthStore.getState().setAuth(data.data.user, data.accessToken, data.refreshToken);
+        console.log('[API] Tokens refreshed successfully');
+        return true;
+      }
+
+      console.error('[API] Invalid refresh response format');
+      return false;
+    } catch (error) {
+      console.error('[API] Refresh token error:', error);
+      return false;
+    }
   }
 
   async request<T>(
     endpoint: string,
     options: RequestOptions = {}
   ): Promise<ApiResponse<T>> {
-    const { requireAuth = false, ...fetchOptions } = options;
-    
+    const { requireAuth = false, skipRetry = false, ...fetchOptions } = options;
+
     const headers = requireAuth
       ? { ...this.getAuthHeaders(), ...fetchOptions.headers }
       : { 'Content-Type': 'application/json', ...fetchOptions.headers };
 
     const url = `${this.baseURL}${endpoint}`;
-    
-    const response = await fetch(url, {
+
+    let response = await fetch(url, {
       ...fetchOptions,
       headers,
     });
+
+    if (response.status === 401 && !skipRetry && requireAuth) {
+      console.log('[API] Received 401, attempting token refresh...');
+
+      const refreshSuccess = await this.refreshTokens();
+
+      if (refreshSuccess) {
+        const newHeaders = requireAuth
+          ? { ...this.getAuthHeaders(), ...fetchOptions.headers }
+          : { 'Content-Type': 'application/json', ...fetchOptions.headers };
+
+        response = await fetch(url, {
+          ...fetchOptions,
+          headers: newHeaders,
+        });
+      } else {
+        console.log('[API] Token refresh failed, clearing auth');
+        useAuthStore.getState().clearAuth();
+        throw new Error('Authentication failed. Please log in again.');
+      }
+    }
 
     if (!response.ok) {
       const error = await response.json().catch(() => ({ message: 'Request failed' }));

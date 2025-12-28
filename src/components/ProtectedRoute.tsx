@@ -1,15 +1,19 @@
 import { Navigate } from 'react-router-dom';
-import { useAuth } from '@/api/auth.api';
+import { useAuthStore } from '@/stores/authStore';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
 }
 
 export function ProtectedRoute({ children }: ProtectedRouteProps) {
-  const { isAuthenticated, isAdmin, logout } = useAuth();
+  const { isAuthenticated, isAdmin, isHydrated, clearAuth } = useAuthStore();
 
-  if (!isAuthenticated || !isAdmin) {
-    logout();
+  if (!isHydrated) {
+    return <div>Loading...</div>;
+  }
+
+  if (!isAuthenticated || !isAdmin()) {
+    clearAuth();
     return <Navigate to="/login" replace />;
   }
 

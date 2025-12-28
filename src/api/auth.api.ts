@@ -35,6 +35,20 @@ const authApi = {
       data: response.data!,
     };
   },
+
+  refresh: async (refreshToken: string): Promise<LoginResponse> => {
+    const response = await apiClient.post<LoginResponse['data']>(
+      '/auth/refresh',
+      { refreshToken },
+      { skipRetry: true } // Don't retry refresh endpoint itself
+    );
+    return {
+      message: response.message,
+      accessToken: response.accessToken!,
+      refreshToken: response.refreshToken!,
+      data: response.data!,
+    };
+  },
 };
 
 export const useAuth = () => {
