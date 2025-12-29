@@ -11,7 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { DynamicIngredientTable, AvailableIngredient } from './components/DynamicIngredientTable';
 import { DynamicInstructionsTable } from './components/DynamicInstructionsTable';
 import { ImageUploadWithPreview } from '@/components/ui/image-upload-with-preview';
-import { useRecipe, useUpdateRecipe } from '@/api/recipes.api';
+import { useRecipe, useUpdateRecipe, UpdateRecipeRequest } from '@/api/recipes.api';
 import { useIngredients } from '@/api/ingredients.api';
 import { useToast } from '@/hooks/use-toast';
 import { InstructionStep, parseInstructionsToSteps, formatStepsToInstructions } from '@/lib/recipe-instructions.utils';
@@ -21,6 +21,7 @@ interface RecipeFormData {
   description?: string;
   image?: File | null;
   image_url?: string;
+  removeImage?: boolean;
   cuisine_type?: string;
   difficulty_level: "easy" | "medium" | "hard";
   prep_time_minutes?: number;
@@ -74,6 +75,7 @@ export function RecipeEditPage() {
         description: recipe.description || '',
         image: null,
         image_url: recipe.image_url || '',
+        removeImage: false,
         cuisine_type: recipe.cuisine_type || '',
         difficulty_level: recipe.difficulty_level || 'easy',
         prep_time_minutes: recipe.prep_time_minutes || 0,
@@ -175,11 +177,12 @@ export function RecipeEditPage() {
 
       let dataToSendFinal: UpdateRecipeRequest | FormData = dataToSend;
 
-      if (formData.image !== null) {
+      if (formData.image && formData.image instanceof File) {
+        // User uploaded new image
         const formDataToSend = new FormData();
 
         Object.entries(dataToSend).forEach(([key, value]) => {
-          if (value !== undefined && value !== null && value !== '') {
+          if (key !== 'removeImage' && value !== undefined && value !== null && value !== '') {
             if (value instanceof File) {
               formDataToSend.append(key, value);
             } else if (Array.isArray(value)) {
@@ -191,8 +194,10 @@ export function RecipeEditPage() {
         });
 
         dataToSendFinal = formDataToSend;
-      } else if (formData.image === null) {
+      } else if (formData.removeImage) {
         dataToSend.image_url = '';
+      } else {
+        delete dataToSend.image_url;
       }
 
       await updateRecipe.mutateAsync({ id, data: dataToSendFinal });
@@ -312,6 +317,7 @@ export function RecipeEditPage() {
                       value={formData.image}
                       existingImageUrl={formData.image_url}
                       onChange={(file) => handleChange('image', file)}
+                      onRemove={() => setFormData({ ...formData, removeImage: true })}
                       label="Recipe Image"
                       placeholder="Upload recipe image"
                     />

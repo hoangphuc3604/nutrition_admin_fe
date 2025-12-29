@@ -42,10 +42,30 @@ interface TrendingRecipesResponse {
   count: number;
 }
 
+interface ChartDataPoint {
+  date: string;
+  value: number;
+}
+
+interface MetricChartData {
+  totalUsers: ChartDataPoint[];
+  mealPlansCreated: ChartDataPoint[];
+  totalRecipes: ChartDataPoint[];
+  surveyCompletion: ChartDataPoint[];
+}
+
 const dashboardApi = {
   getOverview: async (period: Period = Period.PERIOD_7D): Promise<OverviewStats> => {
     const response = await apiClient.get<OverviewStats>(
       `/admin/dashboard/overview?period=${period}`,
+      { requireAuth: true }
+    );
+    return response.data!;
+  },
+
+  getCharts: async (period: Period = Period.PERIOD_7D): Promise<MetricChartData> => {
+    const response = await apiClient.get<MetricChartData>(
+      `/admin/dashboard/charts?period=${period}`,
       { requireAuth: true }
     );
     return response.data!;
@@ -70,6 +90,13 @@ export const useDashboardOverview = (period: Period = Period.PERIOD_7D) => {
   });
 };
 
+export const useDashboardCharts = (period: Period = Period.PERIOD_7D) => {
+  return useQuery({
+    queryKey: ['dashboard', 'charts', period],
+    queryFn: () => dashboardApi.getCharts(period),
+  });
+};
+
 export const useTrendingRecipes = (limit: number = 10) => {
   return useQuery({
     queryKey: ['dashboard', 'trending-recipes', limit],
@@ -77,7 +104,7 @@ export const useTrendingRecipes = (limit: number = 10) => {
   });
 };
 
-export type { OverviewStats, MetricWithTrend, TrendData, TrendingRecipe, TrendingRecipesResponse };
+export type { OverviewStats, MetricWithTrend, TrendData, TrendingRecipe, TrendingRecipesResponse, ChartDataPoint, MetricChartData };
 
 
 

@@ -15,7 +15,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ImageUploadWithPreview } from '@/components/ui/image-upload-with-preview';
-import { useIngredient, useUpdateIngredient } from '@/api/ingredients.api';
+import { useIngredient, useUpdateIngredient, UpdateIngredientRequest } from '@/api/ingredients.api';
 import categoriesApi, { Category } from '@/api/categories.api';
 import { useToast } from '@/hooks/use-toast';
 
@@ -28,6 +28,7 @@ interface IngredientFormData {
   description: string;
   image?: File | null;
   image_url?: string;
+  removeImage?: boolean;
 }
 
 const units = ['gram', 'kg', 'piece', 'tbsp', 'tsp', 'cup', 'ml', 'liter'];
@@ -87,6 +88,7 @@ export function IngredientEditPage() {
       description: ingredient.description || '',
       image: null,
       image_url: ingredient.image_url || '',
+      removeImage: false,
     });
   }, [ingredient, categories]);
 
@@ -120,11 +122,12 @@ export function IngredientEditPage() {
     try {
       let dataToSend: UpdateIngredientRequest | FormData = formData;
 
-      if (formData.image !== null) {
+      if (formData.image && formData.image instanceof File) {
+        // User uploaded new image
         const formDataToSend = new FormData();
 
         Object.entries(formData).forEach(([key, value]) => {
-          if (value !== undefined && value !== null && value !== '') {
+          if (key !== 'removeImage' && value !== undefined && value !== null && value !== '') {
             if (value instanceof File) {
               formDataToSend.append(key, value);
             } else if (Array.isArray(value)) {
@@ -136,11 +139,16 @@ export function IngredientEditPage() {
         });
 
         dataToSend = formDataToSend;
-      } else if (formData.image === null) {
-        const data: UpdateIngredientRequest = { ...formData };
-        delete data.image;
+      } else if (formData.removeImage) {
+        // User explicitly removed image
+        const { image, removeImage, ...formDataWithoutImage } = formData;
+        const data: UpdateIngredientRequest = { ...formDataWithoutImage };
         data.image_url = '';
         dataToSend = data;
+      } else {
+        // User didn't touch image - don't send image_url field
+        const { image, removeImage, image_url, ...formDataWithoutImage } = formData;
+        dataToSend = formDataWithoutImage as UpdateIngredientRequest;
       }
 
       await updateIngredient.mutateAsync({
@@ -325,6 +333,7 @@ export function IngredientEditPage() {
               value={formData.image}
               existingImageUrl={formData.image_url}
               onChange={(file) => handleChange('image', file)}
+              onRemove={() => setFormData({ ...formData, removeImage: true })}
               label="Image"
               placeholder="Upload ingredient image"
             />

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { AdminLayout } from '@/components/layout/AdminLayout';
 import { StatCard } from './components/StatCard';
 import { UsageChart } from './components/UsageChart';
-import { PopularRecipesTable } from './components/PopularRecipesTable';
+import { MetricsCharts } from './components/MetricsCharts';
 import { Users, CalendarDays, UtensilsCrossed, ClipboardCheck } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -89,7 +89,7 @@ export function DashboardPage() {
 
         {/* <UsageChart /> */}
 
-        <PopularRecipesTable />
+        <MetricsCharts period={period} />
       </div>
     </AdminLayout>
   );

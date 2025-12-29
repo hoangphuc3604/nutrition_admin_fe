@@ -7,6 +7,7 @@ interface ImageUploadWithPreviewProps {
   value?: File | null;
   existingImageUrl?: string;
   onChange: (file: File | null) => void;
+  onRemove?: () => void;
   label?: string;
   placeholder?: string;
   accept?: string;
@@ -19,6 +20,7 @@ export function ImageUploadWithPreview({
   value,
   existingImageUrl,
   onChange,
+  onRemove,
   label = "Upload Image",
   placeholder = "Click to upload or drag and drop",
   accept = "image/*",
@@ -90,6 +92,7 @@ export function ImageUploadWithPreview({
     if (inputRef.current) {
       inputRef.current.value = '';
     }
+    onRemove?.();
   };
 
   const handleUndoRemove = () => {
