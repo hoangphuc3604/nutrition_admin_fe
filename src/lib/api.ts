@@ -26,7 +26,6 @@ class ApiClient {
     const stored = localStorage.getItem('auth-storage');
     const token = stored ? JSON.parse(stored).state?.accessToken : null;
     return {
-      'Content-Type': 'application/json',
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
     };
   }
@@ -75,9 +74,12 @@ class ApiClient {
   ): Promise<ApiResponse<T>> {
     const { requireAuth = false, skipRetry = false, ...fetchOptions } = options;
 
+    const isFormData = fetchOptions.body instanceof FormData;
+    const defaultHeaders = isFormData ? {} : { 'Content-Type': 'application/json' };
+
     const headers = requireAuth
-      ? { ...this.getAuthHeaders(), ...fetchOptions.headers }
-      : { 'Content-Type': 'application/json', ...fetchOptions.headers };
+      ? { ...defaultHeaders, ...this.getAuthHeaders(), ...fetchOptions.headers }
+      : { ...defaultHeaders, ...fetchOptions.headers };
 
     const url = `${this.baseURL}${endpoint}`;
 
@@ -120,18 +122,20 @@ class ApiClient {
   }
 
   post<T>(endpoint: string, data?: any, options?: RequestOptions): Promise<ApiResponse<T>> {
+    const isFormData = data instanceof FormData;
     return this.request<T>(endpoint, {
       ...options,
       method: 'POST',
-      body: data ? JSON.stringify(data) : undefined,
+      body: data ? (isFormData ? data : JSON.stringify(data)) : undefined,
     });
   }
 
   put<T>(endpoint: string, data?: any, options?: RequestOptions): Promise<ApiResponse<T>> {
+    const isFormData = data instanceof FormData;
     return this.request<T>(endpoint, {
       ...options,
       method: 'PUT',
-      body: data ? JSON.stringify(data) : undefined,
+      body: data ? (isFormData ? data : JSON.stringify(data)) : undefined,
     });
   }
 

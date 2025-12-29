@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { ImageUpload } from '@/components/ui/image-upload';
 import { DynamicIngredientTable, AvailableIngredient } from './components/DynamicIngredientTable';
 import { DynamicInstructionsTable } from './components/DynamicInstructionsTable';
 import { useCreateRecipe } from '@/api/recipes.api';
@@ -18,7 +19,7 @@ import { InstructionStep, parseInstructionsToSteps, formatStepsToInstructions } 
 interface RecipeFormData {
   name: string;
   description?: string;
-  image_url?: string;
+  image?: File;
   cuisine_type?: string;
   difficulty_level: "easy" | "medium" | "hard";
   prep_time_minutes?: number;
@@ -65,7 +66,7 @@ export function RecipeCreatePage() {
 
   const availableIngredients = (ingredientsData?.ingredients || []) as AvailableIngredient[];
 
-  const handleChange = (field: keyof RecipeFormData, value: string | number) => {
+  const handleChange = (field: keyof RecipeFormData, value: string | number | File | undefined) => {
     setFormData({ ...formData, [field]: value });
   };
 
@@ -119,7 +120,22 @@ export function RecipeCreatePage() {
 
     try {
       const { instructionSteps, ...dataToSend } = formData;
-      await createRecipe.mutateAsync(dataToSend);
+
+      const formDataToSend = new FormData();
+
+      Object.entries(dataToSend).forEach(([key, value]) => {
+        if (value !== undefined && value !== null && value !== '') {
+          if (value instanceof File) {
+            formDataToSend.append(key, value);
+          } else if (Array.isArray(value)) {
+            formDataToSend.append(key, JSON.stringify(value));
+          } else {
+            formDataToSend.append(key, value.toString());
+          }
+        }
+      });
+
+      await createRecipe.mutateAsync(formDataToSend);
       toast({
         title: "Thành công",
         description: "Tạo công thức thành công",
@@ -208,12 +224,11 @@ export function RecipeCreatePage() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <Label htmlFor="image_url">Image URL</Label>
-                    <Input
-                      id="image_url"
-                      value={formData.image_url || ''}
-                      onChange={(e) => handleChange('image_url', e.target.value)}
-                      placeholder="https://..."
+                    <ImageUpload
+                      value={formData.image}
+                      onChange={(file) => handleChange('image', file)}
+                      label="Recipe Image"
+                      placeholder="Upload recipe image"
                     />
                   </div>
 

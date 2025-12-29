@@ -67,12 +67,12 @@ const ingredientsApi = {
     return response.data!;
   },
 
-  createIngredient: async (data: CreateIngredientRequest): Promise<Ingredient> => {
+  createIngredient: async (data: CreateIngredientRequest | FormData): Promise<Ingredient> => {
     const response = await apiClient.post<Ingredient>('/admin/ingredients', data, { requireAuth: true });
     return response.data!;
   },
 
-  updateIngredient: async (id: string, data: UpdateIngredientRequest): Promise<Ingredient> => {
+  updateIngredient: async (id: string, data: UpdateIngredientRequest | FormData): Promise<Ingredient> => {
     const response = await apiClient.put<Ingredient>(`/admin/ingredients/${id}`, data, { requireAuth: true });
     return response.data!;
   },

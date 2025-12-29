@@ -84,12 +84,12 @@ const recipesApi = {
     return response.data!;
   },
 
-  createRecipe: async (data: CreateRecipeRequest): Promise<Recipe> => {
+  createRecipe: async (data: CreateRecipeRequest | FormData): Promise<Recipe> => {
     const response = await apiClient.post<Recipe>('/admin/recipes', data, { requireAuth: true });
     return response.data!;
   },
 
-  updateRecipe: async (id: string, data: UpdateRecipeRequest): Promise<Recipe> => {
+  updateRecipe: async (id: string, data: UpdateRecipeRequest | FormData): Promise<Recipe> => {
     const response = await apiClient.put<Recipe>(`/admin/recipes/${id}`, data, { requireAuth: true });
     return response.data!;
   },

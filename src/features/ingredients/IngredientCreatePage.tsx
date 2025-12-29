@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Save, Loader2, Package, Scale, Tag, Image, Thermometer, Calendar } from 'lucide-react';
+import { ArrowLeft, Save, Loader2, Package, Scale, Tag, Thermometer, Calendar } from 'lucide-react';
 import { AdminLayout } from '@/components/layout/AdminLayout';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -14,6 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { ImageUpload } from '@/components/ui/image-upload';
 import { useCreateIngredient } from '@/api/ingredients.api';
 import categoriesApi, { Category } from '@/api/categories.api';
 import { useToast } from '@/hooks/use-toast';
@@ -25,7 +26,7 @@ interface IngredientFormData {
   storage_temperature: "frozen" | "refrigerated" | "room_temp";
   shelf_life_days: number;
   description: string;
-  image_url: string;
+  image?: File;
 }
 
 const units = ['gram', 'kg', 'piece', 'tbsp', 'tsp', 'cup', 'ml', 'liter'];
@@ -42,7 +43,6 @@ const emptyForm: IngredientFormData = {
   storage_temperature: 'room_temp',
   shelf_life_days: 0,
   description: '',
-  image_url: '',
 };
 
 export function IngredientCreatePage() {
@@ -52,7 +52,7 @@ export function IngredientCreatePage() {
   const createIngredient = useCreateIngredient();
   const [categories, setCategories] = useState<Category[]>([]);
 
-  const handleChange = (field: keyof IngredientFormData, value: string | number) => {
+  const handleChange = (field: keyof IngredientFormData, value: string | number | File | undefined) => {
     setFormData({ ...formData, [field]: value });
   };
 
@@ -78,7 +78,19 @@ export function IngredientCreatePage() {
     }
 
     try {
-      await createIngredient.mutateAsync(formData);
+      const formDataToSend = new FormData();
+
+      Object.entries(formData).forEach(([key, value]) => {
+        if (value !== undefined && value !== null && value !== '') {
+          if (value instanceof File) {
+            formDataToSend.append(key, value);
+          } else {
+            formDataToSend.append(key, value.toString());
+          }
+        }
+      });
+
+      await createIngredient.mutateAsync(formDataToSend);
       toast({
         title: "Thành công",
         description: "Tạo nguyên liệu thành công",
@@ -232,17 +244,13 @@ export function IngredientCreatePage() {
               </div>
             </div>
 
-            {/* Image URL */}
-            <div>
-              <Label className="text-muted-foreground text-xs uppercase tracking-wider flex items-center gap-2 mb-2">
-                <Image className="h-3.5 w-3.5" /> Image URL
-              </Label>
-              <Input
-                value={formData.image_url}
-                onChange={(e) => handleChange('image_url', e.target.value)}
-                placeholder="https://example.com/image.jpg"
-              />
-            </div>
+            {/* Image Upload */}
+            <ImageUpload
+              value={formData.image}
+              onChange={(file) => handleChange('image', file)}
+              label="Image"
+              placeholder="Upload ingredient image"
+            />
 
             {/* Description */}
             <div>
