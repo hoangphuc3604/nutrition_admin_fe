@@ -10,6 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { DynamicIngredientTable, AvailableIngredient } from './components/DynamicIngredientTable';
 import { DynamicInstructionsTable } from './components/DynamicInstructionsTable';
+import { ImageUploadWithPreview } from '@/components/ui/image-upload-with-preview';
 import { useRecipe, useUpdateRecipe } from '@/api/recipes.api';
 import { useIngredients } from '@/api/ingredients.api';
 import { useToast } from '@/hooks/use-toast';
@@ -18,6 +19,7 @@ import { InstructionStep, parseInstructionsToSteps, formatStepsToInstructions } 
 interface RecipeFormData {
   name: string;
   description?: string;
+  image?: File | null;
   image_url?: string;
   cuisine_type?: string;
   difficulty_level: "easy" | "medium" | "hard";
@@ -47,6 +49,7 @@ export function RecipeEditPage() {
   const [formData, setFormData] = useState<RecipeFormData>({
     name: '',
     description: '',
+    image: null,
     cuisine_type: '',
     difficulty_level: 'easy',
     prep_time_minutes: 0,
@@ -69,6 +72,7 @@ export function RecipeEditPage() {
       setFormData({
         name: recipe.name,
         description: recipe.description || '',
+        image: null,
         image_url: recipe.image_url || '',
         cuisine_type: recipe.cuisine_type || '',
         difficulty_level: recipe.difficulty_level || 'easy',
@@ -90,7 +94,7 @@ export function RecipeEditPage() {
     }
   }, [recipe]);
 
-  const handleChange = (field: keyof RecipeFormData, value: string | number) => {
+  const handleChange = (field: keyof RecipeFormData, value: string | number | File | null) => {
     setFormData({ ...formData, [field]: value });
   };
 
@@ -146,7 +150,30 @@ export function RecipeEditPage() {
 
     try {
       const { instructionSteps, ...dataToSend } = formData;
-      await updateRecipe.mutateAsync({ id, data: dataToSend });
+
+      let dataToSendFinal: UpdateRecipeRequest | FormData = dataToSend;
+
+      if (formData.image !== null) {
+        const formDataToSend = new FormData();
+
+        Object.entries(dataToSend).forEach(([key, value]) => {
+          if (value !== undefined && value !== null && value !== '') {
+            if (value instanceof File) {
+              formDataToSend.append(key, value);
+            } else if (Array.isArray(value)) {
+              formDataToSend.append(key, JSON.stringify(value));
+            } else {
+              formDataToSend.append(key, value.toString());
+            }
+          }
+        });
+
+        dataToSendFinal = formDataToSend;
+      } else if (formData.image === null) {
+        dataToSend.image_url = '';
+      }
+
+      await updateRecipe.mutateAsync({ id, data: dataToSendFinal });
       toast({
         title: "Thành công",
         description: "Cập nhật công thức thành công",
@@ -259,12 +286,12 @@ export function RecipeEditPage() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <Label htmlFor="image_url">Image URL</Label>
-                    <Input
-                      id="image_url"
-                      value={formData.image_url || ''}
-                      onChange={(e) => handleChange('image_url', e.target.value)}
-                      placeholder="https://..."
+                    <ImageUploadWithPreview
+                      value={formData.image}
+                      existingImageUrl={formData.image_url}
+                      onChange={(file) => handleChange('image', file)}
+                      label="Recipe Image"
+                      placeholder="Upload recipe image"
                     />
                   </div>
 
