@@ -108,31 +108,53 @@ export function RecipeEditPage() {
   };
 
   const validateForm = (): string | null => {
-    if (!formData.name || formData.name.trim() === '') {
-      return 'Tên công thức không được để trống';
+    try {
+      if (!formData.name || formData.name.trim() === '') {
+        return 'Tên công thức không được để trống';
+      }
+
+    if (!formData.difficulty_level || !['easy', 'medium', 'hard'].includes(formData.difficulty_level)) {
+      return 'Mức độ khó phải là easy, medium, hoặc hard';
     }
 
-    if (formData.prep_time_minutes !== undefined && formData.prep_time_minutes < 0) {
-      return 'Thời gian chuẩn bị không được âm';
+    if (!formData.instructions || formData.instructions.trim() === '') {
+      return 'Hướng dẫn nấu ăn không được để trống';
     }
 
-    if (formData.cook_time_minutes !== undefined && formData.cook_time_minutes < 0) {
-      return 'Thời gian nấu không được âm';
-    }
+      if (formData.prep_time_minutes !== undefined && (formData.prep_time_minutes < 0 || formData.prep_time_minutes > 1440)) {
+        return 'Thời gian chuẩn bị phải từ 0 đến 1440 phút';
+      }
 
-    if (formData.servings !== undefined && formData.servings <= 0) {
-      return 'Số khẩu phần phải lớn hơn 0';
-    }
+      if (formData.cook_time_minutes !== undefined && (formData.cook_time_minutes < 0 || formData.cook_time_minutes > 1440)) {
+        return 'Thời gian nấu phải từ 0 đến 1440 phút';
+      }
 
-    if (formData.ingredients.some(ing =>
-      !ing.ingredientId ||
-      ing.quantity <= 0 ||
-      !ing.unit.trim()
-    )) {
-      return 'Thông tin nguyên liệu không hợp lệ';
-    }
+      if (formData.servings !== undefined && (formData.servings <= 0 || formData.servings > 100)) {
+        return 'Số khẩu phần phải từ 1 đến 100';
+      }
 
-    return null;
+      if (!formData.ingredients || formData.ingredients.length === 0) {
+        return 'Cần ít nhất 1 nguyên liệu';
+      }
+
+      for (let i = 0; i < formData.ingredients.length; i++) {
+        const ing = formData.ingredients[i];
+        if (!ing || !ing.ingredientId || ing.ingredientId.trim() === '') {
+          return `Nguyên liệu ${i + 1}: Vui lòng chọn nguyên liệu`;
+        }
+        if (ing.quantity === undefined || ing.quantity <= 0) {
+          return `Nguyên liệu ${i + 1}: Số lượng phải lớn hơn 0`;
+        }
+        if (!ing.unit || ing.unit.trim() === '') {
+          return `Nguyên liệu ${i + 1}: Đơn vị không được để trống`;
+        }
+      }
+
+      return null;
+    } catch (error) {
+      console.error('Validation error:', error);
+      return 'Lỗi validation form';
+    }
   };
 
   const handleSave = async () => {
@@ -263,7 +285,7 @@ export function RecipeEditPage() {
               <TabsContent value="details" className="space-y-6 mt-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <Label htmlFor="name">Recipe Name *</Label>
+                    <Label htmlFor="name">Recipe Name <span className="text-red-500">*</span></Label>
                     <Input
                       id="name"
                       value={formData.name}
@@ -296,13 +318,15 @@ export function RecipeEditPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="difficulty_level">Difficulty Level</Label>
+                    <Label htmlFor="difficulty_level">Difficulty Level <span className="text-red-500">*</span></Label>
                     <select
                       id="difficulty_level"
                       value={formData.difficulty_level}
                       onChange={(e) => handleChange('difficulty_level', e.target.value as "easy" | "medium" | "hard")}
                       className="w-full px-3 py-2 border border-input bg-background rounded-md"
+                      required
                     >
+                      <option value="">Select difficulty level</option>
                       <option value="easy">Easy</option>
                       <option value="medium">Medium</option>
                       <option value="hard">Hard</option>
@@ -317,6 +341,7 @@ export function RecipeEditPage() {
                       id="prep_time_minutes"
                       type="number"
                       min="0"
+                      max="1440"
                       value={formData.prep_time_minutes || ''}
                       onChange={(e) => handleChange('prep_time_minutes', parseInt(e.target.value) || 0)}
                     />
@@ -327,6 +352,7 @@ export function RecipeEditPage() {
                       id="cook_time_minutes"
                       type="number"
                       min="0"
+                      max="1440"
                       value={formData.cook_time_minutes || ''}
                       onChange={(e) => handleChange('cook_time_minutes', parseInt(e.target.value) || 0)}
                     />
@@ -337,6 +363,7 @@ export function RecipeEditPage() {
                       id="servings"
                       type="number"
                       min="1"
+                      max="100"
                       value={formData.servings || ''}
                       onChange={(e) => handleChange('servings', parseInt(e.target.value) || 1)}
                     />
@@ -364,6 +391,11 @@ export function RecipeEditPage() {
               </TabsContent>
 
               <TabsContent value="instructions" className="mt-6">
+                <div className="space-y-2 mb-4">
+                  <Label className="text-muted-foreground text-xs uppercase tracking-wider flex items-center gap-2">
+                    <span>Instructions <span className="text-red-500">*</span></span>
+                  </Label>
+                </div>
                 <DynamicInstructionsTable
                   steps={formData.instructionSteps}
                   onChange={handleInstructionsChange}

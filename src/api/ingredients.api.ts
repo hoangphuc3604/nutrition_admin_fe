@@ -115,7 +115,7 @@ export const useCreateIngredient = () => {
 export const useUpdateIngredient = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: UpdateIngredientRequest }) =>
+    mutationFn: ({ id, data }: { id: string; data: UpdateIngredientRequest | FormData }) =>
       ingredientsApi.updateIngredient(id, data),
     onSuccess: (_, { id }) => {
       queryClient.invalidateQueries({ queryKey: ['ingredients'] });

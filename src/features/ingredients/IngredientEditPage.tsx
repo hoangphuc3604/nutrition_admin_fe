@@ -14,6 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { ImageUploadWithPreview } from '@/components/ui/image-upload-with-preview';
 import { useIngredient, useUpdateIngredient } from '@/api/ingredients.api';
 import categoriesApi, { Category } from '@/api/categories.api';
 import { useToast } from '@/hooks/use-toast';
@@ -25,7 +26,8 @@ interface IngredientFormData {
   storage_temperature: "frozen" | "refrigerated" | "room_temp";
   shelf_life_days: number;
   description: string;
-  image_url: string;
+  image?: File | null;
+  image_url?: string;
 }
 
 const units = ['gram', 'kg', 'piece', 'tbsp', 'tsp', 'cup', 'ml', 'liter'];
@@ -83,11 +85,12 @@ export function IngredientEditPage() {
       storage_temperature: (ingredient.storage_temperature as "frozen" | "refrigerated" | "room_temp") || 'room_temp',
       shelf_life_days: ingredient.shelf_life_days || 0,
       description: ingredient.description || '',
+      image: null,
       image_url: ingredient.image_url || '',
     });
   }, [ingredient, categories]);
 
-  const handleChange = (field: keyof IngredientFormData, value: string | number) => {
+  const handleChange = (field: keyof IngredientFormData, value: string | number | File | null) => {
     setFormData({ ...formData, [field]: value });
   };
 
@@ -115,9 +118,34 @@ export function IngredientEditPage() {
     }
 
     try {
+      let dataToSend: UpdateIngredientRequest | FormData = formData;
+
+      if (formData.image !== null) {
+        const formDataToSend = new FormData();
+
+        Object.entries(formData).forEach(([key, value]) => {
+          if (value !== undefined && value !== null && value !== '') {
+            if (value instanceof File) {
+              formDataToSend.append(key, value);
+            } else if (Array.isArray(value)) {
+              formDataToSend.append(key, JSON.stringify(value));
+            } else {
+              formDataToSend.append(key, value.toString());
+            }
+          }
+        });
+
+        dataToSend = formDataToSend;
+      } else if (formData.image === null) {
+        const data: UpdateIngredientRequest = { ...formData };
+        delete data.image;
+        data.image_url = '';
+        dataToSend = data;
+      }
+
       await updateIngredient.mutateAsync({
         id,
-        data: formData
+        data: dataToSend
       });
       toast({
         title: "Thành công",
@@ -292,17 +320,14 @@ export function IngredientEditPage() {
               </div>
             </div>
 
-            {/* Image URL */}
-            <div>
-              <Label className="text-muted-foreground text-xs uppercase tracking-wider flex items-center gap-2 mb-2">
-                <Image className="h-3.5 w-3.5" /> Image URL
-              </Label>
-              <Input
-                value={formData.image_url}
-                onChange={(e) => handleChange('image_url', e.target.value)}
-                placeholder="https://example.com/image.jpg"
-              />
-            </div>
+            {/* Image Upload */}
+            <ImageUploadWithPreview
+              value={formData.image}
+              existingImageUrl={formData.image_url}
+              onChange={(file) => handleChange('image', file)}
+              label="Image"
+              placeholder="Upload ingredient image"
+            />
 
             {/* Description */}
             <div>
