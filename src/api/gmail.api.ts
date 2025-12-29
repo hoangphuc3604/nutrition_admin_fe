@@ -13,7 +13,7 @@ interface GmailTokenStatus {
 
 const gmailApi = {
   getStatus: async (): Promise<GmailTokenStatus> => {
-    const response = await apiClient.get<GmailTokenStatus>('/auth/gmail/status', {
+    const response = await apiClient.get<GmailTokenStatus>('/admin/gmail-auth/status', {
       requireAuth: true,
     });
     return response.data!;
@@ -21,7 +21,7 @@ const gmailApi = {
 
   authorize: () => {
     const baseURL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api/v1';
-    window.open(`${baseURL}/auth/gmail/authorize`, '_blank');
+    window.open(`${baseURL}/admin/gmail-auth/authorize`, '_blank');
   }
 };
 
