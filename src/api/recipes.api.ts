@@ -127,7 +127,7 @@ export const useCreateRecipe = () => {
 export const useUpdateRecipe = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: UpdateRecipeRequest }) =>
+    mutationFn: ({ id, data }: { id: string; data: UpdateRecipeRequest | FormData }) =>
       recipesApi.updateRecipe(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['recipes'] });
