@@ -21,7 +21,16 @@ const gmailApi = {
 
   authorize: () => {
     const baseURL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api/v1';
-    window.open(`${baseURL}/admin/gmail-auth/authorize`, '_blank');
+    const stored = localStorage.getItem('auth-storage');
+    const token = stored ? JSON.parse(stored).state?.accessToken : null;
+
+    if (!token) {
+      console.error('No access token available for Gmail authorization');
+      return;
+    }
+
+    const url = `${baseURL}/admin/gmail-auth/authorize?token=${encodeURIComponent(token)}`;
+    window.open(url, '_blank');
   }
 };
 
