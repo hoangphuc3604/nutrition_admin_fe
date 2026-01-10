@@ -16,18 +16,19 @@ import { cn } from '@/lib/utils';
 import { useSidebarStore } from '@/stores/sidebarStore';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/api/auth.api';
+import { useTranslation } from 'react-i18next';
 
-const mainNavItems = [
-  { title: 'Dashboard', icon: LayoutDashboard, path: '/' },
-  { title: 'Users', icon: Users, path: '/users' },
-  { title: 'Recipes', icon: UtensilsCrossed, path: '/recipes' },
-  { title: 'Ingredients', icon: Carrot, path: '/ingredients' },
+const getMainNavItems = (t: any) => [
+  { title: t('navigation.dashboard'), icon: LayoutDashboard, path: '/' },
+  { title: t('navigation.users'), icon: Users, path: '/users' },
+  { title: t('navigation.recipes'), icon: UtensilsCrossed, path: '/recipes' },
+  { title: t('navigation.ingredients'), icon: Carrot, path: '/ingredients' },
 ];
 
-const secondaryNavItems = [
-  { title: 'Reports', icon: BarChart3, path: '/reports' },
-  { title: 'Gmail Auth', icon: Mail, path: '/gmail-auth' },
-  { title: 'Settings', icon: Settings, path: '/settings' },
+const getSecondaryNavItems = (t: any) => [
+  { title: t('navigation.reports'), icon: BarChart3, path: '/reports' },
+  { title: t('navigation.gmailAuth'), icon: Mail, path: '/gmail-auth' },
+  { title: t('navigation.settings'), icon: Settings, path: '/settings' },
 ];
 
 export function AdminSidebar() {
@@ -35,6 +36,7 @@ export function AdminSidebar() {
   const location = useLocation();
   const navigate = useNavigate();
   const { logout } = useAuth();
+  const { t } = useTranslation();
 
   const isActive = (path: string) => {
     if (path === '/') return location.pathname === '/';
@@ -56,6 +58,9 @@ export function AdminSidebar() {
       {!isCollapsed && <span>{item.title}</span>}
     </NavLink>
   );
+
+  const mainNavItems = getMainNavItems(t);
+  const secondaryNavItems = getSecondaryNavItems(t);
 
   const sidebarContent = (
     <div className="flex flex-col h-full">
@@ -104,7 +109,7 @@ export function AdminSidebar() {
         <div className="pt-6">
           {!isCollapsed && (
             <p className="px-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
-              Analytics
+              {t('navigation.analytics')}
             </p>
           )}
           <div className="space-y-1">
@@ -116,7 +121,7 @@ export function AdminSidebar() {
       </nav>
 
       <div className="px-3 py-4 border-t border-sidebar-border">
-        <button 
+        <button
           onClick={() => {
             logout();
             navigate('/login');
@@ -126,7 +131,7 @@ export function AdminSidebar() {
             "text-destructive hover:bg-destructive/10 transition-colors"
           )}>
           <LogOut className="h-5 w-5" />
-          {!isCollapsed && <span>Logout</span>}
+          {!isCollapsed && <span>{t('navigation.logout')}</span>}
         </button>
       </div>
     </div>

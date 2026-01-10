@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { Check, ChevronsUpDown } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import {
@@ -42,9 +43,10 @@ export function IngredientAutocomplete({
   ingredients,
   value,
   onSelect,
-  placeholder = "Select ingredient...",
+  placeholder,
   disabled = false
 }: IngredientAutocompleteProps) {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const selectedIngredient = ingredients.find(i => i.id === value);
 
@@ -64,9 +66,9 @@ export function IngredientAutocomplete({
       </PopoverTrigger>
       <PopoverContent className="w-[300px] p-0" align="start">
         <Command>
-          <CommandInput placeholder="Search ingredient..." />
+          <CommandInput placeholder={t('recipes.ingredientAutocomplete.searchPlaceholder')} />
           <CommandList>
-            <CommandEmpty>No ingredient found.</CommandEmpty>
+            <CommandEmpty>{t('recipes.ingredientAutocomplete.noIngredientFound')}</CommandEmpty>
             <CommandGroup>
               {ingredients.map((ingredient) => (
                 <CommandItem
@@ -86,7 +88,7 @@ export function IngredientAutocomplete({
                   <div className="flex-1">
                     <div className="font-medium">{ingredient.name}</div>
                     <div className="text-xs text-muted-foreground">
-                      {ingredient.common_unit ? `${ingredient.common_unit}` : 'No unit'}
+                      {ingredient.common_unit ? `${ingredient.common_unit}` : t('recipes.ingredientAutocomplete.noUnit')}
                     </div>
                   </div>
                 </CommandItem>

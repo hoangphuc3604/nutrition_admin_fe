@@ -1,31 +1,34 @@
+import { useTranslation } from 'react-i18next';
 import { AdminLayout } from '@/components/layout/AdminLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from 'recharts';
 
-const usageData = [
-  { name: 'Jan', users: 400, mealPlans: 240 },
-  { name: 'Feb', users: 600, mealPlans: 380 },
-  { name: 'Mar', users: 800, mealPlans: 520 },
-  { name: 'Apr', users: 1200, mealPlans: 780 },
-  { name: 'May', users: 1600, mealPlans: 1100 },
-  { name: 'Jun', users: 2100, mealPlans: 1450 },
-];
-
-const categoryData = [
-  { name: 'Breakfast', value: 35 },
-  { name: 'Lunch', value: 30 },
-  { name: 'Dinner', value: 25 },
-  { name: 'Snacks', value: 10 },
-];
-
 const COLORS = ['hsl(var(--primary))', 'hsl(var(--success))', 'hsl(var(--warning))', 'hsl(var(--info))'];
 
 export function ReportsPage() {
+  const { t } = useTranslation();
+
+  const usageData = [
+    { name: t('reports.months.jan'), users: 400, mealPlans: 240 },
+    { name: t('reports.months.feb'), users: 600, mealPlans: 380 },
+    { name: t('reports.months.mar'), users: 800, mealPlans: 520 },
+    { name: t('reports.months.apr'), users: 1200, mealPlans: 780 },
+    { name: t('reports.months.may'), users: 1600, mealPlans: 1100 },
+    { name: t('reports.months.jun'), users: 2100, mealPlans: 1450 },
+  ];
+
+  const categoryData = [
+    { name: t('reports.mealTypes.breakfast'), value: 35 },
+    { name: t('reports.mealTypes.lunch'), value: 30 },
+    { name: t('reports.mealTypes.dinner'), value: 25 },
+    { name: t('reports.mealTypes.snacks'), value: 10 },
+  ];
+
   return (
-    <AdminLayout title="Reports">
+    <AdminLayout title={t('reports.title')}>
       <div className="space-y-6">
         <Card>
-          <CardHeader><CardTitle>User & Meal Plan Growth</CardTitle></CardHeader>
+          <CardHeader><CardTitle>{t('reports.growthTitle')}</CardTitle></CardHeader>
           <CardContent>
             <div className="h-[300px]">
               <ResponsiveContainer width="100%" height="100%">
@@ -43,7 +46,7 @@ export function ReportsPage() {
         </Card>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <Card>
-            <CardHeader><CardTitle>Recipe Categories</CardTitle></CardHeader>
+            <CardHeader><CardTitle>{t('reports.recipeCategories')}</CardTitle></CardHeader>
             <CardContent>
               <div className="h-[250px]">
                 <ResponsiveContainer width="100%" height="100%">
@@ -58,7 +61,7 @@ export function ReportsPage() {
             </CardContent>
           </Card>
           <Card>
-            <CardHeader><CardTitle>Monthly Active Users</CardTitle></CardHeader>
+            <CardHeader><CardTitle>{t('reports.monthlyActiveUsers')}</CardTitle></CardHeader>
             <CardContent>
               <div className="h-[250px]">
                 <ResponsiveContainer width="100%" height="100%">

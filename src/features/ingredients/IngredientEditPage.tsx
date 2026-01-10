@@ -18,6 +18,7 @@ import { ImageUploadWithPreview } from '@/components/ui/image-upload-with-previe
 import { useIngredient, useUpdateIngredient, UpdateIngredientRequest } from '@/api/ingredients.api';
 import categoriesApi, { Category } from '@/api/categories.api';
 import { useToast } from '@/hooks/use-toast';
+import { useTranslation } from 'react-i18next';
 
 interface IngredientFormData {
   name: string;
@@ -49,6 +50,7 @@ export function IngredientEditPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { t } = useTranslation();
   const { data: ingredient, isLoading: ingredientLoading } = useIngredient(id!);
   const updateIngredient = useUpdateIngredient();
 
@@ -98,10 +100,10 @@ export function IngredientEditPage() {
 
   const validateForm = (): string | null => {
     if (!formData.name || formData.name.trim() === '') {
-      return 'Tên nguyên liệu không được để trống';
+      return t('ingredients.validation.nameRequired');
     }
     if (!formData.category_id) {
-      return 'Vui lòng chọn danh mục';
+      return t('ingredients.validation.categoryRequired');
     }
     return null;
   };
@@ -112,7 +114,7 @@ export function IngredientEditPage() {
     const validationError = validateForm();
     if (validationError) {
       toast({
-        title: "Lỗi validation",
+        title: t('common.validationError'),
         description: validationError,
         variant: "destructive",
       });
@@ -156,17 +158,17 @@ export function IngredientEditPage() {
         data: dataToSend
       });
       toast({
-        title: "Thành công",
-        description: "Cập nhật nguyên liệu thành công",
+        title: t('common.success'),
+        description: t('ingredients.updateSuccess'),
         variant: "default",
         className: "bg-green-500 text-white border-none",
       });
       navigate(`/ingredients/${id}`);
     } catch (error: any) {
       console.error('Failed to update ingredient:', error);
-      const errorMessage = error?.response?.data?.message || 'Không thể cập nhật nguyên liệu. Vui lòng thử lại.';
+      const errorMessage = error?.response?.data?.message || t('ingredients.updateError');
       toast({
-        title: "Lỗi",
+        title: t('common.error'),
         description: errorMessage,
         variant: "destructive",
       });
@@ -178,11 +180,11 @@ export function IngredientEditPage() {
 
   if (isLoading) {
     return (
-      <AdminLayout title="Edit Ingredient">
+      <AdminLayout title={t('ingredients.editTitle')}>
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
             <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
-            <p className="text-muted-foreground">Loading ingredient...</p>
+            <p className="text-muted-foreground">{t('ingredients.loading')}</p>
           </div>
         </div>
       </AdminLayout>
@@ -191,15 +193,15 @@ export function IngredientEditPage() {
 
   if (!ingredient) {
     return (
-      <AdminLayout title="Edit Ingredient">
+      <AdminLayout title={t('ingredients.editTitle')}>
         <div className="flex items-center justify-center h-64">
-          <p className="text-muted-foreground">Ingredient not found</p>
+          <p className="text-muted-foreground">{t('ingredients.notFound')}</p>
           <Button
             variant="outline"
             className="mt-4"
             onClick={() => navigate('/ingredients')}
           >
-            Back to Ingredients
+            {t('ingredients.backToIngredients')}
           </Button>
         </div>
       </AdminLayout>
@@ -207,7 +209,7 @@ export function IngredientEditPage() {
   }
 
   return (
-    <AdminLayout title="Edit Ingredient">
+    <AdminLayout title={t('ingredients.editTitle')}>
       <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center gap-4">
@@ -218,7 +220,7 @@ export function IngredientEditPage() {
             className="gap-2"
           >
             <ArrowLeft className="h-4 w-4" />
-            Back to Ingredient
+            {t('ingredients.backToIngredients')}
           </Button>
           <div className="flex-1" />
           <Button
@@ -231,7 +233,7 @@ export function IngredientEditPage() {
             ) : (
               <Save className="h-4 w-4" />
             )}
-            {isSaving ? 'Saving...' : 'Save Changes'}
+            {isSaving ? t('common.saving') : t('common.saveChanges')}
           </Button>
         </div>
 
@@ -242,7 +244,7 @@ export function IngredientEditPage() {
               <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
                 <Package className="h-5 w-5 text-primary" />
               </div>
-              Edit Ingredient: {ingredient.name}
+              {t('ingredients.editIngredient')}: {ingredient.name}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
@@ -250,13 +252,13 @@ export function IngredientEditPage() {
             <div className="space-y-4">
               <div>
                 <Label htmlFor="name" className="text-muted-foreground text-xs uppercase tracking-wider flex items-center gap-2 mb-2">
-                  <Package className="h-3.5 w-3.5" /> Name *
+                  <Package className="h-3.5 w-3.5" /> {t('ingredients.name')} *
                 </Label>
                 <Input
                   id="name"
                   value={formData.name}
                   onChange={(e) => handleChange('name', e.target.value)}
-                  placeholder="Enter ingredient name"
+                  placeholder={t('ingredients.namePlaceholder')}
                   required
                 />
               </div>
@@ -264,11 +266,11 @@ export function IngredientEditPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <Label className="text-muted-foreground text-xs uppercase tracking-wider flex items-center gap-2 mb-2">
-                    <Tag className="h-3.5 w-3.5" /> Category *
+                    <Tag className="h-3.5 w-3.5" /> {t('ingredients.category')} *
                   </Label>
                   <Select value={formData.category_id} onValueChange={(v) => handleChange('category_id', v)}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select category" />
+                      <SelectValue placeholder={t('ingredients.selectCategory')} />
                     </SelectTrigger>
                     <SelectContent>
                       {categories.map((cat) => (
@@ -280,7 +282,7 @@ export function IngredientEditPage() {
 
                 <div>
                   <Label className="text-muted-foreground text-xs uppercase tracking-wider flex items-center gap-2 mb-2">
-                    <Scale className="h-3.5 w-3.5" /> Common Unit
+                    <Scale className="h-3.5 w-3.5" /> {t('ingredients.unit')}
                   </Label>
                   <Select value={formData.common_unit} onValueChange={(v) => handleChange('common_unit', v)}>
                     <SelectTrigger>
@@ -300,7 +302,7 @@ export function IngredientEditPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <Label className="text-muted-foreground text-xs uppercase tracking-wider flex items-center gap-2 mb-2">
-                  <Thermometer className="h-3.5 w-3.5" /> Storage Temperature
+                  <Thermometer className="h-3.5 w-3.5" /> {t('ingredients.storage')}
                 </Label>
                 <Select value={formData.storage_temperature} onValueChange={(v: any) => handleChange('storage_temperature', v)}>
                   <SelectTrigger>
@@ -316,7 +318,7 @@ export function IngredientEditPage() {
 
               <div>
                 <Label className="text-muted-foreground text-xs uppercase tracking-wider flex items-center gap-2 mb-2">
-                  <Calendar className="h-3.5 w-3.5" /> Shelf Life (days)
+                  <Calendar className="h-3.5 w-3.5" /> {t('ingredients.shelfLife')} ({t('common.days')})
                 </Label>
                 <Input
                   type="number"
@@ -334,19 +336,19 @@ export function IngredientEditPage() {
               existingImageUrl={formData.image_url}
               onChange={(file) => handleChange('image', file)}
               onRemove={() => setFormData({ ...formData, removeImage: true })}
-              label="Image"
-              placeholder="Upload ingredient image"
+              label={t('ingredients.image')}
+              placeholder={t('components.imageUpload.placeholder')}
             />
 
             {/* Description */}
             <div>
               <Label className="text-muted-foreground text-xs uppercase tracking-wider mb-2 block">
-                Description
+                {t('ingredients.description')}
               </Label>
               <Textarea
                 value={formData.description}
                 onChange={(e) => handleChange('description', e.target.value)}
-                placeholder="Optional description..."
+                placeholder={t('ingredients.descriptionPlaceholder')}
                 rows={4}
               />
             </div>

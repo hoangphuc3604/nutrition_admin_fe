@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Plus, Trash2, GripVertical } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -73,6 +74,7 @@ interface SortableItemProps {
   onIngredientSelect: (itemId: string, ingredient: AvailableIngredient | null) => void;
   onUpdateItem: (itemId: string, field: keyof IngredientItem, value: string | number | boolean) => void;
   onDeleteItem: (itemId: string) => void;
+  t: any;
 }
 
 function SortableItem({
@@ -83,6 +85,7 @@ function SortableItem({
   onIngredientSelect,
   onUpdateItem,
   onDeleteItem,
+  t,
 }: SortableItemProps) {
   const {
     attributes,
@@ -126,7 +129,7 @@ function SortableItem({
                         ingredients={availableIngredients}
                         value={item.ingredientId}
                         onSelect={(ing) => onIngredientSelect(item.id, ing)}
-                        placeholder="Select ingredient..."
+                        placeholder={t('recipes.ingredientsTable.placeholders.selectIngredient')}
                       />
       </td>
       <td className="py-3 px-3">
@@ -146,7 +149,7 @@ function SortableItem({
                         onValueChange={(v) => onUpdateItem(item.id, 'unit', v)}
                       >
           <SelectTrigger className="w-24">
-            <SelectValue placeholder="Unit" />
+            <SelectValue placeholder={t('recipes.ingredientsTable.placeholders.unit')} />
           </SelectTrigger>
           <SelectContent>
             {units.map((unit) => (
@@ -174,6 +177,7 @@ function SortableItem({
 }
 
 export function DynamicIngredientTable({ items, onChange, availableIngredients }: DynamicIngredientTableProps) {
+  const { t } = useTranslation();
   const [hoveredRow, setHoveredRow] = useState<string | null>(null);
 
   const addRow = () => {
@@ -203,7 +207,7 @@ export function DynamicIngredientTable({ items, onChange, availableIngredients }
           ? {
               ...item,
               ingredientId: ingredient.id,
-              unit: ingredient.common_unit || 'gram'
+              unit: ingredient.common_unit || t('common.gram')
             }
           : item
       ));
@@ -250,7 +254,7 @@ export function DynamicIngredientTable({ items, onChange, availableIngredients }
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <h4 className="font-semibold text-foreground">Recipe Ingredients</h4>
+        <h4 className="font-semibold text-foreground">{t('recipes.ingredientsTable.title')}</h4>
       </div>
 
       <DndContext
@@ -263,9 +267,9 @@ export function DynamicIngredientTable({ items, onChange, availableIngredients }
             <thead>
               <tr className="bg-secondary/50">
                 <th className="w-8 px-2"></th>
-                <th className="text-left py-3 px-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Ingredient</th>
-                <th className="text-left py-3 px-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider w-24">Quantity</th>
-                <th className="text-left py-3 px-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider w-28">Unit</th>
+                <th className="text-left py-3 px-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">{t('recipes.ingredientsTable.headers.ingredient')}</th>
+                <th className="text-left py-3 px-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider w-24">{t('recipes.ingredientsTable.headers.quantity')}</th>
+                <th className="text-left py-3 px-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider w-28">{t('recipes.ingredientsTable.headers.unit')}</th>
                 <th className="w-12 px-2"></th>
               </tr>
             </thead>
@@ -274,7 +278,7 @@ export function DynamicIngredientTable({ items, onChange, availableIngredients }
                 {items.length === 0 ? (
                   <tr>
                     <td colSpan={5} className="py-8 text-center text-muted-foreground">
-                      No ingredients added yet. Click "Add Ingredient" to start.
+                      {t('recipes.ingredientsTable.emptyState')}
                     </td>
                   </tr>
                 ) : (
@@ -288,6 +292,7 @@ export function DynamicIngredientTable({ items, onChange, availableIngredients }
                       onIngredientSelect={handleIngredientSelect}
                       onUpdateItem={updateRow}
                       onDeleteItem={removeRow}
+                      t={t}
                     />
                   ))
                 )}
@@ -304,7 +309,7 @@ export function DynamicIngredientTable({ items, onChange, availableIngredients }
         className="w-full border-dashed"
       >
         <Plus className="h-4 w-4 mr-2" />
-        Add Ingredient
+        {t('recipes.ingredientsTable.addIngredient')}
       </Button>
     </div>
   );

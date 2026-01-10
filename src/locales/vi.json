@@ -1,0 +1,465 @@
+{
+  "common": {
+    "loading": "Đang tải...",
+    "error": "Lỗi",
+    "success": "Thành công",
+    "cancel": "Hủy",
+    "save": "Lưu",
+    "delete": "Xóa",
+    "edit": "Chỉnh sửa",
+    "view": "Xem",
+    "search": "Tìm kiếm...",
+    "filter": "Lọc",
+    "reset": "Đặt lại",
+    "previous": "Trước",
+    "next": "Sau",
+    "showing": "Hiển thị",
+    "to": "đến",
+    "of": "của",
+    "items": "mục",
+    "noData": "Không tìm thấy dữ liệu",
+    "confirm": "Xác nhận",
+    "yes": "Có",
+    "no": "Không",
+    "other": "Khác",
+    "unknown": "Không xác định",
+    "min": "phút",
+    "gram": "gam",
+    "saving": "Đang lưu...",
+    "saveChanges": "Lưu thay đổi",
+    "validationError": "Lỗi xác thực",
+    "image": "Hình ảnh",
+    "actions": "Hành động",
+    "na": "N/A",
+    "days": "ngày",
+    "note": "Lưu ý"
+  },
+  "components": {
+    "imageUpload": {
+      "label": "Tải ảnh lên",
+      "placeholder": "Nhấn để tải lên hoặc kéo thả",
+      "clickToChange": "Nhấn để thay đổi ảnh",
+      "fileSizeError": "Kích thước tệp phải nhỏ hơn {{size}}MB",
+      "imageRemoved": "Đã xóa ảnh",
+      "undoRemove": "Hoàn tác xóa",
+      "currentImage": "Ảnh hiện tại",
+      "maxSizeInfo": "PNG, JPG, JPEG tối đa {{size}}MB"
+    },
+    "pagination": {
+      "previous": "Đến trang trước",
+      "next": "Đến trang sau",
+      "more": "Thêm trang"
+    }
+  },
+  "navigation": {
+    "dashboard": "Bảng điều khiển",
+    "users": "Người dùng",
+    "recipes": "Công thức",
+    "ingredients": "Nguyên liệu",
+    "reports": "Báo cáo",
+    "gmailAuth": "Xác thực Gmail",
+    "settings": "Cài đặt",
+    "logout": "Đăng xuất",
+    "analytics": "Phân tích"
+  },
+  "header": {
+    "search": "Tìm kiếm...",
+    "myAccount": "Tài khoản của tôi",
+    "profile": "Hồ sơ",
+    "logout": "Đăng xuất"
+  },
+  "auth": {
+    "login": {
+      "title": "Smart Meal Admin",
+      "description": "Đăng nhập vào hệ thống quản trị",
+      "email": "Email",
+      "password": "Mật khẩu",
+      "emailPlaceholder": "admin@smartmeal.com",
+      "passwordPlaceholder": "Nhập mật khẩu",
+      "rememberMe": "Ghi nhớ đăng nhập",
+      "forgotPassword": "Quên mật khẩu?",
+      "loginButton": "Đăng nhập",
+      "loggingIn": "Đang đăng nhập...",
+      "success": "Đăng nhập thành công",
+      "welcomeBack": "Chào mừng bạn quay trở lại!",
+      "failed": "Đăng nhập thất bại",
+      "checkCredentials": "Vui lòng kiểm tra lại thông tin đăng nhập"
+    }
+  },
+  "dashboard": {
+    "title": "Bảng điều khiển",
+    "overviewStatistics": "Thống kê tổng quan",
+    "totalUsers": "Tổng người dùng",
+    "mealPlansCreated": "Kế hoạch ăn uống đã tạo",
+    "totalRecipes": "Tổng công thức",
+    "surveyCompletion": "Hoàn thành khảo sát",
+    "selectPeriod": "Chọn khoảng thời gian",
+    "charts": {
+      "totalUsersTrend": "Xu hướng tổng người dùng",
+      "mealPlansCreatedTrend": "Xu hướng kế hoạch ăn uống được tạo",
+      "totalRecipesTrend": "Xu hướng tổng công thức",
+      "surveyCompletionTrend": "Xu hướng hoàn thành khảo sát",
+      "surveyCompletion": "Hoàn thành khảo sát"
+    },
+    "popularRecipes": {
+      "title": "Công thức phổ biến",
+      "recipeName": "Tên công thức",
+      "cuisineType": "Loại món ăn",
+      "status": "Trạng thái",
+      "trending": "đang hot",
+      "noTrendingRecipes": "Không tìm thấy công thức đang hot"
+    },
+    "usageAnalytics": {
+      "title": "Phân tích sử dụng",
+      "october": "Tháng 10",
+      "november": "Tháng 11",
+      "december": "Tháng 12"
+    },
+    "periods": {
+      "7d": "7 ngày qua",
+      "30d": "30 ngày qua",
+      "90d": "90 ngày qua",
+      "1y": "1 năm qua",
+      "all": "Tất cả thời gian"
+    }
+  },
+  "users": {
+    "title": "Người dùng",
+    "management": "Quản lý người dùng",
+    "filterBy": "Lọc theo",
+    "status": "Trạng thái",
+    "role": "Vai trò",
+    "allStatus": "Tất cả trạng thái",
+    "active": "Hoạt động",
+    "banned": "Bị cấm",
+    "allRoles": "Tất cả vai trò",
+    "resetFilter": "Đặt lại bộ lọc",
+    "searchUsers": "Tìm kiếm người dùng...",
+    "table": {
+      "id": "ID",
+      "email": "Email",
+      "created": "Ngày tạo",
+      "roles": "Vai trò",
+      "status": "Trạng thái",
+      "actions": "Hành động"
+    },
+    "loading": "Đang tải người dùng...",
+    "loadFailed": "Không thể tải người dùng. Vui lòng thử lại.",
+    "noUsers": "Không tìm thấy người dùng",
+    "showingUsers": "người dùng",
+    "viewDetails": "Xem chi tiết",
+    "editRoles": "Chỉnh sửa vai trò",
+    "banUser": "Cấm người dùng",
+    "activate": "Kích hoạt",
+    "delete": "Xóa",
+    "you": "(Bạn)",
+    "updateSuccess": "Thành công",
+    "updateFailed": "Lỗi",
+    "updateRolesFailed": "Không thể cập nhật vai trò người dùng",
+    "updateStatusFailed": "Không thể cập nhật trạng thái người dùng",
+    "userDetail": {
+      "title": "Chi tiết người dùng",
+      "backToUsers": "Quay lại danh sách người dùng",
+      "editRoles": "Chỉnh sửa vai trò",
+      "loading": "Đang tải chi tiết người dùng...",
+      "loadFailed": "Không thể tải chi tiết người dùng. Vui lòng thử lại.",
+      "userInformation": "Thông tin người dùng",
+      "profileInformation": "Thông tin hồ sơ",
+      "dietaryInformation": "Thông tin dinh dưỡng",
+      "statistics": "Thống kê",
+      "fields": {
+        "userId": "ID người dùng",
+        "email": "Email",
+        "status": "Trạng thái",
+        "roles": "Vai trò",
+        "emailVerified": "Email đã xác thực",
+        "surveyCompleted": "Đã hoàn thành khảo sát",
+        "createdAt": "Ngày tạo",
+        "updatedAt": "Ngày cập nhật",
+        "age": "Tuổi",
+        "height": "Chiều cao",
+        "weight": "Cân nặng",
+        "targetWeight": "Cân nặng mục tiêu",
+        "activityLevel": "Mức độ hoạt động",
+        "healthGoal": "Mục tiêu sức khỏe",
+        "dailyCalorieTarget": "Mục tiêu calo hàng ngày",
+        "allergies": "Dị ứng",
+        "medicalConditions": "Tình trạng sức khỏe",
+        "dietaryRestrictions": "Hạn chế ăn uống",
+        "dietaryPreferences": "Sở thích ăn uống",
+        "cuisines": "Loại ẩm thực",
+        "spiceLevel": "Mức độ cay",
+        "cookingTime": "Thời gian nấu",
+        "mealTypes": "Loại bữa ăn"
+      },
+      "values": {
+        "verified": "Đã xác thực",
+        "notVerified": "Chưa xác thực",
+        "yes": "Có",
+        "no": "Không",
+        "none": "Không có",
+        "na": "Không có thông tin"
+      },
+      "stats": {
+        "completedMeals": "Bữa ăn đã hoàn thành",
+        "likedMeals": "Bữa ăn đã thích",
+        "daysUsingApp": "Số ngày sử dụng app",
+        "totalMealPlans": "Tổng kế hoạch ăn uống",
+        "fridgeItems": "Món trong tủ lạnh"
+      }
+    },
+    "editUserRoles": {
+      "title": "Chỉnh sửa vai trò người dùng",
+      "description": "Cập nhật vai trò cho {{email}}. Người dùng phải có ít nhất một vai trò.",
+      "atLeastOneRole": "Người dùng phải có ít nhất một vai trò",
+      "saveChanges": "Lưu thay đổi",
+      "saving": "Đang lưu...",
+      "updateFailed": "Không thể cập nhật vai trò người dùng"
+    }
+  },
+  "roles": {
+    "user": "Người dùng",
+    "admin": "Quản trị viên",
+    "moderator": "Điều hành viên",
+    "guest": "Khách"
+  },
+  "recipes": {
+    "title": "Công thức",
+    "management": "Quản lý công thức",
+    "addRecipe": "Thêm công thức",
+    "searchRecipes": "Tìm kiếm công thức...",
+    "table": {
+      "image": "Hình ảnh",
+      "recipeName": "Tên công thức",
+      "cuisineType": "Loại món ăn",
+      "prepTime": "Thời gian chuẩn bị",
+      "actions": "Hành động"
+    },
+    "loading": "Đang tải công thức...",
+    "loadFailed": "Không thể tải công thức. Vui lòng thử lại.",
+    "noRecipes": "Không tìm thấy công thức",
+    "showingRecipes": "công thức",
+    "viewRecipe": "Xem công thức",
+    "editRecipe": "Chỉnh sửa công thức",
+    "deleteRecipe": "Xóa công thức",
+    "confirmDelete": "Bạn có chắc chắn muốn xóa công thức này?",
+    "viewRecipeTooltip": "Xem công thức",
+    "editRecipeTooltip": "Chỉnh sửa công thức",
+    "deleteRecipeTooltip": "Xóa công thức",
+  "recipeDetail": {
+    "title": "Chi tiết công thức",
+    "loading": "Đang tải công thức...",
+    "loadFailed": "Không thể tải công thức",
+    "notFound": "Không tìm thấy công thức",
+    "backToRecipes": "Quay lại danh sách công thức",
+    "editRecipe": "Chỉnh sửa công thức",
+    "totalTime": "Tổng thời gian",
+    "servings": "Khẩu phần",
+    "difficulty": "Độ khó",
+    "cuisineType": "Loại món ăn",
+    "tabs": {
+      "overview": "Tổng quan",
+      "ingredients": "Nguyên liệu",
+      "instructions": "Hướng dẫn"
+    },
+    "sections": {
+      "description": "Mô tả",
+      "ingredients": "Nguyên liệu",
+      "instructions": "Hướng dẫn"
+    },
+    "emptyStates": {
+      "noDescription": "Không có mô tả",
+      "noIngredients": "Chưa thêm nguyên liệu",
+      "noInstructions": "Chưa có hướng dẫn"
+    }
+  },
+    "recipeCreate": {
+      "title": "Tạo công thức",
+      "createRecipe": "Tạo công thức",
+      "creating": "Đang tạo...",
+      "createNewRecipe": "Tạo công thức mới",
+      "addIngredient": "Thêm nguyên liệu",
+    "tabs": {
+      "details": "Chi tiết",
+      "ingredients": "Nguyên liệu",
+      "instructions": "Hướng dẫn"
+    },
+    "fields": {
+      "recipeName": "Tên công thức",
+      "cuisineType": "Loại món ăn",
+      "recipeImage": "Hình ảnh công thức",
+      "difficultyLevel": "Mức độ khó",
+      "prepTime": "Thời gian chuẩn bị (phút)",
+      "cookTime": "Thời gian nấu (phút)",
+      "servings": "Khẩu phần",
+      "description": "Mô tả",
+      "instructions": "Hướng dẫn"
+    },
+    "placeholders": {
+      "enterRecipeName": "Nhập tên công thức",
+      "cuisineExample": "vd: Ý, Việt Nam, Á",
+      "recipeDescription": "Mô tả công thức...",
+      "uploadImage": "Tải lên hình ảnh công thức"
+    },
+    "difficulty": {
+      "select": "Chọn mức độ khó",
+      "easy": "Dễ",
+      "medium": "Trung bình",
+      "hard": "Khó"
+    },
+    "validation": {
+      "nameRequired": "Tên công thức không được để trống",
+      "invalidDifficulty": "Mức độ khó phải là dễ, trung bình, hoặc khó",
+      "instructionsRequired": "Hướng dẫn không được để trống",
+      "invalidPrepTime": "Thời gian chuẩn bị phải từ 0 đến 1440 phút",
+      "invalidCookTime": "Thời gian nấu phải từ 0 đến 1440 phút",
+      "invalidServings": "Khẩu phần phải từ 1 đến 100",
+      "atLeastOneIngredient": "Cần ít nhất 1 nguyên liệu",
+      "selectIngredient": "Vui lòng chọn nguyên liệu",
+      "quantityGreaterThanZero": "Số lượng phải lớn hơn 0",
+      "unitRequired": "Đơn vị không được để trống",
+      "validationError": "Lỗi validation form"
+    },
+    "success": "Tạo công thức thành công",
+    "error": "Không thể tạo công thức. Vui lòng thử lại."
+    },
+    "recipeEdit": {
+      "title": "Chỉnh sửa công thức",
+      "updateRecipe": "Cập nhật công thức",
+      "updating": "Đang cập nhật...",
+      "editRecipe": "Chỉnh sửa công thức: {{name}}",
+      "success": "Cập nhật công thức thành công",
+      "error": "Không thể cập nhật công thức. Vui lòng thử lại."
+    },
+    "ingredientsTable": {
+      "title": "Nguyên liệu công thức",
+      "headers": {
+        "ingredient": "Nguyên liệu",
+        "quantity": "Số lượng",
+        "unit": "Đơn vị"
+      },
+      "placeholders": {
+        "selectIngredient": "Chọn nguyên liệu...",
+        "unit": "Đơn vị"
+      },
+      "emptyState": "Chưa thêm nguyên liệu. Nhấn \"Thêm nguyên liệu\" để bắt đầu.",
+      "addIngredient": "Thêm nguyên liệu"
+    },
+    "instructionsTable": {
+      "title": "Hướng dẫn nấu ăn",
+      "emptyState": "Chưa thêm hướng dẫn. Nhấn \"Thêm bước\" để bắt đầu.",
+      "addStep": "Thêm bước",
+      "placeholder": "Nhập bước thực hiện..."
+    },
+    "ingredientAutocomplete": {
+      "searchPlaceholder": "Tìm kiếm nguyên liệu...",
+      "noIngredientFound": "Không tìm thấy nguyên liệu.",
+      "noUnit": "Không có đơn vị"
+    }
+  },
+  "settings": {
+    "pageTitle": "Cài đặt",
+    "profile": "Cài đặt hồ sơ",
+    "email": "Email",
+    "notifications": {
+      "title": "Thông báo",
+      "email": "Thông báo qua Email",
+      "newUser": "Cảnh báo người dùng mới",
+      "weeklyReport": "Báo cáo hàng tuần"
+    }
+  },
+  "gmail": {
+    "title": "Tích hợp Gmail",
+    "connectionMethods": "Kết nối API Gmail",
+    "reconnect": "Kết nối lại / Đổi tài khoản",
+    "connect": "Kết nối tài khoản Gmail",
+    "errorLoading": "Lỗi tải trạng thái kết nối Gmail",
+    "status": "Trạng thái kết nối",
+    "connected": "Đã kết nối",
+    "notConnected": "Chưa kết nối",
+    "connectedAccount": "Tài khoản kết nối",
+    "tokenExpires": "Token hết hạn lúc",
+    "refresh": "Làm mới trạng thái",
+    "description": "Token Gmail API cần được làm mới định kỳ. Nếu hệ thống không gửi được email, vui lòng kiểm tra trạng thái kết nối tại đây và kết nối lại nếu cần."
+  },  "reports": {
+    "title": "Báo cáo",
+    "growthTitle": "Tăng trưởng người dùng & Kế hoạch ăn uống",
+    "recipeCategories": "Danh mục công thức",
+    "monthlyActiveUsers": "Người dùng hoạt động hàng tháng",
+    "months": {
+      "jan": "Th1",
+      "feb": "Th2",
+      "mar": "Th3",
+      "apr": "Th4",
+      "may": "Th5",
+      "jun": "Th6"
+    },
+    "mealTypes": {
+      "breakfast": "Bữa sáng",
+      "lunch": "Bữa trưa",
+      "dinner": "Bữa tối",
+      "snacks": "Đồ ăn nhẹ"
+    }
+  },  "ingredients": {
+    "title": "Nguyên liệu",
+    "management": "Quản lý nguyên liệu",
+    "add": "Thêm nguyên liệu",
+    "searchPlaceholder": "Tìm kiếm nguyên liệu...",
+    "loading": "Đang tải nguyên liệu...",
+    "errorLoading": "Lỗi tải dữ liệu. Vui lòng thử lại.",
+    "notFound": "Không tìm thấy nguyên liệu.",
+    "noImage": "Không có ảnh",
+    "confirmDelete": "Bạn có chắc muốn xóa {{name}}?",
+    "deleteSuccess": "Xóa nguyên liệu thành công",
+    "createTitle": "Tạo nguyên liệu",
+    "editTitle": "Chỉnh sửa nguyên liệu",
+    "detailTitle": "Chi tiết nguyên liệu",
+    "backToIngredients": "Quay lại danh sách",
+    "create": "Tạo nguyên liệu",
+    "createSuccess": "Tạo nguyên liệu thành công",
+    "createError": "Không thể tạo nguyên liệu",
+    "updateSuccess": "Cập nhật nguyên liệu thành công",
+    "updateError": "Không thể cập nhật nguyên liệu",
+    "validation": {
+      "nameRequired": "Tên nguyên liệu không được để trống",
+      "categoryRequired": "Vui lòng chọn danh mục"
+    },
+    "addIngredient": "Thêm nguyên liệu mới",
+    "editIngredient": "Chỉnh sửa nguyên liệu",
+    "ingredientDetails": "Chi tiết nguyên liệu",
+    "edit": "Chỉnh sửa",
+    "cancel": "Hủy",
+    "save": "Lưu",
+    "saving": "Đang lưu...",
+    "name": "Tên",
+    "category": "Danh mục",
+    "unit": "Đơn vị phổ biến",
+    "storage": "Nhiệt độ bảo quản",
+    "shelfLife": "Thời hạn sử dụng (ngày)",
+    "description": "Mô tả",
+    "image": "Hình ảnh",
+    "uncategorized": "Chưa phân loại",
+    "selectCategory": "Chọn danh mục",
+    "selectStorage": "Chọn nhiệt độ bảo quản",
+    "frozen": "Đông lạnh",
+    "refrigerated": "Lạnh",
+    "roomTemp": "Nhiệt độ phòng",
+    "namePlaceholder": "Tên nguyên liệu",
+    "descriptionPlaceholder": "Mô tả nguyên liệu này...",
+    "categories": {
+      "protein": "Đạm",
+      "vegetables": "Rau củ",
+      "fruits": "Hoa quả",
+      "grains": "Ngũ cốc",
+      "dairy": "Sữa",
+      "oils": "Dầu, chất béo",
+      "spices": "Gia vị"
+    },
+    "createSuccess": "Tạo nguyên liệu thành công",
+    "updateSuccess": "Cập nhật nguyên liệu thành công",
+    "createFailed": "Không thể tạo nguyên liệu",
+    "updateFailed": "Không thể cập nhật nguyên liệu",
+    "deleteSuccess": "Xóa nguyên liệu thành công",
+    "confirmDelete": "Bạn có chắc chắn muốn xóa nguyên liệu \"{{name}}\"?"
+  }
+}

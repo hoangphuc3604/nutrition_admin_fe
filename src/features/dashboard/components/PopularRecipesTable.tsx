@@ -2,14 +2,16 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { useTrendingRecipes } from '@/api/dashboard.api';
+import { useTranslation } from 'react-i18next';
 
 export function PopularRecipesTable() {
+  const { t } = useTranslation();
   const { data, isLoading } = useTrendingRecipes(10);
 
   return (
     <Card className="shadow-sm">
       <CardHeader className="flex flex-row items-center justify-between pb-2">
-        <CardTitle className="text-lg font-semibold">Popular Recipes</CardTitle>
+        <CardTitle className="text-lg font-semibold">{t('dashboard.popularRecipes.title')}</CardTitle>
       </CardHeader>
       <CardContent>
         {isLoading ? (
@@ -23,9 +25,9 @@ export function PopularRecipesTable() {
             <table className="w-full">
               <thead>
                 <tr className="border-b border-border">
-                  <th className="text-left py-3 px-2 text-sm font-medium text-muted-foreground">Recipe Name</th>
-                  <th className="text-left py-3 px-2 text-sm font-medium text-muted-foreground">Cuisine Type</th>
-                  <th className="text-left py-3 px-2 text-sm font-medium text-muted-foreground">Status</th>
+                  <th className="text-left py-3 px-2 text-sm font-medium text-muted-foreground">{t('dashboard.popularRecipes.recipeName')}</th>
+                  <th className="text-left py-3 px-2 text-sm font-medium text-muted-foreground">{t('dashboard.popularRecipes.cuisineType')}</th>
+                  <th className="text-left py-3 px-2 text-sm font-medium text-muted-foreground">{t('dashboard.popularRecipes.status')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -35,11 +37,11 @@ export function PopularRecipesTable() {
                       {recipe.name}
                     </td>
                     <td className="py-4 px-2 text-sm text-muted-foreground">
-                      {recipe.cuisine_type || 'N/A'}
+                      {recipe.cuisine_type || t('common.unknown')}
                     </td>
                     <td className="py-4 px-2">
                       <Badge className={cn("capitalize text-xs", "bg-warning text-warning-foreground")}>
-                        trending
+                        {t('dashboard.popularRecipes.trending')}
                       </Badge>
                     </td>
                   </tr>
@@ -49,7 +51,7 @@ export function PopularRecipesTable() {
           </div>
         ) : (
           <div className="text-center py-8 text-muted-foreground">
-            No trending recipes found
+            {t('dashboard.popularRecipes.noTrendingRecipes')}
           </div>
         )}
       </CardContent>

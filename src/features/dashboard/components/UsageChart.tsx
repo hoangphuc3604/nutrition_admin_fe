@@ -17,6 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useTranslation } from 'react-i18next';
 
 const data = [
   { name: '5k', value: 20 },
@@ -34,18 +35,20 @@ const data = [
 ];
 
 export function UsageChart() {
+  const { t } = useTranslation();
+
   return (
     <Card className="shadow-sm">
       <CardHeader className="flex flex-row items-center justify-between pb-2">
-        <CardTitle className="text-lg font-semibold">Usage Analytics</CardTitle>
+        <CardTitle className="text-lg font-semibold">{t('dashboard.usageAnalytics.title')}</CardTitle>
         <Select defaultValue="october">
           <SelectTrigger className="w-32 h-8 text-sm">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="october">October</SelectItem>
-            <SelectItem value="november">November</SelectItem>
-            <SelectItem value="december">December</SelectItem>
+            <SelectItem value="october">{t('dashboard.usageAnalytics.october')}</SelectItem>
+            <SelectItem value="november">{t('dashboard.usageAnalytics.november')}</SelectItem>
+            <SelectItem value="december">{t('dashboard.usageAnalytics.december')}</SelectItem>
           </SelectContent>
         </Select>
       </CardHeader>

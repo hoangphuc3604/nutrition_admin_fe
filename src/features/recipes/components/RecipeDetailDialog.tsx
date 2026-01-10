@@ -20,6 +20,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { useRecipe, useCreateRecipe, useUpdateRecipe } from '@/api/recipes.api';
 import { useIngredients } from '@/api/ingredients.api';
 import { Recipe, Ingredient } from '@/types';
+import { useTranslation } from 'react-i18next';
 
 interface RecipeFormData {
   name: string;
@@ -69,6 +70,7 @@ export function RecipeDetailDialog({
   onOpenChange,
   mode = 'view'
 }: RecipeDetailDialogProps) {
+  const { t } = useTranslation();
   const [isEditing, setIsEditing] = useState(mode === 'edit' || mode === 'create');
   const [formData, setFormData] = useState<RecipeFormData>(emptyRecipe);
 
@@ -141,7 +143,7 @@ export function RecipeDetailDialog({
   };
 
   const isCreateMode = mode === 'create';
-  const title = isCreateMode ? 'Add New Recipe' : isEditing ? 'Edit Recipe' : 'Recipe Details';
+  const title = isCreateMode ? t('recipes.recipeCreate.addIngredient') : isEditing ? t('recipes.recipeDetail.editRecipe') : t('recipes.recipeDetail.title');
   const isLoading = recipeLoading && !isCreateMode;
   const isSaving = createRecipe.isPending || updateRecipe.isPending;
 
@@ -152,7 +154,7 @@ export function RecipeDetailDialog({
           <div className="flex items-center justify-center py-8">
             <div className="text-center">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-2"></div>
-              <p className="text-sm text-muted-foreground">Loading recipe...</p>
+              <p className="text-sm text-muted-foreground">{t('recipes.recipeDetail.loading')}</p>
             </div>
           </div>
         </DialogContent>
@@ -179,7 +181,7 @@ export function RecipeDetailDialog({
                   <Input
                     value={formData.name}
                     onChange={(e) => handleChange('name', e.target.value)}
-                    placeholder="Recipe name"
+                    placeholder={t('recipes.recipeCreate.fields.recipeName')}
                     className="bg-background/80 backdrop-blur-sm text-xl font-bold mb-2 max-w-md"
                   />
                 ) : (
@@ -188,11 +190,11 @@ export function RecipeDetailDialog({
                 <div className="flex items-center gap-4 text-primary-foreground/80">
                   <div className="flex items-center gap-1">
                     <Clock className="h-4 w-4" />
-                    <span className="text-sm">{(formData.prep_time_minutes || 0) + (formData.cook_time_minutes || 0)} min</span>
+                    <span className="text-sm">{(formData.prep_time_minutes || 0) + (formData.cook_time_minutes || 0)} {t('common.min')}</span>
                   </div>
                   <div className="flex items-center gap-1">
                     <Users className="h-4 w-4" />
-                    <span className="text-sm">{formData.servings} servings</span>
+                    <span className="text-sm">{formData.servings} {t('recipes.recipeCreate.fields.servings')}</span>
                   </div>
                 </div>
               </div>
@@ -200,15 +202,15 @@ export function RecipeDetailDialog({
                 {isEditing ? (
                   <>
                     <Button size="sm" variant="secondary" onClick={handleCancel} disabled={isSaving}>
-                      <X className="h-4 w-4 mr-1" /> Cancel
+                      <X className="h-4 w-4 mr-1" /> {t('common.cancel')}
                     </Button>
                     <Button size="sm" onClick={handleSave} disabled={isSaving}>
-                      <Save className="h-4 w-4 mr-1" /> {isSaving ? 'Saving...' : 'Save'}
+                      <Save className="h-4 w-4 mr-1" /> {isSaving ? t('common.loading') : t('common.save')}
                     </Button>
                   </>
                 ) : (
                   <Button size="sm" variant="secondary" onClick={handleEdit}>
-                    <Edit2 className="h-4 w-4 mr-1" /> Edit
+                    <Edit2 className="h-4 w-4 mr-1" /> {t('common.edit')}
                   </Button>
                 )}
               </div>
@@ -221,34 +223,34 @@ export function RecipeDetailDialog({
             <Tabs defaultValue="details" className="w-full">
               <TabsList className="grid w-full grid-cols-3 mb-6">
                 <TabsTrigger value="details" className="gap-2">
-                  <ChefHat className="h-4 w-4" /> Details
+                  <ChefHat className="h-4 w-4" /> {t('recipes.recipeCreate.tabs.details')}
                 </TabsTrigger>
                 <TabsTrigger value="ingredients" className="gap-2">
-                  <Tag className="h-4 w-4" /> Ingredients
+                  <Tag className="h-4 w-4" /> {t('recipes.recipeCreate.tabs.ingredients')}
                 </TabsTrigger>
                 <TabsTrigger value="instructions" className="gap-2">
-                  <BookOpen className="h-4 w-4" /> Instructions
+                  <BookOpen className="h-4 w-4" /> {t('recipes.recipeCreate.tabs.instructions')}
                 </TabsTrigger>
               </TabsList>
 
               <TabsContent value="details" className="space-y-6">
                 <div className="grid grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <Label className="text-muted-foreground text-xs uppercase tracking-wider">Cuisine Type</Label>
+                    <Label className="text-muted-foreground text-xs uppercase tracking-wider">{t('recipes.recipeCreate.fields.cuisineType')}</Label>
                     {isEditing ? (
                       <Input
                         value={formData.cuisine_type || ''}
                         onChange={(e) => handleChange('cuisine_type', e.target.value)}
-                        placeholder="e.g., Italian, Asian, Vietnamese"
+                        placeholder={t('recipes.recipeCreate.placeholders.cuisineExample')}
                       />
                     ) : (
-                      <p className="text-foreground font-medium">{formData.cuisine_type || 'Not specified'}</p>
+                      <p className="text-foreground font-medium">{formData.cuisine_type || t('common.unknown')}</p>
                     )}
                   </div>
 
                   <div className="space-y-2">
                     <Label className="text-muted-foreground text-xs uppercase tracking-wider">
-                      <ImageIcon className="h-3.5 w-3.5 inline mr-1" /> Image URL
+                      <ImageIcon className="h-3.5 w-3.5 inline mr-1" /> {t('recipes.recipeCreate.fields.recipeImage')}
                     </Label>
                     {isEditing ? (
                       <Input
@@ -257,30 +259,30 @@ export function RecipeDetailDialog({
                         placeholder="https://..."
                       />
                     ) : (
-                      <p className="text-foreground font-medium truncate">{formData.image_url || 'No image'}</p>
+                      <p className="text-foreground font-medium truncate">{formData.image_url || t('common.unknown')}</p>
                     )}
                   </div>
                 </div>
 
                 <div className="grid grid-cols-3 gap-4">
                   <div className="space-y-2">
-                    <Label className="text-muted-foreground text-xs uppercase tracking-wider">Difficulty</Label>
+                    <Label className="text-muted-foreground text-xs uppercase tracking-wider">{t('recipes.recipeCreate.fields.difficultyLevel')}</Label>
                     {isEditing ? (
                       <select
                         value={formData.difficulty_level}
                         onChange={(e) => handleChange('difficulty_level', e.target.value as "easy" | "medium" | "hard")}
                         className="w-full px-3 py-2 border border-input bg-background rounded-md"
                       >
-                        <option value="easy">Easy</option>
-                        <option value="medium">Medium</option>
-                        <option value="hard">Hard</option>
+                        <option value="easy">{t('recipes.recipeCreate.difficulty.easy')}</option>
+                        <option value="medium">{t('recipes.recipeCreate.difficulty.medium')}</option>
+                        <option value="hard">{t('recipes.recipeCreate.difficulty.hard')}</option>
                       </select>
                     ) : (
                       <p className="text-foreground font-medium capitalize">{formData.difficulty_level}</p>
                     )}
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-muted-foreground text-xs uppercase tracking-wider">Prep Time (min)</Label>
+                    <Label className="text-muted-foreground text-xs uppercase tracking-wider">{t('recipes.recipeCreate.fields.prepTime')}</Label>
                     {isEditing ? (
                       <Input
                         type="number"
@@ -289,11 +291,11 @@ export function RecipeDetailDialog({
                         onChange={(e) => handleChange('prep_time_minutes', parseInt(e.target.value) || 0)}
                       />
                     ) : (
-                      <p className="text-foreground font-medium">{formData.prep_time_minutes || 0} min</p>
+                      <p className="text-foreground font-medium">{formData.prep_time_minutes || 0} {t('common.min')}</p>
                     )}
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-muted-foreground text-xs uppercase tracking-wider">Cook Time (min)</Label>
+                    <Label className="text-muted-foreground text-xs uppercase tracking-wider">{t('recipes.recipeCreate.fields.cookTime')}</Label>
                     {isEditing ? (
                       <Input
                         type="number"
@@ -302,14 +304,14 @@ export function RecipeDetailDialog({
                         onChange={(e) => handleChange('cook_time_minutes', parseInt(e.target.value) || 0)}
                       />
                     ) : (
-                      <p className="text-foreground font-medium">{formData.cook_time_minutes || 0} min</p>
+                      <p className="text-foreground font-medium">{formData.cook_time_minutes || 0} {t('common.min')}</p>
                     )}
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label className="text-muted-foreground text-xs uppercase tracking-wider">Servings</Label>
+                    <Label className="text-muted-foreground text-xs uppercase tracking-wider">{t('recipes.recipeCreate.fields.servings')}</Label>
                     {isEditing ? (
                       <Input
                         type="number"
@@ -324,16 +326,16 @@ export function RecipeDetailDialog({
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="text-muted-foreground text-xs uppercase tracking-wider">Description</Label>
+                  <Label className="text-muted-foreground text-xs uppercase tracking-wider">{t('recipes.recipeCreate.fields.description')}</Label>
                   {isEditing ? (
                     <Textarea
                       value={formData.description || ''}
                       onChange={(e) => handleChange('description', e.target.value)}
-                      placeholder="Recipe description..."
+                      placeholder={t('recipes.recipeCreate.placeholders.recipeDescription')}
                       rows={3}
                     />
                   ) : (
-                    <p className="text-foreground">{formData.description || 'No description'}</p>
+                    <p className="text-foreground">{formData.description || t('common.unknown')}</p>
                   )}
                 </div>
               </TabsContent>
@@ -348,14 +350,14 @@ export function RecipeDetailDialog({
                 ) : (
                   <div className="space-y-3">
                     {formData.ingredients.length === 0 ? (
-                      <p className="text-center text-muted-foreground py-8">No ingredients added</p>
+                      <p className="text-center text-muted-foreground py-8">{t('recipes.recipeDetail.emptyStates.noIngredients')}</p>
                     ) : (
                       <div className="border border-border rounded-xl overflow-hidden">
                         <table className="w-full">
                           <thead>
                             <tr className="bg-secondary/50">
-                              <th className="text-left py-3 px-4 text-xs font-semibold text-muted-foreground uppercase">Ingredient</th>
-                              <th className="text-left py-3 px-4 text-xs font-semibold text-muted-foreground uppercase">Amount</th>
+                              <th className="text-left py-3 px-4 text-xs font-semibold text-muted-foreground uppercase">{t('recipes.ingredientsTable.headers.ingredient')}</th>
+                              <th className="text-left py-3 px-4 text-xs font-semibold text-muted-foreground uppercase">{t('recipes.ingredientsTable.headers.quantity')}</th>
                             </tr>
                           </thead>
                           <tbody>
@@ -363,7 +365,7 @@ export function RecipeDetailDialog({
                               const ingredient = availableIngredients.find(i => i.id === item.ingredientId);
                               return (
                                 <tr key={index} className="border-t border-border">
-                                  <td className="py-3 px-4 font-medium">{ingredient?.name || 'Unknown'}</td>
+                                  <td className="py-3 px-4 font-medium">{ingredient?.name || t('common.unknown')}</td>
                                   <td className="py-3 px-4 text-muted-foreground">{item.quantity} {item.unit}</td>
                                 </tr>
                               );
@@ -378,18 +380,18 @@ export function RecipeDetailDialog({
 
               <TabsContent value="instructions">
                 <div className="space-y-2">
-                  <Label className="text-muted-foreground text-xs uppercase tracking-wider">Cooking Instructions</Label>
+                  <Label className="text-muted-foreground text-xs uppercase tracking-wider">{t('recipes.recipeCreate.fields.instructions')}</Label>
                   {isEditing ? (
                     <Textarea
                       value={formData.instructions || ''}
                       onChange={(e) => handleChange('instructions', e.target.value)}
-                      placeholder="Step by step instructions..."
+                      placeholder={t('recipes.instructionsTable.placeholder')}
                       rows={10}
                     />
                   ) : (
                     <div className="bg-secondary/30 rounded-xl p-4">
                       <p className="text-foreground whitespace-pre-wrap">
-                        {formData.instructions || 'No instructions provided'}
+                        {formData.instructions || t('recipes.recipeDetail.emptyStates.noInstructions')}
                       </p>
                     </div>
                   )}

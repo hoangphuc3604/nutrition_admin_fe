@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Package, Scale, Tag, Save, X, Edit2, Image } from 'lucide-react';
 import { useCreateIngredient, useUpdateIngredient } from '@/api/ingredients.api';
 import { useToast } from '@/hooks/use-toast';
+import { useTranslation } from 'react-i18next';
 import {
   Dialog,
   DialogContent,
@@ -40,22 +41,9 @@ interface IngredientDetailDialogProps {
   mode?: 'view' | 'edit' | 'create';
 }
 
-const categories = [
-  { id: '1', name: 'Protein' },
-  { id: '2', name: 'Vegetables' },
-  { id: '3', name: 'Fruits' },
-  { id: '4', name: 'Grains' },
-  { id: '5', name: 'Dairy' },
-  { id: '6', name: 'Oils' },
-  { id: '7', name: 'Spices' },
-  { id: '8', name: 'Other' },
-];
+// Categories will be defined using translations in the component
 const units = ['gram', 'kg', 'piece', 'tbsp', 'tsp', 'cup', 'ml', 'liter'];
-const storageTemperatures = [
-  { value: 'frozen', label: 'Frozen' },
-  { value: 'refrigerated', label: 'Refrigerated' },
-  { value: 'room_temp', label: 'Room Temperature' },
-];
+// storageTemperatures will be defined using translations in the component
 
 const emptyIngredient: IngredientData = {
   id: '',
@@ -75,8 +63,26 @@ export function IngredientDetailDialog({
   onOpenChange,
   mode = 'view'
 }: IngredientDetailDialogProps) {
+  const { t } = useTranslation();
   const [isEditing, setIsEditing] = useState(mode === 'edit' || mode === 'create');
   const [formData, setFormData] = useState<IngredientData>(emptyIngredient);
+
+  const categories = [
+    { id: '1', name: t('ingredients.categories.protein') },
+    { id: '2', name: t('ingredients.categories.vegetables') },
+    { id: '3', name: t('ingredients.categories.fruits') },
+    { id: '4', name: t('ingredients.categories.grains') },
+    { id: '5', name: t('ingredients.categories.dairy') },
+    { id: '6', name: t('ingredients.categories.oils') },
+    { id: '7', name: t('ingredients.categories.spices') },
+    { id: '8', name: t('common.other') },
+  ];
+
+  const storageTemperatures = [
+    { value: 'frozen', label: t('ingredients.frozen') },
+    { value: 'refrigerated', label: t('ingredients.refrigerated') },
+    { value: 'room_temp', label: t('ingredients.roomTemp') },
+  ];
   const { toast } = useToast();
 
   const createIngredient = useCreateIngredient();
@@ -116,8 +122,8 @@ export function IngredientDetailDialog({
           common_unit: formData.common_unit,
         });
         toast({
-          title: "Thành công",
-          description: "Tạo nguyên liệu thành công",
+          title: t('common.success'),
+          description: t('ingredients.createSuccess'),
           variant: "default",
           className: "bg-green-500 text-white border-none",
         });
@@ -135,8 +141,8 @@ export function IngredientDetailDialog({
           }
         });
         toast({
-          title: "Thành công",
-          description: "Cập nhật nguyên liệu thành công",
+          title: t('common.success'),
+          description: t('ingredients.updateSuccess'),
           variant: "default",
           className: "bg-green-500 text-white border-none",
         });
@@ -146,9 +152,9 @@ export function IngredientDetailDialog({
       onOpenChange(false);
     } catch (error: any) {
       console.error('Failed to save ingredient:', error);
-      const errorMessage = error?.response?.data?.message || 'Không thể lưu nguyên liệu. Vui lòng thử lại.';
+      const errorMessage = error?.response?.data?.message || (isCreateMode ? t('ingredients.createFailed') : t('ingredients.updateFailed'));
       toast({
-        title: "Lỗi",
+        title: t('common.error'),
         description: errorMessage,
         variant: "destructive",
       });
@@ -160,7 +166,7 @@ export function IngredientDetailDialog({
   };
 
   const isCreateMode = mode === 'create';
-  const title = isCreateMode ? 'Add New Ingredient' : isEditing ? 'Edit Ingredient' : 'Ingredient Details';
+  const title = isCreateMode ? t('ingredients.addIngredient') : isEditing ? t('ingredients.editIngredient') : t('ingredients.ingredientDetails');
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -170,7 +176,7 @@ export function IngredientDetailDialog({
             <DialogTitle className="text-xl font-bold">{title}</DialogTitle>
             {!isCreateMode && !isEditing && (
               <Button size="sm" variant="outline" onClick={handleEdit}>
-                <Edit2 className="h-4 w-4 mr-1" /> Edit
+                <Edit2 className="h-4 w-4 mr-1" /> {t('ingredients.edit')}
               </Button>
             )}
           </div>
@@ -186,13 +192,13 @@ export function IngredientDetailDialog({
                 <Input
                   value={formData.name}
                   onChange={(e) => handleChange('name', e.target.value)}
-                  placeholder="Ingredient name"
+                  placeholder={t('ingredients.namePlaceholder')}
                   className="text-lg font-semibold"
                 />
               ) : (
                 <>
                   <h3 className="text-lg font-semibold text-foreground">{formData.name}</h3>
-                  <Badge variant="secondary">{formData.category || 'Uncategorized'}</Badge>
+                  <Badge variant="secondary">{formData.category || t('ingredients.uncategorized')}</Badge>
                 </>
               )}
             </div>
@@ -201,7 +207,7 @@ export function IngredientDetailDialog({
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label className="text-muted-foreground text-xs uppercase tracking-wider flex items-center gap-2">
-                <Tag className="h-3.5 w-3.5" /> Category
+                <Tag className="h-3.5 w-3.5" /> {t('ingredients.category')}
               </Label>
               {isEditing ? (
                 <Select value={formData.category_id} onValueChange={(v) => handleChange('category_id', v)}>
@@ -215,13 +221,13 @@ export function IngredientDetailDialog({
                   </SelectContent>
                 </Select>
               ) : (
-                <p className="text-foreground font-medium">{formData.category || 'Uncategorized'}</p>
+                <p className="text-foreground font-medium">{formData.category || t('ingredients.uncategorized')}</p>
               )}
             </div>
 
             <div className="space-y-2">
               <Label className="text-muted-foreground text-xs uppercase tracking-wider flex items-center gap-2">
-                <Scale className="h-3.5 w-3.5" /> Common Unit
+                <Scale className="h-3.5 w-3.5" /> {t('ingredients.unit')}
               </Label>
               {isEditing ? (
                 <Select value={formData.common_unit} onValueChange={(v) => handleChange('common_unit', v)}>
@@ -235,7 +241,7 @@ export function IngredientDetailDialog({
                   </SelectContent>
                 </Select>
               ) : (
-                <p className="text-foreground font-medium">{formData.common_unit || 'N/A'}</p>
+                <p className="text-foreground font-medium">{formData.common_unit || t('common.na')}</p>
               )}
             </div>
           </div>
@@ -243,7 +249,7 @@ export function IngredientDetailDialog({
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label className="text-muted-foreground text-xs uppercase tracking-wider">
-                Storage Temperature
+                {t('ingredients.storage')}
               </Label>
               {isEditing ? (
                 <Select value={formData.storage_temperature} onValueChange={(v: any) => handleChange('storage_temperature', v)}>
@@ -258,14 +264,14 @@ export function IngredientDetailDialog({
                 </Select>
               ) : (
                 <p className="text-foreground font-medium capitalize">
-                  {formData.storage_temperature?.replace('_', ' ') || 'Room Temperature'}
+                  {formData.storage_temperature?.replace('_', ' ') || t('ingredients.roomTemp')}
                 </p>
               )}
             </div>
 
             <div className="space-y-2">
               <Label className="text-muted-foreground text-xs uppercase tracking-wider">
-                Shelf Life (days)
+                {t('ingredients.shelfLife')}
               </Label>
               {isEditing ? (
                 <Input
@@ -276,7 +282,7 @@ export function IngredientDetailDialog({
                 />
               ) : (
                 <p className="text-foreground font-medium">
-                  {formData.shelf_life_days || 0} days
+                  {formData.shelf_life_days || 0} {t('common.days')}
                 </p>
               )}
             </div>
@@ -286,7 +292,7 @@ export function IngredientDetailDialog({
             <>
               <div className="space-y-2">
                 <Label className="text-muted-foreground text-xs uppercase tracking-wider flex items-center gap-2">
-                  <Image className="h-3.5 w-3.5" /> Image URL
+                  <Image className="h-3.5 w-3.5" /> {t('ingredients.image')}
                 </Label>
                 <Input
                   value={formData.image_url || ''}
@@ -296,11 +302,11 @@ export function IngredientDetailDialog({
               </div>
 
               <div className="space-y-2">
-                <Label className="text-muted-foreground text-xs uppercase tracking-wider">Description</Label>
+                <Label className="text-muted-foreground text-xs uppercase tracking-wider">{t('ingredients.description')}</Label>
                 <Textarea
                   value={formData.description || ''}
                   onChange={(e) => handleChange('description', e.target.value)}
-                  placeholder="Optional description..."
+                  placeholder={t('ingredients.descriptionPlaceholder')}
                   rows={3}
                 />
               </div>
@@ -310,10 +316,10 @@ export function IngredientDetailDialog({
           {isEditing && (
             <div className="flex justify-end gap-2 pt-4 border-t border-border">
               <Button variant="outline" onClick={handleCancel}>
-                <X className="h-4 w-4 mr-1" /> Cancel
+                <X className="h-4 w-4 mr-1" /> {t('ingredients.cancel')}
               </Button>
               <Button onClick={handleSave}>
-                <Save className="h-4 w-4 mr-1" /> {isCreateMode ? 'Create' : 'Save'}
+                <Save className="h-4 w-4 mr-1" /> {isCreateMode ? t('common.save') : t('ingredients.save')}
               </Button>
             </div>
           )}

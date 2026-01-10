@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { Upload, X, Image as ImageIcon, RotateCcw } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Button } from './button';
 import { Label } from './label';
 
@@ -21,13 +22,17 @@ export function ImageUploadWithPreview({
   existingImageUrl,
   onChange,
   onRemove,
-  label = "Upload Image",
-  placeholder = "Click to upload or drag and drop",
+  label: propLabel,
+  placeholder: propPlaceholder,
   accept = "image/*",
   maxSize = 5 * 1024 * 1024,
   error,
   className = ""
 }: ImageUploadWithPreviewProps) {
+  const { t } = useTranslation();
+  const label = propLabel || t('components.imageUpload.label');
+  const placeholder = propPlaceholder || t('components.imageUpload.placeholder');
+  
   const [preview, setPreview] = useState<string | null>(null);
   const [dragActive, setDragActive] = useState(false);
   const [isRemoved, setIsRemoved] = useState(false);
@@ -50,7 +55,7 @@ export function ImageUploadWithPreview({
 
   const handleFileSelect = (file: File) => {
     if (file.size > maxSize) {
-      alert(`File size must be less than ${maxSize / (1024 * 1024)}MB`);
+      alert(t('components.imageUpload.fileSizeError', { size: maxSize / (1024 * 1024) }));
       return;
     }
 
@@ -141,7 +146,7 @@ export function ImageUploadWithPreview({
             </div>
             <div className="text-center space-y-2">
               <p className="text-sm font-medium text-foreground">
-                Image removed
+                {t('components.imageUpload.imageRemoved')}
               </p>
               <Button
                 type="button"
@@ -154,7 +159,7 @@ export function ImageUploadWithPreview({
                 className="gap-2"
               >
                 <RotateCcw className="h-3 w-3" />
-                Undo Remove
+                {t('components.imageUpload.undoRemove')}
               </Button>
             </div>
           </div>
@@ -186,11 +191,11 @@ export function ImageUploadWithPreview({
                     {value?.name} ({(value.size / (1024 * 1024)).toFixed(1)}MB)
                   </>
                 ) : hasExistingImage ? (
-                  'Current image'
+                  t('components.imageUpload.currentImage')
                 ) : null}
               </p>
               <p className="text-xs text-muted-foreground">
-                Click to change image
+                {t('components.imageUpload.clickToChange')}
               </p>
             </div>
           </div>
@@ -204,7 +209,7 @@ export function ImageUploadWithPreview({
                 {placeholder}
               </p>
               <p className="text-xs text-muted-foreground mt-1">
-                PNG, JPG, JPEG up to {maxSize / (1024 * 1024)}MB
+                {t('components.imageUpload.maxSizeInfo', { size: maxSize / (1024 * 1024) })}
               </p>
             </div>
           </div>

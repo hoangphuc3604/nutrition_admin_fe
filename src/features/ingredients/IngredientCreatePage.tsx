@@ -19,6 +19,8 @@ import { useCreateIngredient } from '@/api/ingredients.api';
 import categoriesApi, { Category } from '@/api/categories.api';
 import { useToast } from '@/hooks/use-toast';
 
+import { useTranslation } from 'react-i18next';
+
 interface IngredientFormData {
   name: string;
   category_id: string;
@@ -30,11 +32,6 @@ interface IngredientFormData {
 }
 
 const units = ['gram', 'kg', 'piece', 'tbsp', 'tsp', 'cup', 'ml', 'liter'];
-const storageTemperatures = [
-  { value: 'frozen', label: 'Frozen' },
-  { value: 'refrigerated', label: 'Refrigerated' },
-  { value: 'room_temp', label: 'Room Temperature' },
-];
 
 const emptyForm: IngredientFormData = {
   name: '',
@@ -48,9 +45,16 @@ const emptyForm: IngredientFormData = {
 export function IngredientCreatePage() {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { t } = useTranslation();
   const [formData, setFormData] = useState<IngredientFormData>(emptyForm);
   const createIngredient = useCreateIngredient();
   const [categories, setCategories] = useState<Category[]>([]);
+
+  const storageTemperatures = [
+    { value: 'frozen', label: t('ingredients.frozen') },
+    { value: 'refrigerated', label: t('ingredients.refrigerated') },
+    { value: 'room_temp', label: t('ingredients.roomTemp') },
+  ];
 
   const handleChange = (field: keyof IngredientFormData, value: string | number | File | undefined) => {
     setFormData({ ...formData, [field]: value });
@@ -58,10 +62,10 @@ export function IngredientCreatePage() {
 
   const validateForm = (): string | null => {
     if (!formData.name || formData.name.trim() === '') {
-      return 'Tên nguyên liệu không được để trống';
+      return t('ingredients.validation.nameRequired');
     }
     if (!formData.category_id) {
-      return 'Vui lòng chọn danh mục';
+      return t('ingredients.validation.categoryRequired');
     }
     return null;
   };
@@ -70,7 +74,7 @@ export function IngredientCreatePage() {
     const validationError = validateForm();
     if (validationError) {
       toast({
-        title: "Lỗi validation",
+        title: t('common.validationError'),
         description: validationError,
         variant: "destructive",
       });
@@ -92,17 +96,17 @@ export function IngredientCreatePage() {
 
       await createIngredient.mutateAsync(formDataToSend);
       toast({
-        title: "Thành công",
-        description: "Tạo nguyên liệu thành công",
+        title: t('common.success'),
+        description: t('ingredients.createSuccess'),
         variant: "default",
         className: "bg-green-500 text-white border-none",
       });
       navigate('/ingredients');
     } catch (error: any) {
       console.error('Failed to create ingredient:', error);
-      const errorMessage = error?.response?.data?.message || 'Không thể tạo nguyên liệu. Vui lòng thử lại.';
+      const errorMessage = error?.response?.data?.message || t('ingredients.createError');
       toast({
-        title: "Lỗi",
+        title: t('common.error'),
         description: errorMessage,
         variant: "destructive",
       });
@@ -123,7 +127,7 @@ export function IngredientCreatePage() {
   }, []);
 
   return (
-    <AdminLayout title="Create Ingredient">
+    <AdminLayout title={t('ingredients.createTitle')}>
       <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center gap-4">
@@ -134,7 +138,7 @@ export function IngredientCreatePage() {
             className="gap-2"
           >
             <ArrowLeft className="h-4 w-4" />
-            Back to Ingredients
+            {t('ingredients.backToIngredients')}
           </Button>
           <div className="flex-1" />
           <Button
@@ -147,7 +151,7 @@ export function IngredientCreatePage() {
             ) : (
               <Save className="h-4 w-4" />
             )}
-            {isSaving ? 'Creating...' : 'Create Ingredient'}
+            {isSaving ? t('common.saving') : t('ingredients.create')}
           </Button>
         </div>
 
@@ -158,7 +162,7 @@ export function IngredientCreatePage() {
               <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
                 <Package className="h-5 w-5 text-primary" />
               </div>
-              Create New Ingredient
+              {t('ingredients.createTitle')}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
@@ -166,13 +170,13 @@ export function IngredientCreatePage() {
             <div className="space-y-4">
               <div>
                 <Label htmlFor="name" className="text-muted-foreground text-xs uppercase tracking-wider flex items-center gap-2 mb-2">
-                  <Package className="h-3.5 w-3.5" /> Name *
+                  <Package className="h-3.5 w-3.5" /> {t('ingredients.name')} *
                 </Label>
                 <Input
                   id="name"
                   value={formData.name}
                   onChange={(e) => handleChange('name', e.target.value)}
-                  placeholder="Enter ingredient name"
+                  placeholder={t('ingredients.namePlaceholder')}
                   required
                 />
               </div>
@@ -180,11 +184,11 @@ export function IngredientCreatePage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <Label className="text-muted-foreground text-xs uppercase tracking-wider flex items-center gap-2 mb-2">
-                    <Tag className="h-3.5 w-3.5" /> Category *
+                    <Tag className="h-3.5 w-3.5" /> {t('ingredients.category')} *
                   </Label>
                   <Select value={formData.category_id} onValueChange={(v) => handleChange('category_id', v)}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select category" />
+                      <SelectValue placeholder={t('ingredients.selectCategory')} />
                     </SelectTrigger>
                     <SelectContent>
                       {categories.map((cat) => (
@@ -196,7 +200,7 @@ export function IngredientCreatePage() {
 
                 <div>
                   <Label className="text-muted-foreground text-xs uppercase tracking-wider flex items-center gap-2 mb-2">
-                    <Scale className="h-3.5 w-3.5" /> Common Unit
+                    <Scale className="h-3.5 w-3.5" /> {t('ingredients.unit')}
                   </Label>
                   <Select value={formData.common_unit} onValueChange={(v) => handleChange('common_unit', v)}>
                     <SelectTrigger>
@@ -204,7 +208,7 @@ export function IngredientCreatePage() {
                     </SelectTrigger>
                     <SelectContent>
                       {units.map((unit) => (
-                        <SelectItem key={unit} value={unit}>{unit}</SelectItem>
+                        <SelectItem key={unit} value={unit}>{t(`common.${unit}`) !== `common.${unit}` ? t(`common.${unit}`) : unit}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
@@ -216,7 +220,7 @@ export function IngredientCreatePage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <Label className="text-muted-foreground text-xs uppercase tracking-wider flex items-center gap-2 mb-2">
-                  <Thermometer className="h-3.5 w-3.5" /> Storage Temperature
+                  <Thermometer className="h-3.5 w-3.5" /> {t('ingredients.storage')}
                 </Label>
                 <Select value={formData.storage_temperature} onValueChange={(v: any) => handleChange('storage_temperature', v)}>
                   <SelectTrigger>
@@ -232,7 +236,7 @@ export function IngredientCreatePage() {
 
               <div>
                 <Label className="text-muted-foreground text-xs uppercase tracking-wider flex items-center gap-2 mb-2">
-                  <Calendar className="h-3.5 w-3.5" /> Shelf Life (days)
+                  <Calendar className="h-3.5 w-3.5" /> {t('ingredients.shelfLife')}
                 </Label>
                 <Input
                   type="number"
@@ -248,19 +252,19 @@ export function IngredientCreatePage() {
             <ImageUpload
               value={formData.image}
               onChange={(file) => handleChange('image', file)}
-              label="Image"
-              placeholder="Upload ingredient image"
+              label={t('ingredients.image')}
+              placeholder={t('ingredients.noImage')}
             />
 
             {/* Description */}
             <div>
               <Label className="text-muted-foreground text-xs uppercase tracking-wider mb-2 block">
-                Description
+                {t('ingredients.description')}
               </Label>
               <Textarea
                 value={formData.description}
                 onChange={(e) => handleChange('description', e.target.value)}
-                placeholder="Optional description..."
+                placeholder={t('ingredients.descriptionPlaceholder')}
                 rows={4}
               />
             </div>

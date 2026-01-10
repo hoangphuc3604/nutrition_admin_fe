@@ -6,11 +6,13 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useRecipes, useDeleteRecipe } from '@/api/recipes.api';
+import { useTranslation } from 'react-i18next';
 
 export function RecipesPage() {
   const navigate = useNavigate();
   const [page, setPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
+  const { t } = useTranslation();
 
   const { data, isLoading, error } = useRecipes({
     page,
@@ -38,7 +40,7 @@ export function RecipesPage() {
   };
 
   const handleDelete = async (recipeId: string) => {
-    if (window.confirm('Are you sure you want to delete this recipe?')) {
+    if (window.confirm(t('recipes.confirmDelete'))) {
       try {
         await deleteRecipe.mutateAsync(recipeId);
       } catch (error) {
@@ -48,13 +50,13 @@ export function RecipesPage() {
   };
 
   return (
-    <AdminLayout title="Recipes">
+    <AdminLayout title={t('recipes.title')}>
       <Card className="shadow-sm">
         <CardHeader className="flex flex-row items-center justify-between pb-4">
-          <CardTitle className="text-2xl font-bold">Recipe Management</CardTitle>
+          <CardTitle className="text-2xl font-bold">{t('recipes.management')}</CardTitle>
           <Button className="gap-2" onClick={handleCreate}>
             <Plus className="h-4 w-4" />
-            Add Recipe
+            {t('recipes.addRecipe')}
           </Button>
         </CardHeader>
         <CardContent>
@@ -62,7 +64,7 @@ export function RecipesPage() {
             <div className="relative w-72">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Search recipes..."
+                placeholder={t('recipes.searchRecipes')}
                 value={searchQuery}
                 onChange={(e) => handleSearchChange(e.target.value)}
                 className="pl-10"
@@ -74,30 +76,30 @@ export function RecipesPage() {
             <table className="w-full">
               <thead>
                 <tr className="border-b border-border bg-secondary/30">
-                  <th className="text-left py-4 px-4 text-sm font-semibold text-muted-foreground">Image</th>
-                  <th className="text-left py-4 px-4 text-sm font-semibold text-muted-foreground">Recipe Name</th>
-                  <th className="text-left py-4 px-4 text-sm font-semibold text-muted-foreground">Cuisine Type</th>
-                  <th className="text-left py-4 px-4 text-sm font-semibold text-muted-foreground">Prep Time</th>
-                  <th className="text-left py-4 px-4 text-sm font-semibold text-muted-foreground">Actions</th>
+                  <th className="text-left py-4 px-4 text-sm font-semibold text-muted-foreground">{t('recipes.table.image')}</th>
+                  <th className="text-left py-4 px-4 text-sm font-semibold text-muted-foreground">{t('recipes.table.recipeName')}</th>
+                  <th className="text-left py-4 px-4 text-sm font-semibold text-muted-foreground">{t('recipes.table.cuisineType')}</th>
+                  <th className="text-left py-4 px-4 text-sm font-semibold text-muted-foreground">{t('recipes.table.prepTime')}</th>
+                  <th className="text-left py-4 px-4 text-sm font-semibold text-muted-foreground">{t('recipes.table.actions')}</th>
                 </tr>
               </thead>
               <tbody>
                 {isLoading ? (
                   <tr>
                     <td colSpan={5} className="py-8 px-4 text-center text-sm text-muted-foreground">
-                      Loading recipes...
+                      {t('recipes.loading')}
                     </td>
                   </tr>
                 ) : error ? (
                   <tr>
                     <td colSpan={5} className="py-8 px-4 text-center text-sm text-destructive">
-                      Failed to load recipes. Please try again.
+                      {t('recipes.loadFailed')}
                     </td>
                   </tr>
                 ) : data?.recipes.length === 0 ? (
                   <tr>
                     <td colSpan={5} className="py-8 px-4 text-center text-sm text-muted-foreground">
-                      No recipes found
+                      {t('recipes.noRecipes')}
                     </td>
                   </tr>
                 ) : (
@@ -111,8 +113,8 @@ export function RecipesPage() {
                         />
                       </td>
                       <td className="py-4 px-4 text-sm font-medium text-foreground">{recipe.name}</td>
-                      <td className="py-4 px-4 text-sm text-muted-foreground">{recipe.cuisine_type || 'N/A'}</td>
-                      <td className="py-4 px-4 text-sm text-muted-foreground">{recipe.prep_time_minutes ? `${recipe.prep_time_minutes} min` : 'N/A'}</td>
+                      <td className="py-4 px-4 text-sm text-muted-foreground">{recipe.cuisine_type || t('common.unknown')}</td>
+                      <td className="py-4 px-4 text-sm text-muted-foreground">{recipe.prep_time_minutes ? `${recipe.prep_time_minutes} ${t('common.min')}` : t('common.unknown')}</td>
                       <td className="py-4 px-4">
                         <div className="flex items-center gap-1">
                           <Button
@@ -153,12 +155,12 @@ export function RecipesPage() {
             <p className="text-sm text-muted-foreground">
               {data ? (
                 <>
-                  Showing {((data.pagination.page - 1) * data.pagination.limit) + 1} to{' '}
-                  {Math.min(data.pagination.page * data.pagination.limit, data.pagination.total)} of{' '}
-                  {data.pagination.total} recipes
+                  {t('common.showing')} {((data.pagination.page - 1) * data.pagination.limit) + 1} {t('common.to')}{' '}
+                  {Math.min(data.pagination.page * data.pagination.limit, data.pagination.total)} {t('common.of')}{' '}
+                  {data.pagination.total} {t('recipes.showingRecipes')}
                 </>
               ) : (
-                'Loading...'
+                <span>{t('common.loading')}</span>
               )}
             </p>
             <div className="flex items-center gap-2">
@@ -168,7 +170,7 @@ export function RecipesPage() {
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={!data || data.pagination.page === 1 || isLoading}
               >
-                Previous
+                {t('common.previous')}
               </Button>
               <Button
                 variant="outline"
@@ -176,7 +178,7 @@ export function RecipesPage() {
                 onClick={() => setPage((p) => p + 1)}
                 disabled={!data || !data.pagination.hasNext || isLoading}
               >
-                Next
+                {t('common.next')}
               </Button>
             </div>
           </div>

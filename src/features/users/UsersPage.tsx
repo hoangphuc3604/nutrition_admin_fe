@@ -25,6 +25,7 @@ import { useAuthStore } from '@/stores/authStore';
 import { UserRole, RoleLabels, getRoleVariant } from '@/enum/role.enum';
 import { EditUserRolesDialog } from './components/EditUserRolesDialog';
 import { useToast } from '@/hooks/use-toast';
+import { useTranslation } from 'react-i18next';
 
 export function UsersPage() {
   const [page, setPage] = useState(1);
@@ -38,6 +39,7 @@ export function UsersPage() {
   const { toast } = useToast();
   const updateUserRolesMutation = useUpdateUserRoles();
   const updateUserStatusMutation = useUpdateUserStatus();
+  const { t } = useTranslation();
 
   const queryParams = useMemo(() => {
     const params: { page: number; limit: number; search?: string; status?: string; role?: string } = {
@@ -98,15 +100,15 @@ export function UsersPage() {
       const result = await updateUserRolesMutation.mutateAsync({ id: userId, roles });
       setEditingUser(null);
       toast({
-        title: "Thành công",
+        title: t('users.updateSuccess'),
         description: result.message,
         variant: "default",
         className: "bg-green-500 text-white border-none",
       });
     } catch (error: any) {
       toast({
-        title: "Lỗi",
-        description: error.message || "Không thể cập nhật roles người dùng",
+        title: t('users.updateFailed'),
+        description: error.message || t('users.updateRolesFailed'),
         variant: "destructive",
       });
     }
@@ -116,15 +118,15 @@ export function UsersPage() {
     try {
       const result = await updateUserStatusMutation.mutateAsync({ id: userId, status: newStatus });
       toast({
-        title: "Thành công",
+        title: t('users.updateSuccess'),
         description: result.message,
         variant: "default",
         className: "bg-green-500 text-white border-none",
       });
     } catch (error: any) {
       toast({
-        title: "Lỗi",
-        description: error.message || "Không thể cập nhật trạng thái người dùng",
+        title: t('users.updateFailed'),
+        description: error.message || t('users.updateStatusFailed'),
         variant: "destructive",
       });
     }
@@ -132,50 +134,50 @@ export function UsersPage() {
 
 
   return (
-    <AdminLayout title="Users">
+    <AdminLayout title={t('users.title')}>
       <Card className="shadow-sm">
         <CardHeader className="pb-4">
-          <CardTitle className="text-2xl font-bold">User Management</CardTitle>
+          <CardTitle className="text-2xl font-bold">{t('users.management')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex flex-wrap items-center gap-4 mb-6 p-4 bg-secondary/50 rounded-xl">
             <div className="flex items-center gap-2">
               <Filter className="h-5 w-5 text-muted-foreground" />
-              <span className="text-sm font-medium">Filter By</span>
+              <span className="text-sm font-medium">{t('users.filterBy')}</span>
             </div>
-            
+
             <Select value={statusFilter} onValueChange={handleStatusFilterChange}>
               <SelectTrigger className="w-36 bg-card">
-                <SelectValue placeholder="Status" />
+                <SelectValue placeholder={t('users.status')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Status</SelectItem>
-                <SelectItem value="active">Active</SelectItem>
-                <SelectItem value="banned">Banned</SelectItem>
+                <SelectItem value="all">{t('users.allStatus')}</SelectItem>
+                <SelectItem value="active">{t('users.active')}</SelectItem>
+                <SelectItem value="banned">{t('users.banned')}</SelectItem>
               </SelectContent>
             </Select>
 
             <Select value={roleFilter} onValueChange={handleRoleFilterChange}>
               <SelectTrigger className="w-36 bg-card">
-                <SelectValue placeholder="Role" />
+                <SelectValue placeholder={t('users.role')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Roles</SelectItem>
-                <SelectItem value={UserRole.USER}>{RoleLabels[UserRole.USER]}</SelectItem>
-                <SelectItem value={UserRole.ADMIN}>{RoleLabels[UserRole.ADMIN]}</SelectItem>
-                <SelectItem value={UserRole.MODERATOR}>{RoleLabels[UserRole.MODERATOR]}</SelectItem>
-                <SelectItem value={UserRole.GUEST}>{RoleLabels[UserRole.GUEST]}</SelectItem>
+                <SelectItem value="all">{t('users.allRoles')}</SelectItem>
+                <SelectItem value={UserRole.USER}>{t(`roles.${UserRole.USER}`)}</SelectItem>
+                <SelectItem value={UserRole.ADMIN}>{t(`roles.${UserRole.ADMIN}`)}</SelectItem>
+                <SelectItem value={UserRole.MODERATOR}>{t(`roles.${UserRole.MODERATOR}`)}</SelectItem>
+                <SelectItem value={UserRole.GUEST}>{t(`roles.${UserRole.GUEST}`)}</SelectItem>
               </SelectContent>
             </Select>
 
             <Button variant="ghost" onClick={resetFilters} className="text-destructive hover:text-destructive">
-              Reset Filter
+              {t('users.resetFilter')}
             </Button>
 
             <div className="relative ml-auto">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Search users..."
+                placeholder={t('users.searchUsers')}
                 value={searchQuery}
                 onChange={(e) => handleSearchChange(e.target.value)}
                 className="pl-10 w-64 bg-card"
@@ -187,31 +189,31 @@ export function UsersPage() {
             <table className="w-full">
               <thead>
                 <tr className="border-b border-border bg-secondary/30">
-                  <th className="text-left py-4 px-4 text-sm font-semibold text-muted-foreground">ID</th>
-                  <th className="text-left py-4 px-4 text-sm font-semibold text-muted-foreground">Email</th>
-                  <th className="text-left py-4 px-4 text-sm font-semibold text-muted-foreground">Created</th>
-                  <th className="text-left py-4 px-4 text-sm font-semibold text-muted-foreground">Roles</th>
-                  <th className="text-left py-4 px-4 text-sm font-semibold text-muted-foreground">Status</th>
-                  <th className="text-left py-4 px-4 text-sm font-semibold text-muted-foreground">Actions</th>
+                  <th className="text-left py-4 px-4 text-sm font-semibold text-muted-foreground">{t('users.table.id')}</th>
+                  <th className="text-left py-4 px-4 text-sm font-semibold text-muted-foreground">{t('users.table.email')}</th>
+                  <th className="text-left py-4 px-4 text-sm font-semibold text-muted-foreground">{t('users.table.created')}</th>
+                  <th className="text-left py-4 px-4 text-sm font-semibold text-muted-foreground">{t('users.table.roles')}</th>
+                  <th className="text-left py-4 px-4 text-sm font-semibold text-muted-foreground">{t('users.table.status')}</th>
+                  <th className="text-left py-4 px-4 text-sm font-semibold text-muted-foreground">{t('users.table.actions')}</th>
                 </tr>
               </thead>
               <tbody>
                 {isLoading ? (
                   <tr>
                     <td colSpan={6} className="py-8 px-4 text-center text-sm text-muted-foreground">
-                      Loading users...
+                      {t('users.loading')}
                     </td>
                   </tr>
                 ) : error ? (
                   <tr>
                     <td colSpan={6} className="py-8 px-4 text-center text-sm text-destructive">
-                      Failed to load users. Please try again.
+                      {t('users.loadFailed')}
                     </td>
                   </tr>
                 ) : data?.users.length === 0 ? (
                   <tr>
                     <td colSpan={6} className="py-8 px-4 text-center text-sm text-muted-foreground">
-                      No users found
+                      {t('users.noUsers')}
                     </td>
                   </tr>
                 ) : (
@@ -223,7 +225,7 @@ export function UsersPage() {
                         <td className="py-4 px-4 text-sm text-muted-foreground">{user.id.slice(0, 8)}...</td>
                         <td className="py-4 px-4 text-sm font-medium text-foreground">
                           {user.email}
-                          {isCurrentUser && <span className="text-muted-foreground text-xs ml-2">(You)</span>}
+                          {isCurrentUser && <span className="text-muted-foreground text-xs ml-2">{t('users.you')}</span>}
                         </td>
                         <td className="py-4 px-4 text-sm text-muted-foreground">{formatDate(user.createdAt)}</td>
                         <td className="py-4 px-4">
@@ -240,7 +242,7 @@ export function UsersPage() {
                               ))
                             ) : (
                               <Badge variant="secondary" className="capitalize">
-                                user
+                                {t('roles.user')}
                               </Badge>
                             )}
                           </div>
@@ -263,14 +265,14 @@ export function UsersPage() {
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
-                              <DropdownMenuItem 
+                              <DropdownMenuItem
                                 className="gap-2"
                                 onClick={() => navigate(`/users/${user.id}`)}
                               >
-                                <Edit className="h-4 w-4" /> View Details
+                                <Edit className="h-4 w-4" /> {t('users.viewDetails')}
                               </DropdownMenuItem>
                               {isAdmin && (
-                                <DropdownMenuItem 
+                                <DropdownMenuItem
                                   className="gap-2"
                                   onClick={() => handleEditRoles({
                                     id: user.id,
@@ -278,23 +280,23 @@ export function UsersPage() {
                                     roles: roles.length > 0 ? roles as UserRole[] : [UserRole.USER]
                                   })}
                                 >
-                                  <Shield className="h-4 w-4" /> Edit Roles
+                                  <Shield className="h-4 w-4" /> {t('users.editRoles')}
                                 </DropdownMenuItem>
                               )}
                               {isAdmin && (
-                                <DropdownMenuItem 
+                                <DropdownMenuItem
                                   className="gap-2"
                                   onClick={() => handleUpdateStatus(user.id, user.status === 'active' ? 'banned' : 'active')}
                                 >
                                   {user.status === 'active' ? (
-                                    <><Ban className="h-4 w-4" /> Ban User</>
+                                    <><Ban className="h-4 w-4" /> {t('users.banUser')}</>
                                   ) : (
-                                    <><CheckCircle className="h-4 w-4" /> Activate</>
+                                    <><CheckCircle className="h-4 w-4" /> {t('users.activate')}</>
                                   )}
                                 </DropdownMenuItem>
                               )}
                               <DropdownMenuItem className="gap-2 text-destructive">
-                                <Trash2 className="h-4 w-4" /> Delete
+                                <Trash2 className="h-4 w-4" /> {t('users.delete')}
                               </DropdownMenuItem>
                             </DropdownMenuContent>
                           </DropdownMenu>
@@ -311,12 +313,12 @@ export function UsersPage() {
             <p className="text-sm text-muted-foreground">
               {data ? (
                 <>
-                  Showing {((data.pagination.page - 1) * data.pagination.limit) + 1} to{' '}
-                  {Math.min(data.pagination.page * data.pagination.limit, data.pagination.total)} of{' '}
-                  {data.pagination.total} users
+                  {t('common.showing')} {((data.pagination.page - 1) * data.pagination.limit) + 1} {t('common.to')}{' '}
+                  {Math.min(data.pagination.page * data.pagination.limit, data.pagination.total)} {t('common.of')}{' '}
+                  {data.pagination.total} {t('users.showingUsers')}
                 </>
               ) : (
-                'Loading...'
+                <span>{t('common.loading')}</span>
               )}
             </p>
             <div className="flex items-center gap-2">
@@ -326,7 +328,7 @@ export function UsersPage() {
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={!data || data.pagination.page === 1 || isLoading}
               >
-                Previous
+                {t('common.previous')}
               </Button>
               <Button
                 variant="outline"
@@ -334,7 +336,7 @@ export function UsersPage() {
                 onClick={() => setPage((p) => p + 1)}
                 disabled={!data || !data.pagination.hasNext || isLoading}
               >
-                Next
+                {t('common.next')}
               </Button>
             </div>
           </div>

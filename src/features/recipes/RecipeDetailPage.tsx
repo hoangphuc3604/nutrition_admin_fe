@@ -8,8 +8,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useRecipe } from '@/api/recipes.api';
 import { Recipe } from '@/types';
+import { useTranslation } from 'react-i18next';
 
 export function RecipeDetailPage() {
+  const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('overview');
@@ -18,11 +20,11 @@ export function RecipeDetailPage() {
 
   if (isLoading) {
     return (
-      <AdminLayout title="Recipe Details">
+      <AdminLayout title={t('recipes.recipeDetail.title')}>
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
             <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
-            <p className="text-muted-foreground">Loading recipe...</p>
+            <p className="text-muted-foreground">{t('recipes.recipeDetail.loading')}</p>
           </div>
         </div>
       </AdminLayout>
@@ -31,16 +33,16 @@ export function RecipeDetailPage() {
 
   if (error) {
     return (
-      <AdminLayout title="Recipe Details">
+      <AdminLayout title={t('recipes.recipeDetail.title')}>
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
-            <p className="text-destructive">Failed to load recipe</p>
+            <p className="text-destructive">{t('recipes.recipeDetail.loadFailed')}</p>
             <Button
               variant="outline"
               onClick={() => navigate('/recipes')}
               className="mt-4"
             >
-              Back to Recipes
+              {t('recipes.recipeDetail.backToRecipes')}
             </Button>
           </div>
         </div>
@@ -50,9 +52,9 @@ export function RecipeDetailPage() {
 
   if (!recipe) {
     return (
-      <AdminLayout title="Recipe Details">
+      <AdminLayout title={t('recipes.recipeDetail.title')}>
         <div className="flex items-center justify-center h-64">
-          <p className="text-muted-foreground">Recipe not found</p>
+          <p className="text-muted-foreground">{t('recipes.recipeDetail.notFound')}</p>
         </div>
       </AdminLayout>
     );
@@ -61,7 +63,7 @@ export function RecipeDetailPage() {
   const totalTime = (recipe.prep_time_minutes || 0) + (recipe.cook_time_minutes || 0);
 
   return (
-    <AdminLayout title="Recipe Details">
+    <AdminLayout title={t('recipes.recipeDetail.title')}>
       <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center gap-4">
@@ -72,7 +74,7 @@ export function RecipeDetailPage() {
             className="gap-2"
           >
             <ArrowLeft className="h-4 w-4" />
-            Back to Recipes
+            {t('recipes.recipeDetail.backToRecipes')}
           </Button>
           <div className="flex-1" />
           <Button
@@ -80,7 +82,7 @@ export function RecipeDetailPage() {
             onClick={() => navigate(`/recipes/${id}/edit`)}
           >
             <Edit className="h-4 w-4" />
-            Edit Recipe
+            {t('recipes.recipeDetail.editRecipe')}
           </Button>
         </div>
 
@@ -106,21 +108,21 @@ export function RecipeDetailPage() {
             <CardContent className="p-4 text-center">
               <Clock className="h-8 w-8 mx-auto mb-2 text-primary" />
               <div className="text-2xl font-bold">{totalTime}min</div>
-              <div className="text-sm text-muted-foreground">Total Time</div>
+              <div className="text-sm text-muted-foreground">{t('recipes.recipeDetail.totalTime')}</div>
             </CardContent>
           </Card>
           <Card>
             <CardContent className="p-4 text-center">
               <Users className="h-8 w-8 mx-auto mb-2 text-primary" />
               <div className="text-2xl font-bold">{recipe.servings}</div>
-              <div className="text-sm text-muted-foreground">Servings</div>
+              <div className="text-sm text-muted-foreground">{t('recipes.recipeDetail.servings')}</div>
             </CardContent>
           </Card>
           <Card>
             <CardContent className="p-4 text-center">
               <ChefHat className="h-8 w-8 mx-auto mb-2 text-primary" />
-              <div className="text-2xl font-bold capitalize">{recipe.difficulty_level || 'Easy'}</div>
-              <div className="text-sm text-muted-foreground">Difficulty</div>
+              <div className="text-2xl font-bold capitalize">{recipe.difficulty_level || t('recipes.recipeCreate.difficulty.easy')}</div>
+              <div className="text-sm text-muted-foreground">{t('recipes.recipeDetail.difficulty')}</div>
             </CardContent>
           </Card>
         </div>
@@ -129,7 +131,7 @@ export function RecipeDetailPage() {
         {recipe.cuisine_type && (
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg">Cuisine Type</CardTitle>
+              <CardTitle className="text-lg">{t('recipes.recipeDetail.cuisineType')}</CardTitle>
             </CardHeader>
             <CardContent>
               <Badge variant="secondary">{recipe.cuisine_type}</Badge>
@@ -140,16 +142,16 @@ export function RecipeDetailPage() {
         {/* Detailed Information Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="overview" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:font-semibold">Overview</TabsTrigger>
-            <TabsTrigger value="ingredients" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:font-semibold">Ingredients</TabsTrigger>
-            <TabsTrigger value="instructions" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:font-semibold">Instructions</TabsTrigger>
+            <TabsTrigger value="overview" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:font-semibold">{t('recipes.recipeDetail.tabs.overview')}</TabsTrigger>
+            <TabsTrigger value="ingredients" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:font-semibold">{t('recipes.recipeDetail.tabs.ingredients')}</TabsTrigger>
+            <TabsTrigger value="instructions" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:font-semibold">{t('recipes.recipeDetail.tabs.instructions')}</TabsTrigger>
           </TabsList>
 
           <TabsContent value="overview" className="space-y-6">
             {recipe.description && (
               <Card>
                 <CardHeader>
-                  <CardTitle>Description</CardTitle>
+                  <CardTitle>{t('recipes.recipeDetail.sections.description')}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-muted-foreground">
@@ -162,7 +164,7 @@ export function RecipeDetailPage() {
             {!recipe.description && (
               <Card>
                 <CardContent className="py-8 text-center">
-                  <p className="text-muted-foreground">No description provided</p>
+                  <p className="text-muted-foreground">{t('recipes.recipeDetail.emptyStates.noDescription')}</p>
                 </CardContent>
               </Card>
             )}
@@ -171,13 +173,13 @@ export function RecipeDetailPage() {
           <TabsContent value="ingredients" className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>Ingredients {recipe.servings && `(${recipe.servings} servings)`}</CardTitle>
+                <CardTitle>{t('recipes.recipeDetail.sections.ingredients')} {recipe.servings && `(${recipe.servings} ${t('recipes.recipeDetail.servings').toLowerCase()})`}</CardTitle>
               </CardHeader>
               <CardContent>
                 {recipe.ingredients && recipe.ingredients.length > 0 ? (
                   <div className="space-y-3">
                     {recipe.ingredients.map((item: any, index: number) => {
-                      const name = item?.name ?? 'Unknown ingredient';
+                      const name = item?.name ?? t('common.unknown');
                       const quantity = item?.quantity ?? '';
                       const unit = item?.unit ?? '';
                       return (
@@ -193,7 +195,7 @@ export function RecipeDetailPage() {
                     })}
                   </div>
                 ) : (
-                  <p className="text-center text-muted-foreground py-8">No ingredients added</p>
+                  <p className="text-center text-muted-foreground py-8">{t('recipes.recipeDetail.emptyStates.noIngredients')}</p>
                 )}
               </CardContent>
             </Card>
@@ -203,7 +205,7 @@ export function RecipeDetailPage() {
             {recipe.instructions && (
               <Card>
                 <CardHeader>
-                  <CardTitle>Instructions</CardTitle>
+                  <CardTitle>{t('recipes.recipeDetail.sections.instructions')}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="whitespace-pre-wrap text-muted-foreground">
@@ -216,7 +218,7 @@ export function RecipeDetailPage() {
             {!recipe.instructions && (
               <Card>
                 <CardContent className="py-8 text-center">
-                  <p className="text-muted-foreground">No instructions provided</p>
+                  <p className="text-muted-foreground">{t('recipes.recipeDetail.emptyStates.noInstructions')}</p>
                 </CardContent>
               </Card>
             )}

@@ -2,41 +2,40 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { useDashboardCharts } from '@/api/dashboard.api';
 import { Period } from '@/enum/period.enum';
+import { useTranslation } from 'react-i18next';
 
 interface MetricsChartsProps {
   period: Period;
 }
 
 export function MetricsCharts({ period }: MetricsChartsProps) {
+  const { t, i18n } = useTranslation();
   const { data: chartsData, isLoading } = useDashboardCharts(period);
 
-  const getSamplingInterval = (dataLength: number): 'day' | 'week' | 'month' => {
-    const maxPoints = 30;
-
-    if (dataLength <= 7) return 'day';
-    if (dataLength <= maxPoints) return 'week';
+  const getSamplingInterval = (dataLength: number): 'day' | 'month' => {
+    // If we have less than ~60 points (2 months), show daily format
+    if (dataLength <= 60) return 'day';
     return 'month';
   };
 
   const formatDate = (dateStr: string, dataLength: number) => {
     const date = new Date(dateStr);
     const interval = getSamplingInterval(dataLength);
+    const lang = i18n.language;
 
     switch (interval) {
       case 'day':
-        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-      case 'week':
-        return `Week of ${date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
+        return date.toLocaleDateString(lang, { month: 'short', day: 'numeric' });
       case 'month':
-        return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+        return date.toLocaleDateString(lang, { month: 'short', year: 'numeric' });
       default:
-        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        return date.toLocaleDateString(lang, { month: 'short', day: 'numeric' });
     }
   };
 
   const formatTooltipValue = (value: number, name: string) => {
     if (name === 'surveyCompletion') {
-      return [`${value}%`, 'Survey Completion'];
+      return [`${value}%`, t('dashboard.charts.surveyCompletion')];
     }
     return [value, name];
   };
@@ -44,25 +43,25 @@ export function MetricsCharts({ period }: MetricsChartsProps) {
   const chartConfigs = [
     {
       key: 'totalUsers',
-      title: 'Total Users Trend',
+      title: t('dashboard.charts.totalUsersTrend'),
       color: '#8884d8',
       data: chartsData?.totalUsers || [],
     },
     {
       key: 'mealPlansCreated',
-      title: 'Meal Plans Created Trend',
+      title: t('dashboard.charts.mealPlansCreatedTrend'),
       color: '#82ca9d',
       data: chartsData?.mealPlansCreated || [],
     },
     {
       key: 'totalRecipes',
-      title: 'Total Recipes Trend',
+      title: t('dashboard.charts.totalRecipesTrend'),
       color: '#ffc658',
       data: chartsData?.totalRecipes || [],
     },
     {
       key: 'surveyCompletion',
-      title: 'Survey Completion Trend',
+      title: t('dashboard.charts.surveyCompletionTrend'),
       color: '#ff7300',
       data: chartsData?.surveyCompletion || [],
     },
@@ -100,6 +99,7 @@ export function MetricsCharts({ period }: MetricsChartsProps) {
                   dataKey="date"
                   tickFormatter={(value) => formatDate(value, config.data.length)}
                   fontSize={12}
+                  minTickGap={30}
                 />
                 <YAxis fontSize={12} />
                 <Tooltip

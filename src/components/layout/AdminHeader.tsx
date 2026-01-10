@@ -13,6 +13,8 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { useSidebarStore } from '@/stores/sidebarStore';
+import { LanguageSwitcher } from '@/components/LanguageSwitcher';
+import { useTranslation } from 'react-i18next';
 
 interface AdminHeaderProps {
   title: string;
@@ -20,6 +22,7 @@ interface AdminHeaderProps {
 
 export function AdminHeader({ title }: AdminHeaderProps) {
   const { isCollapsed, isMobileOpen, setMobileOpen } = useSidebarStore();
+  const { t } = useTranslation();
 
   return (
     <header className={cn(
@@ -39,14 +42,15 @@ export function AdminHeader({ title }: AdminHeaderProps) {
         
         <div className="relative max-w-md w-full ml-auto hidden md:block lg:ml-8">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input 
-            placeholder="Search..." 
+          <Input
+            placeholder={t('header.search')}
             className="pl-10 bg-secondary border-0 focus-visible:ring-1 focus-visible:ring-primary"
           />
         </div>
       </div>
 
       <div className="flex items-center gap-3 ml-4">
+        <LanguageSwitcher />
         <Button variant="ghost" size="icon" className="relative">
           <Bell className="h-5 w-5" />
           <Badge className="absolute -top-1 -right-1 h-5 w-5 p-0 flex items-center justify-center text-xs">
@@ -68,12 +72,12 @@ export function AdminHeader({ title }: AdminHeaderProps) {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-56">
-            <DropdownMenuLabel>My Account</DropdownMenuLabel>
+            <DropdownMenuLabel>{t('header.myAccount')}</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Profile</DropdownMenuItem>
-            <DropdownMenuItem>Settings</DropdownMenuItem>
+            <DropdownMenuItem>{t('header.profile')}</DropdownMenuItem>
+            <DropdownMenuItem>{t('navigation.settings')}</DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="text-destructive">Logout</DropdownMenuItem>
+            <DropdownMenuItem className="text-destructive">{t('navigation.logout')}</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

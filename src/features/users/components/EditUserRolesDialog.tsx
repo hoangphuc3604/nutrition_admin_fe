@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { UserRole, RoleLabels } from '@/enum/role.enum';
+import { UserRole } from '@/enum/role.enum';
+import { useTranslation } from 'react-i18next';
 import {
   Dialog,
   DialogContent,
@@ -34,6 +35,7 @@ export function EditUserRolesDialog({
   const [selectedRoles, setSelectedRoles] = useState<UserRole[]>(currentRoles);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (open) {
@@ -50,7 +52,7 @@ export function EditUserRolesDialog({
         // Nếu bỏ chọn role, đảm bảo còn ít nhất 1 role
         const newRoles = prev.filter((r) => r !== role);
         if (newRoles.length === 0) {
-          setError('User must have at least one role');
+          setError(t('users.editUserRoles.atLeastOneRole'));
           return prev;
         }
         setError(null);
@@ -64,7 +66,7 @@ export function EditUserRolesDialog({
 
   const handleSave = async () => {
     if (selectedRoles.length === 0) {
-      setError('User must have at least one role');
+      setError(t('users.editUserRoles.atLeastOneRole'));
       return;
     }
 
@@ -75,7 +77,7 @@ export function EditUserRolesDialog({
       await onSave(userId, selectedRoles);
       onOpenChange(false);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to update user roles');
+      setError(err instanceof Error ? err.message : t('users.editUserRoles.updateFailed'));
     } finally {
       setIsSaving(false);
     }
@@ -85,10 +87,9 @@ export function EditUserRolesDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Edit User Roles</DialogTitle>
+          <DialogTitle>{t('users.editUserRoles.title')}</DialogTitle>
           <DialogDescription>
-            Update roles for <span className="font-medium">{userEmail}</span>. 
-            User must have at least one role.
+            {t('users.editUserRoles.description', { email: userEmail })}
           </DialogDescription>
         </DialogHeader>
 
@@ -106,7 +107,7 @@ export function EditUserRolesDialog({
                   htmlFor={role}
                   className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
                 >
-                  {RoleLabels[role]}
+                  {t(`roles.${role}`)}
                 </Label>
               </div>
             ))}
@@ -126,10 +127,10 @@ export function EditUserRolesDialog({
             onClick={() => onOpenChange(false)}
             disabled={isSaving}
           >
-            Cancel
+            {t('common.cancel')}
           </Button>
           <Button onClick={handleSave} disabled={isSaving || selectedRoles.length === 0}>
-            {isSaving ? 'Saving...' : 'Save Changes'}
+            {isSaving ? t('users.editUserRoles.saving') : t('users.editUserRoles.saveChanges')}
           </Button>
         </DialogFooter>
       </DialogContent>

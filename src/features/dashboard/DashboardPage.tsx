@@ -6,32 +6,34 @@ import { MetricsCharts } from './components/MetricsCharts';
 import { Users, CalendarDays, UtensilsCrossed, ClipboardCheck } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Period, PeriodLabels } from '@/enum/period.enum';
+import { Period } from '@/enum/period.enum';
 import { useDashboardOverview } from '@/api/dashboard.api';
+import { useTranslation } from 'react-i18next';
 
 export function DashboardPage() {
   const [period, setPeriod] = useState<Period>(Period.PERIOD_7D);
   const { data: overview, isLoading } = useDashboardOverview(period);
+  const { t } = useTranslation();
 
   const formatNumber = (num: number): string => {
     return new Intl.NumberFormat('en-US').format(num);
   };
 
   return (
-    <AdminLayout title="Dashboard">
+    <AdminLayout title={t('dashboard.title')}>
       <div className="space-y-6">
         <Card>
           <CardHeader>
             <div className="flex items-center justify-between">
-              <CardTitle>Overview Statistics</CardTitle>
+              <CardTitle>{t('dashboard.overviewStatistics')}</CardTitle>
               <Select value={period} onValueChange={(value) => setPeriod(value as Period)}>
                 <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Select period" />
+                  <SelectValue placeholder={t('dashboard.selectPeriod')} />
                 </SelectTrigger>
                 <SelectContent>
                   {Object.values(Period).map((p) => (
                     <SelectItem key={p} value={p}>
-                      {PeriodLabels[p]}
+                      {t(`dashboard.periods.${p}`)}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -51,7 +53,7 @@ export function DashboardPage() {
             ) : overview ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <StatCard
-                  title="Total Users"
+                  title={t('dashboard.totalUsers')}
                   value={formatNumber(overview.totalUsers.value)}
                   icon={Users}
                   trend={overview.totalUsers.trend}
@@ -59,7 +61,7 @@ export function DashboardPage() {
                   iconColorClass="text-primary"
                 />
                 <StatCard
-                  title="Meal Plans Created"
+                  title={t('dashboard.mealPlansCreated')}
                   value={formatNumber(overview.mealPlansCreated.value)}
                   icon={CalendarDays}
                   trend={overview.mealPlansCreated.trend}
@@ -67,7 +69,7 @@ export function DashboardPage() {
                   iconColorClass="text-warning"
                 />
                 <StatCard
-                  title="Total Recipes"
+                  title={t('dashboard.totalRecipes')}
                   value={formatNumber(overview.totalRecipes.value)}
                   icon={UtensilsCrossed}
                   trend={overview.totalRecipes.trend}
@@ -75,7 +77,7 @@ export function DashboardPage() {
                   iconColorClass="text-success"
                 />
                 <StatCard
-                  title="Survey Completion"
+                  title={t('dashboard.surveyCompletion')}
                   value={`${overview.surveyCompletion.value}%`}
                   icon={ClipboardCheck}
                   trend={overview.surveyCompletion.trend}

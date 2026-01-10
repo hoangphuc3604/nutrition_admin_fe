@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/api/auth.api';
+import { useTranslation } from 'react-i18next';
 
 export function LoginPage() {
   const [email, setEmail] = useState('');
@@ -15,29 +16,30 @@ export function LoginPage() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { login, isLoggingIn } = useAuth();
+  const { t } = useTranslation();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    login(
-      { email, password },
-      {
-        onSuccess: () => {
-          toast({
-            title: 'Đăng nhập thành công',
-            description: 'Chào mừng bạn quay trở lại!',
-          });
-          navigate('/');
-        },
-        onError: (error: Error) => {
-          toast({
-            title: 'Đăng nhập thất bại',
-            description: error.message || 'Vui lòng kiểm tra lại thông tin đăng nhập',
-            variant: 'destructive',
-          });
-        },
-      }
-    );
+        login(
+          { email, password },
+          {
+            onSuccess: () => {
+              toast({
+                title: t('auth.login.success'),
+                description: t('auth.login.welcomeBack'),
+              });
+              navigate('/');
+            },
+            onError: (error: Error) => {
+              toast({
+                title: t('auth.login.failed'),
+                description: error.message || t('auth.login.checkCredentials'),
+                variant: 'destructive',
+              });
+            },
+          }
+        );
   };
 
   return (
@@ -49,21 +51,21 @@ export function LoginPage() {
               <ChefHat className="h-10 w-10 text-primary-foreground" />
             </div>
           </div>
-          <CardTitle className="text-2xl font-bold">Smart Meal Admin</CardTitle>
+          <CardTitle className="text-2xl font-bold">{t('auth.login.title')}</CardTitle>
           <CardDescription>
-            Đăng nhập vào hệ thống quản trị
+            {t('auth.login.description')}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">{t('auth.login.email')}</Label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
                   id="email"
                   type="email"
-                  placeholder="admin@smartmeal.com"
+                  placeholder={t('auth.login.emailPlaceholder')}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="pl-10"
@@ -72,13 +74,13 @@ export function LoginPage() {
               </div>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">Mật khẩu</Label>
+              <Label htmlFor="password">{t('auth.login.password')}</Label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
                   id="password"
                   type={showPassword ? 'text' : 'password'}
-                  placeholder="Nhập mật khẩu"
+                  placeholder={t('auth.login.passwordPlaceholder')}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="pl-10 pr-10"
@@ -105,7 +107,7 @@ export function LoginPage() {
                   className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
                 />
                 <Label htmlFor="remember" className="text-sm font-normal cursor-pointer">
-                  Ghi nhớ đăng nhập
+                  {t('auth.login.rememberMe')}
                 </Label>
               </div>
               <Button
@@ -113,7 +115,7 @@ export function LoginPage() {
                 variant="link"
                 className="px-0 text-sm"
               >
-                Quên mật khẩu?
+                {t('auth.login.forgotPassword')}
               </Button>
             </div>
             <Button
@@ -121,7 +123,7 @@ export function LoginPage() {
               className="w-full"
               disabled={isLoggingIn}
             >
-              {isLoggingIn ? 'Đang đăng nhập...' : 'Đăng nhập'}
+              {isLoggingIn ? t('auth.login.loggingIn') : t('auth.login.loginButton')}
             </Button>
           </form>
         </CardContent>

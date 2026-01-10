@@ -14,6 +14,7 @@ import { ImageUploadWithPreview } from '@/components/ui/image-upload-with-previe
 import { useRecipe, useUpdateRecipe, UpdateRecipeRequest } from '@/api/recipes.api';
 import { useIngredients } from '@/api/ingredients.api';
 import { useToast } from '@/hooks/use-toast';
+import { useTranslation } from 'react-i18next';
 import { InstructionStep, parseInstructionsToSteps, formatStepsToInstructions } from '@/lib/recipe-instructions.utils';
 
 interface RecipeFormData {
@@ -43,6 +44,7 @@ interface RecipeIngredientForm {
 }
 
 export function RecipeEditPage() {
+  const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('details');
@@ -112,50 +114,50 @@ export function RecipeEditPage() {
   const validateForm = (): string | null => {
     try {
       if (!formData.name || formData.name.trim() === '') {
-        return 'Tên công thức không được để trống';
+        return t('recipes.recipeCreate.validation.nameRequired');
       }
 
     if (!formData.difficulty_level || !['easy', 'medium', 'hard'].includes(formData.difficulty_level)) {
-      return 'Mức độ khó phải là easy, medium, hoặc hard';
+      return t('recipes.recipeCreate.validation.invalidDifficulty');
     }
 
     if (!formData.instructions || formData.instructions.trim() === '') {
-      return 'Hướng dẫn nấu ăn không được để trống';
+      return t('recipes.recipeCreate.validation.instructionsRequired');
     }
 
       if (formData.prep_time_minutes !== undefined && (formData.prep_time_minutes < 0 || formData.prep_time_minutes > 1440)) {
-        return 'Thời gian chuẩn bị phải từ 0 đến 1440 phút';
+        return t('recipes.recipeCreate.validation.invalidPrepTime');
       }
 
       if (formData.cook_time_minutes !== undefined && (formData.cook_time_minutes < 0 || formData.cook_time_minutes > 1440)) {
-        return 'Thời gian nấu phải từ 0 đến 1440 phút';
+        return t('recipes.recipeCreate.validation.invalidCookTime');
       }
 
       if (formData.servings !== undefined && (formData.servings <= 0 || formData.servings > 100)) {
-        return 'Số khẩu phần phải từ 1 đến 100';
+        return t('recipes.recipeCreate.validation.invalidServings');
       }
 
       if (!formData.ingredients || formData.ingredients.length === 0) {
-        return 'Cần ít nhất 1 nguyên liệu';
+        return t('recipes.recipeCreate.validation.atLeastOneIngredient');
       }
 
       for (let i = 0; i < formData.ingredients.length; i++) {
         const ing = formData.ingredients[i];
         if (!ing || !ing.ingredientId || ing.ingredientId.trim() === '') {
-          return `Nguyên liệu ${i + 1}: Vui lòng chọn nguyên liệu`;
+          return `${t('recipes.ingredientsTable.headers.ingredient')} ${i + 1}: ${t('recipes.recipeCreate.validation.selectIngredient')}`;
         }
         if (ing.quantity === undefined || ing.quantity <= 0) {
-          return `Nguyên liệu ${i + 1}: Số lượng phải lớn hơn 0`;
+          return `${t('recipes.ingredientsTable.headers.ingredient')} ${i + 1}: ${t('recipes.recipeCreate.validation.quantityGreaterThanZero')}`;
         }
         if (!ing.unit || ing.unit.trim() === '') {
-          return `Nguyên liệu ${i + 1}: Đơn vị không được để trống`;
+          return `${t('recipes.ingredientsTable.headers.ingredient')} ${i + 1}: ${t('recipes.recipeCreate.validation.unitRequired')}`;
         }
       }
 
       return null;
     } catch (error) {
       console.error('Validation error:', error);
-      return 'Lỗi validation form';
+      return t('recipes.recipeCreate.validation.validationError');
     }
   };
 
@@ -165,7 +167,7 @@ export function RecipeEditPage() {
     const validationError = validateForm();
     if (validationError) {
       toast({
-        title: "Lỗi validation",
+        title: t('common.error'),
         description: validationError,
         variant: "destructive",
       });
@@ -202,17 +204,17 @@ export function RecipeEditPage() {
 
       await updateRecipe.mutateAsync({ id, data: dataToSendFinal });
       toast({
-        title: "Thành công",
-        description: "Cập nhật công thức thành công",
+        title: t('common.success'),
+        description: t('recipes.recipeEdit.success'),
         variant: "default",
         className: "bg-green-500 text-white border-none",
       });
       navigate(`/recipes/${id}`);
     } catch (error: any) {
       console.error('Failed to update recipe:', error);
-      const errorMessage = error?.response?.data?.message || 'Không thể cập nhật công thức. Vui lòng thử lại.';
+      const errorMessage = error?.response?.data?.message || t('recipes.recipeEdit.error');
       toast({
-        title: "Lỗi",
+        title: t('common.error'),
         description: errorMessage,
         variant: "destructive",
       });
@@ -224,11 +226,11 @@ export function RecipeEditPage() {
 
   if (isLoading) {
     return (
-      <AdminLayout title="Edit Recipe">
+      <AdminLayout title={t('recipes.recipeEdit.title')}>
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
             <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
-            <p className="text-muted-foreground">Loading recipe...</p>
+            <p className="text-muted-foreground">{t('recipes.recipeDetail.loading')}</p>
           </div>
         </div>
       </AdminLayout>
@@ -237,16 +239,16 @@ export function RecipeEditPage() {
 
   if (!recipe) {
     return (
-      <AdminLayout title="Edit Recipe">
+      <AdminLayout title={t('recipes.recipeEdit.title')}>
         <div className="flex items-center justify-center h-64">
-          <p className="text-muted-foreground">Recipe not found</p>
+          <p className="text-muted-foreground">{t('recipes.recipeDetail.notFound')}</p>
         </div>
       </AdminLayout>
     );
   }
 
   return (
-    <AdminLayout title="Edit Recipe">
+    <AdminLayout title={t('recipes.recipeEdit.title')}>
       <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center gap-4">
@@ -257,7 +259,7 @@ export function RecipeEditPage() {
             className="gap-2"
           >
             <ArrowLeft className="h-4 w-4" />
-            Back to Recipe
+            {t('recipes.recipeDetail.backToRecipes')}
           </Button>
           <div className="flex-1" />
           <Button
@@ -270,32 +272,32 @@ export function RecipeEditPage() {
             ) : (
               <Save className="h-4 w-4" />
             )}
-            {isSaving ? 'Saving...' : 'Save Changes'}
+            {isSaving ? t('recipes.recipeEdit.updating') : t('recipes.recipeEdit.updateRecipe')}
           </Button>
         </div>
 
         {/* Recipe Form */}
         <Card>
           <CardHeader>
-            <CardTitle>Edit Recipe: {recipe.name}</CardTitle>
+            <CardTitle>{t('recipes.recipeEdit.editRecipe', { name: recipe.name })}</CardTitle>
           </CardHeader>
           <CardContent>
             <Tabs value={activeTab} onValueChange={setActiveTab}>
               <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="details" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:font-semibold">Details</TabsTrigger>
-                <TabsTrigger value="ingredients" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:font-semibold">Ingredients</TabsTrigger>
-                <TabsTrigger value="instructions" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:font-semibold">Instructions</TabsTrigger>
+                <TabsTrigger value="details" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:font-semibold">{t('recipes.recipeCreate.tabs.details')}</TabsTrigger>
+                <TabsTrigger value="ingredients" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:font-semibold">{t('recipes.recipeCreate.tabs.ingredients')}</TabsTrigger>
+                <TabsTrigger value="instructions" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:font-semibold">{t('recipes.recipeCreate.tabs.instructions')}</TabsTrigger>
               </TabsList>
 
               <TabsContent value="details" className="space-y-6 mt-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <Label htmlFor="name">Recipe Name <span className="text-red-500">*</span></Label>
+                    <Label htmlFor="name">{t('recipes.recipeCreate.fields.recipeName')} <span className="text-red-500">*</span></Label>
                     <Input
                       id="name"
                       value={formData.name}
                       onChange={(e) => handleChange('name', e.target.value)}
-                      placeholder="Enter recipe name"
+                      placeholder={t('recipes.recipeCreate.placeholders.enterRecipeName')}
                       required
                     />
                   </div>
@@ -306,7 +308,7 @@ export function RecipeEditPage() {
                       id="cuisine_type"
                       value={formData.cuisine_type || ''}
                       onChange={(e) => handleChange('cuisine_type', e.target.value)}
-                      placeholder="e.g., Italian, Vietnamese, Asian"
+                      placeholder={t('recipes.recipeCreate.placeholders.cuisineExample')}
                     />
                   </div>
                 </div>
@@ -318,13 +320,13 @@ export function RecipeEditPage() {
                       existingImageUrl={formData.image_url}
                       onChange={(file) => handleChange('image', file)}
                       onRemove={() => setFormData({ ...formData, removeImage: true })}
-                      label="Recipe Image"
-                      placeholder="Upload recipe image"
+                      label={t('recipes.recipeCreate.fields.recipeImage')}
+                      placeholder={t('recipes.recipeCreate.placeholders.uploadImage')}
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="difficulty_level">Difficulty Level <span className="text-red-500">*</span></Label>
+                    <Label htmlFor="difficulty_level">{t('recipes.recipeCreate.fields.difficultyLevel')} <span className="text-red-500">*</span></Label>
                     <select
                       id="difficulty_level"
                       value={formData.difficulty_level}
@@ -332,17 +334,17 @@ export function RecipeEditPage() {
                       className="w-full px-3 py-2 border border-input bg-background rounded-md"
                       required
                     >
-                      <option value="">Select difficulty level</option>
-                      <option value="easy">Easy</option>
-                      <option value="medium">Medium</option>
-                      <option value="hard">Hard</option>
+                      <option value="">{t('recipes.recipeCreate.difficulty.select')}</option>
+                      <option value="easy">{t('recipes.recipeCreate.difficulty.easy')}</option>
+                      <option value="medium">{t('recipes.recipeCreate.difficulty.medium')}</option>
+                      <option value="hard">{t('recipes.recipeCreate.difficulty.hard')}</option>
                     </select>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="prep_time_minutes">Prep Time (min)</Label>
+                    <Label htmlFor="prep_time_minutes">{t('recipes.recipeCreate.fields.prepTime')}</Label>
                     <Input
                       id="prep_time_minutes"
                       type="number"
@@ -353,7 +355,7 @@ export function RecipeEditPage() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="cook_time_minutes">Cook Time (min)</Label>
+                    <Label htmlFor="cook_time_minutes">{t('recipes.recipeCreate.fields.cookTime')}</Label>
                     <Input
                       id="cook_time_minutes"
                       type="number"
@@ -364,7 +366,7 @@ export function RecipeEditPage() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="servings">Servings</Label>
+                    <Label htmlFor="servings">{t('recipes.recipeCreate.fields.servings')}</Label>
                     <Input
                       id="servings"
                       type="number"
@@ -377,12 +379,12 @@ export function RecipeEditPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="description">Description</Label>
+                  <Label htmlFor="description">{t('recipes.recipeCreate.fields.description')}</Label>
                   <Textarea
                     id="description"
                     value={formData.description || ''}
                     onChange={(e) => handleChange('description', e.target.value)}
-                    placeholder="Recipe description..."
+                    placeholder={t('recipes.recipeCreate.placeholders.recipeDescription')}
                     rows={3}
                   />
                 </div>
@@ -399,7 +401,7 @@ export function RecipeEditPage() {
               <TabsContent value="instructions" className="mt-6">
                 <div className="space-y-2 mb-4">
                   <Label className="text-muted-foreground text-xs uppercase tracking-wider flex items-center gap-2">
-                    <span>Instructions <span className="text-red-500">*</span></span>
+                    <span>{t('recipes.recipeCreate.fields.instructions')} <span className="text-red-500">*</span></span>
                   </Label>
                 </div>
                 <DynamicInstructionsTable

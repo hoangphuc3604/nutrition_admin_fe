@@ -1,0 +1,466 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "view": "View",
+    "search": "Search...",
+    "filter": "Filter",
+    "reset": "Reset",
+    "previous": "Previous",
+    "next": "Next",
+    "showing": "Showing",
+    "to": "to",
+    "of": "of",
+    "items": "items",
+    "noData": "No data found",
+    "confirm": "Confirm",
+    "yes": "Yes",
+    "no": "No",
+    "other": "Other",
+    "unknown": "Unknown",
+    "min": "min",
+    "gram": "gram",
+    "saving": "Saving...",
+    "saveChanges": "Save Changes",
+    "validationError": "Validation Error",
+    "image": "Image",
+    "actions": "Actions",
+    "na": "N/A",
+    "days": "days",
+    "note": "Note"
+  },
+  "components": {
+    "imageUpload": {
+      "label": "Upload Image",
+      "placeholder": "Click to upload or drag and drop",
+      "clickToChange": "Click to change image",
+      "fileSizeError": "File size must be less than {{size}}MB",
+      "imageRemoved": "Image removed",
+      "undoRemove": "Undo Remove",
+      "currentImage": "Current image",
+      "maxSizeInfo": "PNG, JPG, JPEG up to {{size}}MB"
+    },
+    "pagination": {
+      "previous": "Go to previous page",
+      "next": "Go to next page",
+      "more": "More pages"
+    }
+  },
+  "navigation": {
+    "dashboard": "Dashboard",
+    "users": "Users",
+    "recipes": "Recipes",
+    "ingredients": "Ingredients",
+    "reports": "Reports",
+    "gmailAuth": "Gmail Auth",
+    "settings": "Settings",
+    "logout": "Logout",
+    "analytics": "Analytics"
+  },
+  "header": {
+    "search": "Search...",
+    "myAccount": "My Account",
+    "profile": "Profile",
+    "logout": "Logout"
+  },
+  "auth": {
+    "login": {
+      "title": "Smart Meal Admin",
+      "description": "Login to admin system",
+      "email": "Email",
+      "password": "Password",
+      "emailPlaceholder": "admin@smartmeal.com",
+      "passwordPlaceholder": "Enter password",
+      "rememberMe": "Remember login",
+      "forgotPassword": "Forgot password?",
+      "loginButton": "Login",
+      "loggingIn": "Logging in...",
+      "success": "Login successful",
+      "welcomeBack": "Welcome back!",
+      "failed": "Login failed",
+      "checkCredentials": "Please check your login information"
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "overviewStatistics": "Overview Statistics",
+    "totalUsers": "Total Users",
+    "mealPlansCreated": "Meal Plans Created",
+    "totalRecipes": "Total Recipes",
+    "surveyCompletion": "Survey Completion",
+    "selectPeriod": "Select period",
+    "charts": {
+      "totalUsersTrend": "Total Users Trend",
+      "mealPlansCreatedTrend": "Meal Plans Created Trend",
+      "totalRecipesTrend": "Total Recipes Trend",
+      "surveyCompletionTrend": "Survey Completion Trend",
+      "surveyCompletion": "Survey Completion"
+    },
+    "popularRecipes": {
+      "title": "Popular Recipes",
+      "recipeName": "Recipe Name",
+      "cuisineType": "Cuisine Type",
+      "status": "Status",
+      "trending": "trending",
+      "noTrendingRecipes": "No trending recipes found"
+    },
+    "usageAnalytics": {
+      "title": "Usage Analytics",
+      "october": "October",
+      "november": "November",
+      "december": "December"
+    },
+    "periods": {
+      "7d": "Last 7 days",
+      "30d": "Last 30 days",
+      "90d": "Last 90 days",
+      "1y": "Last year",
+      "all": "All time"
+    }
+  },
+  "users": {
+    "title": "Users",
+    "management": "User Management",
+    "filterBy": "Filter By",
+    "status": "Status",
+    "role": "Role",
+    "allStatus": "All Status",
+    "active": "Active",
+    "banned": "Banned",
+    "allRoles": "All Roles",
+    "resetFilter": "Reset Filter",
+    "searchUsers": "Search users...",
+    "table": {
+      "id": "ID",
+      "email": "Email",
+      "created": "Created",
+      "roles": "Roles",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "loading": "Loading users...",
+    "loadFailed": "Failed to load users. Please try again.",
+    "noUsers": "No users found",
+    "showingUsers": "users",
+    "viewDetails": "View Details",
+    "editRoles": "Edit Roles",
+    "banUser": "Ban User",
+    "activate": "Activate",
+    "delete": "Delete",
+    "you": "(You)",
+    "updateSuccess": "Success",
+    "updateFailed": "Error",
+    "updateRolesFailed": "Cannot update user roles",
+    "updateStatusFailed": "Cannot update user status",
+    "userDetail": {
+      "title": "User Details",
+      "backToUsers": "Back to Users",
+      "editRoles": "Edit Roles",
+      "loading": "Loading user details...",
+      "loadFailed": "Failed to load user details. Please try again.",
+      "userInformation": "User Information",
+      "profileInformation": "Profile Information",
+      "dietaryInformation": "Dietary Information",
+      "statistics": "Statistics",
+      "fields": {
+        "userId": "User ID",
+        "email": "Email",
+        "status": "Status",
+        "roles": "Roles",
+        "emailVerified": "Email Verified",
+        "surveyCompleted": "Survey Completed",
+        "createdAt": "Created At",
+        "updatedAt": "Updated At",
+        "age": "Age",
+        "height": "Height",
+        "weight": "Weight",
+        "targetWeight": "Target Weight",
+        "activityLevel": "Activity Level",
+        "healthGoal": "Health Goal",
+        "dailyCalorieTarget": "Daily Calorie Target",
+        "allergies": "Allergies",
+        "medicalConditions": "Medical Conditions",
+        "dietaryRestrictions": "Dietary Restrictions",
+        "dietaryPreferences": "Dietary Preferences",
+        "cuisines": "Cuisines",
+        "spiceLevel": "Spice Level",
+        "cookingTime": "Cooking Time",
+        "mealTypes": "Meal Types"
+      },
+      "values": {
+        "verified": "Verified",
+        "notVerified": "Not Verified",
+        "yes": "Yes",
+        "no": "No",
+        "none": "None",
+        "na": "N/A"
+      },
+      "stats": {
+        "completedMeals": "Completed Meals",
+        "likedMeals": "Liked Meals",
+        "daysUsingApp": "Days Using App",
+        "totalMealPlans": "Total Meal Plans",
+        "fridgeItems": "Fridge Items"
+      }
+    },
+    "editUserRoles": {
+      "title": "Edit User Roles",
+      "description": "Update roles for {{email}}. User must have at least one role.",
+      "atLeastOneRole": "User must have at least one role",
+      "saveChanges": "Save Changes",
+      "saving": "Saving...",
+      "updateFailed": "Failed to update user roles"
+    }
+  },
+  "roles": {
+    "user": "User",
+    "admin": "Admin",
+    "moderator": "Moderator",
+    "guest": "Guest"
+  },
+  "recipes": {
+    "title": "Recipes",
+    "management": "Recipe Management",
+    "addRecipe": "Add Recipe",
+    "searchRecipes": "Search recipes...",
+    "table": {
+      "image": "Image",
+      "recipeName": "Recipe Name",
+      "cuisineType": "Cuisine Type",
+      "prepTime": "Prep Time",
+      "actions": "Actions"
+    },
+    "loading": "Loading recipes...",
+    "loadFailed": "Failed to load recipes. Please try again.",
+    "noRecipes": "No recipes found",
+    "showingRecipes": "recipes",
+    "viewRecipe": "View Recipe",
+    "editRecipe": "Edit Recipe",
+    "deleteRecipe": "Delete Recipe",
+    "confirmDelete": "Are you sure you want to delete this recipe?",
+    "viewRecipeTooltip": "View Recipe",
+    "editRecipeTooltip": "Edit Recipe",
+    "deleteRecipeTooltip": "Delete Recipe",
+  "recipeDetail": {
+    "title": "Recipe Details",
+    "loading": "Loading recipe...",
+    "loadFailed": "Failed to load recipe",
+    "notFound": "Recipe not found",
+    "backToRecipes": "Back to Recipes",
+    "editRecipe": "Edit Recipe",
+    "totalTime": "Total Time",
+    "servings": "Servings",
+    "difficulty": "Difficulty",
+    "cuisineType": "Cuisine Type",
+    "tabs": {
+      "overview": "Overview",
+      "ingredients": "Ingredients",
+      "instructions": "Instructions"
+    },
+    "sections": {
+      "description": "Description",
+      "ingredients": "Ingredients",
+      "instructions": "Instructions"
+    },
+    "emptyStates": {
+      "noDescription": "No description provided",
+      "noIngredients": "No ingredients added",
+      "noInstructions": "No instructions provided"
+    }
+  },
+    "recipeCreate": {
+      "title": "Create Recipe",
+      "createRecipe": "Create Recipe",
+      "creating": "Creating...",
+      "createNewRecipe": "Create New Recipe",
+      "addIngredient": "Add Ingredient",
+    "tabs": {
+      "details": "Details",
+      "ingredients": "Ingredients",
+      "instructions": "Instructions"
+    },
+    "fields": {
+      "recipeName": "Recipe Name",
+      "cuisineType": "Cuisine Type",
+      "recipeImage": "Recipe Image",
+      "difficultyLevel": "Difficulty Level",
+      "prepTime": "Prep Time (min)",
+      "cookTime": "Cook Time (min)",
+      "servings": "Servings",
+      "description": "Description",
+      "instructions": "Instructions"
+    },
+    "placeholders": {
+      "enterRecipeName": "Enter recipe name",
+      "cuisineExample": "e.g., Italian, Vietnamese, Asian",
+      "recipeDescription": "Recipe description...",
+      "uploadImage": "Upload recipe image"
+    },
+    "difficulty": {
+      "select": "Select difficulty level",
+      "easy": "Easy",
+      "medium": "Medium",
+      "hard": "Hard"
+    },
+    "validation": {
+      "nameRequired": "Recipe name is required",
+      "invalidDifficulty": "Difficulty must be easy, medium, or hard",
+      "instructionsRequired": "Instructions are required",
+      "invalidPrepTime": "Prep time must be between 0 and 1440 minutes",
+      "invalidCookTime": "Cook time must be between 0 and 1440 minutes",
+      "invalidServings": "Servings must be between 1 and 100",
+      "atLeastOneIngredient": "At least one ingredient is required",
+      "selectIngredient": "Please select an ingredient",
+      "quantityGreaterThanZero": "Quantity must be greater than 0",
+      "unitRequired": "Unit is required",
+      "validationError": "Form validation error"
+    },
+    "success": "Recipe created successfully",
+    "error": "Failed to create recipe. Please try again."
+    },
+    "recipeEdit": {
+      "title": "Edit Recipe",
+      "updateRecipe": "Update Recipe",
+      "updating": "Updating...",
+      "editRecipe": "Edit Recipe: {{name}}",
+      "success": "Recipe updated successfully",
+      "error": "Failed to update recipe. Please try again."
+    },
+    "ingredientsTable": {
+      "title": "Recipe Ingredients",
+      "headers": {
+        "ingredient": "Ingredient",
+        "quantity": "Quantity",
+        "unit": "Unit"
+      },
+      "placeholders": {
+        "selectIngredient": "Select ingredient...",
+        "unit": "Unit"
+      },
+      "emptyState": "No ingredients added yet. Click \"Add Ingredient\" to start.",
+      "addIngredient": "Add Ingredient"
+    },
+    "instructionsTable": {
+      "title": "Cooking Instructions",
+      "emptyState": "No instructions added yet. Click \"Add Step\" to start.",
+      "addStep": "Add Step",
+      "placeholder": "Enter step instruction..."
+    },
+    "ingredientAutocomplete": {
+      "searchPlaceholder": "Search ingredient...",
+      "noIngredientFound": "No ingredient found.",
+      "noUnit": "No unit"
+    }
+  },
+  "settings": {
+    "pageTitle": "Settings",
+    "profile": "Profile Settings",
+    "email": "Email",
+    "notifications": {
+      "title": "Notifications",
+      "email": "Email notifications",
+      "newUser": "New user alerts",
+      "weeklyReport": "Weekly reports"
+    }
+  },
+  "gmail": {
+    "title": "Gmail Integration",
+    "connectionMethods": "Gmail API Connection",
+    "reconnect": "Reconnect / Switch Account",
+    "connect": "Connect Gmail Account",
+    "errorLoading": "Failed to load Gmail connection status",
+    "status": "Connection Status",
+    "connected": "Connected",
+    "notConnected": "Not Connected",
+    "connectedAccount": "Connected Account",
+    "tokenExpires": "Token expires at",
+    "refresh": "Refresh Status",
+    "description": "The Gmail API token needs to be refreshed periodically. If the system fails to send emails, please check the connection status here and reconnect if necessary."
+  },
+  "reports": {
+    "title": "Reports",
+    "growthTitle": "User & Meal Plan Growth",
+    "recipeCategories": "Recipe Categories",
+    "monthlyActiveUsers": "Monthly Active Users",
+    "months": {
+      "jan": "Jan",
+      "feb": "Feb",
+      "mar": "Mar",
+      "apr": "Apr",
+      "may": "May",
+      "jun": "Jun"
+    },
+    "mealTypes": {
+      "breakfast": "Breakfast",
+      "lunch": "Lunch",
+      "dinner": "Dinner",
+      "snacks": "Snacks"
+    }
+  },
+  "ingredients": {
+    "title": "Ingredients",
+    "management": "Ingredient Management",
+    "add": "Add Ingredient",
+    "searchPlaceholder": "Search ingredients...",
+    "loading": "Loading ingredients...",
+    "errorLoading": "Error loading ingredients. Please try again.",
+    "notFound": "No ingredients found.",
+    "noImage": "No Image",
+    "confirmDelete": "Are you sure you want to delete {{name}}?",
+    "deleteSuccess": "Ingredient deleted",
+    "createTitle": "Create Ingredient",
+    "editTitle": "Edit Ingredient",
+    "detailTitle": "Ingredient Details",
+    "backToIngredients": "Back to Ingredients",
+    "create": "Create Ingredient",
+    "createSuccess": "Ingredient created successfully",
+    "createError": "Failed to create ingredient",
+    "updateSuccess": "Ingredient updated successfully",
+    "updateError": "Failed to update ingredient",
+    "validation": {
+      "nameRequired": "Ingredient name is required",
+      "categoryRequired": "Category is required"
+    },
+    "addIngredient": "Add New Ingredient",
+    "editIngredient": "Edit Ingredient",
+    "ingredientDetails": "Ingredient Details",
+    "edit": "Edit",
+    "cancel": "Cancel",
+    "save": "Save",
+    "saving": "Saving...",
+    "name": "Name",
+    "category": "Category",
+    "unit": "Common Unit",
+    "storage": "Storage Temperature",
+    "shelfLife": "Shelf Life",
+    "description": "Description",
+    "image": "Image",
+    "uncategorized": "Uncategorized",
+    "selectCategory": "Select category",
+    "selectStorage": "Select storage temperature",
+    "frozen": "Frozen",
+    "refrigerated": "Refrigerated",
+    "roomTemp": "Room Temperature",
+    "namePlaceholder": "Ingredient name",
+    "descriptionPlaceholder": "Describe this ingredient...",
+    "categories": {
+      "protein": "Protein",
+      "vegetables": "Vegetables",
+      "fruits": "Fruits",
+      "grains": "Grains",
+      "dairy": "Dairy",
+      "oils": "Oils, Fats",
+      "spices": "Spices"
+    },
+    "updateSuccess": "Ingredient updated successfully",
+    "createFailed": "Failed to create ingredient",
+    "updateFailed": "Failed to update ingredient",
+    "deleteSuccess": "Ingredient deleted successfully",
+    "confirmDelete": "Are you sure you want to delete ingredient \"{{name}}\"?"
+  }
+}

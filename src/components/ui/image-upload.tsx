@@ -1,5 +1,6 @@
 import { useState, useRef } from 'react';
 import { Upload, X, Image as ImageIcon } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Button } from './button';
 import { Label } from './label';
 
@@ -17,20 +18,24 @@ interface ImageUploadProps {
 export function ImageUpload({
   value,
   onChange,
-  label = "Upload Image",
-  placeholder = "Click to upload or drag and drop",
+  label: propLabel,
+  placeholder: propPlaceholder,
   accept = "image/*",
   maxSize = 5 * 1024 * 1024,
   error,
   className = ""
 }: ImageUploadProps) {
+  const { t } = useTranslation();
+  const label = propLabel || t('components.imageUpload.label');
+  const placeholder = propPlaceholder || t('components.imageUpload.placeholder');
+
   const [preview, setPreview] = useState<string | null>(null);
   const [dragActive, setDragActive] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleFileSelect = (file: File) => {
     if (file.size > maxSize) {
-      alert(`File size must be less than ${maxSize / (1024 * 1024)}MB`);
+      alert(t('components.imageUpload.fileSizeError', { size: maxSize / (1024 * 1024) }));
       return;
     }
 
@@ -141,7 +146,7 @@ export function ImageUpload({
                 {placeholder}
               </p>
               <p className="text-xs text-muted-foreground mt-1">
-                PNG, JPG, JPEG up to {maxSize / (1024 * 1024)}MB
+                {t('components.imageUpload.maxSizeInfo', { size: maxSize / (1024 * 1024) })}
               </p>
             </div>
           </div>

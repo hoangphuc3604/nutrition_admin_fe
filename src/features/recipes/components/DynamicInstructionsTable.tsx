@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Plus, Trash2, GripVertical } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
@@ -36,6 +37,7 @@ interface SortableStepProps {
   setHoveredRow: (id: string | null) => void;
   onUpdateStep: (index: number, content: string) => void;
   onDeleteStep: (index: number) => void;
+  t: (key: string) => string;
 }
 
 function SortableStep({
@@ -45,6 +47,7 @@ function SortableStep({
   setHoveredRow,
   onUpdateStep,
   onDeleteStep,
+  t,
 }: SortableStepProps) {
   const {
     attributes,
@@ -89,7 +92,7 @@ function SortableStep({
         <Input
           value={step.content}
           onChange={(e) => onUpdateStep(index, e.target.value)}
-          placeholder="Nhập bước thực hiện..."
+          placeholder={t('recipes.instructionsTable.placeholder')}
           className="shadow-none focus-visible:ring-0 px-0"
         />
       </div>
@@ -111,6 +114,7 @@ function SortableStep({
 }
 
 export function DynamicInstructionsTable({ steps, onChange }: DynamicInstructionsTableProps) {
+  const { t } = useTranslation();
   const [hoveredRow, setHoveredRow] = useState<string | null>(null);
 
   const addStep = () => {
@@ -153,7 +157,7 @@ export function DynamicInstructionsTable({ steps, onChange }: DynamicInstruction
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <h4 className="font-semibold text-foreground">Cooking Instructions</h4>
+        <h4 className="font-semibold text-foreground">{t('recipes.instructionsTable.title')}</h4>
       </div>
 
       <DndContext
@@ -165,7 +169,7 @@ export function DynamicInstructionsTable({ steps, onChange }: DynamicInstruction
           <SortableContext items={steps.map(step => step.id)} strategy={verticalListSortingStrategy}>
             {steps.length === 0 ? (
               <div className="py-8 text-center text-muted-foreground">
-                No instructions added yet. Click "Add Step" to start.
+                {t('recipes.instructionsTable.emptyState')}
               </div>
             ) : (
               steps.map((step, index) => (
@@ -177,6 +181,7 @@ export function DynamicInstructionsTable({ steps, onChange }: DynamicInstruction
                   setHoveredRow={setHoveredRow}
                   onUpdateStep={updateStep}
                   onDeleteStep={removeStep}
+                  t={t}
                 />
               ))
             )}
@@ -191,7 +196,7 @@ export function DynamicInstructionsTable({ steps, onChange }: DynamicInstruction
         className="w-full border-dashed"
       >
         <Plus className="h-4 w-4 mr-2" />
-        Add Step
+        {t('recipes.instructionsTable.addStep')}
       </Button>
     </div>
   );
