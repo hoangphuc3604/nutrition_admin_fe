@@ -1,16 +1,17 @@
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
-import { 
-  LayoutDashboard, 
-  Users, 
-  UtensilsCrossed, 
-  Carrot, 
-  BarChart3, 
+import {
+  LayoutDashboard,
+  Users,
+  UtensilsCrossed,
+  Carrot,
+  BarChart3,
   Settings,
   LogOut,
   ChefHat,
   Menu,
   X,
-  Mail
+  Mail,
+  Key
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useSidebarStore } from '@/stores/sidebarStore';
@@ -27,6 +28,7 @@ const getMainNavItems = (t: any) => [
 
 const getSecondaryNavItems = (t: any) => [
   { title: t('navigation.reports'), icon: BarChart3, path: '/reports' },
+  { title: t('navigation.apiKeys'), icon: Key, path: '/api-keys' },
   { title: t('navigation.gmailAuth'), icon: Mail, path: '/gmail-auth' },
   { title: t('navigation.settings'), icon: Settings, path: '/settings' },
 ];

@@ -19,6 +19,7 @@ import { IngredientEditPage } from "./features/ingredients/IngredientEditPage";
 import { ReportsPage } from "./features/reports/ReportsPage";
 import { SettingsPage } from "./features/settings/SettingsPage";
 import { GmailAuthPage } from "./features/settings/GmailAuthPage";
+import { ApiKeysPage } from "./features/api-keys/ApiKeysPage";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import NotFound from "./pages/NotFound";
 import { queryClient } from "./lib/queryClient";
@@ -124,6 +125,14 @@ const App = () => (
             element={
               <ProtectedRoute>
                 <ReportsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/api-keys"
+            element={
+              <ProtectedRoute>
+                <ApiKeysPage />
               </ProtectedRoute>
             }
           />

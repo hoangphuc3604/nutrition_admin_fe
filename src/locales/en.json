@@ -57,6 +57,7 @@
     "recipes": "Recipes",
     "ingredients": "Ingredients",
     "reports": "Reports",
+    "apiKeys": "API Keys",
     "gmailAuth": "Gmail Auth",
     "settings": "Settings",
     "logout": "Logout",
