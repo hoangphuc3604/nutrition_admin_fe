@@ -3,8 +3,40 @@ export interface InstructionStep {
   content: string;
 }
 
-export function parseInstructionsToSteps(instructions: string): InstructionStep[] {
-  if (!instructions || instructions.trim() === '') {
+interface ApiInstruction {
+  instruction?: string;
+  step_number?: number;
+  image_url?: string | null;
+  timer_minutes?: number | null;
+  ingredients_used?: string[];
+}
+
+/**
+ * Parse instructions from API (which can be either a string or an array of objects)
+ * into an array of InstructionStep objects
+ */
+export function parseInstructionsToSteps(instructions: string | ApiInstruction[] | undefined | null): InstructionStep[] {
+  // Handle null/undefined/empty
+  if (!instructions) {
+    return [];
+  }
+
+  // If it's already an array (API response format), convert it
+  if (Array.isArray(instructions)) {
+    return instructions
+      .filter((step): step is ApiInstruction => step && typeof step === 'object' && 'instruction' in step)
+      .map((step, index) => ({
+        id: `step-${step.step_number ?? index}`,
+        content: step.instruction || ''
+      }));
+  }
+
+  // If it's a string (legacy format), process as before
+  if (typeof instructions !== 'string') {
+    return [];
+  }
+
+  if (instructions.trim() === '') {
     return [];
   }
 

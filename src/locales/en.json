@@ -18,6 +18,7 @@
     "of": "of",
     "items": "items",
     "noData": "No data found",
+    "loadMore": "Load more",
     "confirm": "Confirm",
     "yes": "Yes",
     "no": "No",
@@ -61,7 +62,7 @@
     "gmailAuth": "Gmail Auth",
     "settings": "Settings",
     "logout": "Logout",
-    "analytics": "Analytics"
+    "analytics": "Configuration"
   },
   "header": {
     "search": "Search...",

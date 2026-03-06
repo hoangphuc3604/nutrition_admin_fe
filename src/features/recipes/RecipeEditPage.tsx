@@ -63,15 +63,42 @@ export function RecipeEditPage() {
     ingredients: [],
   });
 
+  const [ingredientPage, setIngredientPage] = useState(1);
+  const [ingredientHasMore, setIngredientHasMore] = useState(true);
+  const [allIngredients, setAllIngredients] = useState<AvailableIngredient[]>([]);
+
   const { data: recipe, isLoading: recipeLoading } = useRecipe(id!);
-  const { data: ingredientsData } = useIngredients({ limit: 100 });
+  const { data: ingredientsData } = useIngredients({ page: ingredientPage, limit: 100 });
   const updateRecipe = useUpdateRecipe();
 
-  const availableIngredients = (ingredientsData?.ingredients || []) as AvailableIngredient[];
+  useEffect(() => {
+    if (ingredientsData?.ingredients) {
+      setAllIngredients(prev => {
+        const newIngredients = ingredientsData.ingredients.filter(
+          ing => !prev.some(existing => existing.id === ing.id)
+        );
+        return [...prev, ...newIngredients];
+      });
+      if (ingredientsData.pagination) {
+        setIngredientHasMore(ingredientsData.pagination.hasNext);
+      }
+    }
+  }, [ingredientsData]);
+
+  const availableIngredients = allIngredients as AvailableIngredient[];
+
+  const loadMoreIngredients = () => {
+    if (ingredientHasMore) {
+      setIngredientPage(prev => prev + 1);
+    }
+  };
 
   useEffect(() => {
     if (recipe) {
-      const instructionSteps = parseInstructionsToSteps(recipe.instructions || '');
+      // Parse instructions - API returns array format, function handles both string and array
+      const instructionSteps = parseInstructionsToSteps(recipe.instructions);
+      const instructionsString = formatStepsToInstructions(instructionSteps);
+
       setFormData({
         name: recipe.name,
         description: recipe.description || '',
@@ -83,7 +110,7 @@ export function RecipeEditPage() {
         prep_time_minutes: recipe.prep_time_minutes || 0,
         cook_time_minutes: recipe.cook_time_minutes || 0,
         servings: recipe.servings || 1,
-        instructions: recipe.instructions || '',
+        instructions: instructionsString,
         instructionSteps,
         ingredients: recipe.ingredients?.map((ri: any) => ({
           id: `ingredient-${ri.ingredientId}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
@@ -395,6 +422,8 @@ export function RecipeEditPage() {
                   items={formData.ingredients}
                   onChange={handleIngredientsChange}
                   availableIngredients={availableIngredients}
+                  onLoadMoreIngredients={loadMoreIngredients}
+                  hasMoreIngredients={ingredientHasMore}
                 />
               </TabsContent>
 

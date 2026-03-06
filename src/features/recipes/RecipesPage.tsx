@@ -35,9 +35,9 @@ export function RecipesPage() {
     navigate(`/recipes/${recipeId}/edit`);
   };
 
-  const handleCreate = () => {
-    navigate('/recipes/create');
-  };
+  // const handleCreate = () => {
+  //   navigate('/recipes/create');
+  // };
 
   const handleDelete = async (recipeId: string) => {
     if (window.confirm(t('recipes.confirmDelete'))) {
@@ -54,10 +54,10 @@ export function RecipesPage() {
       <Card className="shadow-sm">
         <CardHeader className="flex flex-row items-center justify-between pb-4">
           <CardTitle className="text-2xl font-bold">{t('recipes.management')}</CardTitle>
-          <Button className="gap-2" onClick={handleCreate}>
+          {/* <Button className="gap-2" onClick={handleCreate}>
             <Plus className="h-4 w-4" />
             {t('recipes.addRecipe')}
-          </Button>
+          </Button> */}
         </CardHeader>
         <CardContent>
           <div className="flex items-center justify-between mb-6">

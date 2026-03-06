@@ -37,6 +37,8 @@ interface IngredientAutocompleteProps {
   onSelect: (ingredient: Ingredient | null) => void;
   placeholder?: string;
   disabled?: boolean;
+  onLoadMore?: () => void;
+  hasMore?: boolean;
 }
 
 export function IngredientAutocomplete({
@@ -44,7 +46,9 @@ export function IngredientAutocomplete({
   value,
   onSelect,
   placeholder,
-  disabled = false
+  disabled = false,
+  onLoadMore,
+  hasMore
 }: IngredientAutocompleteProps) {
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
@@ -94,6 +98,22 @@ export function IngredientAutocomplete({
                 </CommandItem>
               ))}
             </CommandGroup>
+            {hasMore && (
+              <div className="p-2 border-t">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="w-full"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (onLoadMore) onLoadMore();
+                  }}
+                >
+                  {t('common.loadMore')}
+                </Button>
+              </div>
+            )}
           </CommandList>
         </Command>
       </PopoverContent>

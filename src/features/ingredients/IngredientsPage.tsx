@@ -19,7 +19,7 @@ export function IngredientsPage() {
   const { t } = useTranslation();
 
   const { data: ingredientsData, isLoading, error } = useIngredients({
-    limit: 100,
+    limit: 10,
     search: searchQuery || undefined
   });
   const deleteIngredient = useDeleteIngredient();
@@ -99,7 +99,6 @@ export function IngredientsPage() {
                   <th className="text-left py-4 px-4 text-sm font-semibold text-muted-foreground">{t('common.image')}</th>
                   <th className="text-left py-4 px-4 text-sm font-semibold text-muted-foreground">{t('ingredients.name')}</th>
                   <th className="text-left py-4 px-4 text-sm font-semibold text-muted-foreground">{t('ingredients.category')}</th>
-                  <th className="text-left py-4 px-4 text-sm font-semibold text-muted-foreground">{t('ingredients.unit')}</th>
                   <th className="text-left py-4 px-4 text-sm font-semibold text-muted-foreground">{t('ingredients.storage')}</th>
                   <th className="text-left py-4 px-4 text-sm font-semibold text-muted-foreground">{t('common.actions')}</th>
                 </tr>
@@ -107,7 +106,7 @@ export function IngredientsPage() {
               <tbody>
                 {ingredients.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="py-8 text-center text-muted-foreground">
+                    <td colSpan={5} className="py-8 text-center text-muted-foreground">
                       {t('ingredients.notFound')}
                     </td>
                   </tr>
@@ -132,7 +131,6 @@ export function IngredientsPage() {
                       <td className="py-4 px-4">
                         <Badge variant="secondary">{item.category || t('ingredients.uncategorized')}</Badge>
                       </td>
-                      <td className="py-4 px-4 text-sm text-muted-foreground">{item.common_unit || t('common.na')}</td>
                       <td className="py-4 px-4 text-sm text-muted-foreground capitalize">
                         {item.storage_temperature ? t(`ingredients.${item.storage_temperature}`) : t('common.na')}
                       </td>

@@ -64,14 +64,14 @@ const App = () => (
               </ProtectedRoute>
             }
           />
-          <Route
+          {/* <Route
             path="/recipes/create"
             element={
               <ProtectedRoute>
                 <RecipeCreatePage />
               </ProtectedRoute>
             }
-          />
+          /> */}
           <Route
             path="/recipes/:id"
             element={

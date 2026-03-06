@@ -18,6 +18,7 @@
     "of": "của",
     "items": "mục",
     "noData": "Không tìm thấy dữ liệu",
+    "loadMore": "Tải thêm",
     "confirm": "Xác nhận",
     "yes": "Có",
     "no": "Không",
@@ -61,7 +62,7 @@
     "gmailAuth": "Xác thực Gmail",
     "settings": "Cài đặt",
     "logout": "Đăng xuất",
-    "analytics": "Phân tích"
+    "analytics": "Cấu hình"
   },
   "header": {
     "search": "Tìm kiếm...",

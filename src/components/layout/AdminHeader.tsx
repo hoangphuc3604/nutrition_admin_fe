@@ -1,4 +1,4 @@
-import { Bell, Search, Menu, X } from 'lucide-react';
+import { Search, Menu, X } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -10,11 +10,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { useSidebarStore } from '@/stores/sidebarStore';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { useTranslation } from 'react-i18next';
+import { useAuthStore } from '@/stores/authStore';
 
 interface AdminHeaderProps {
   title: string;
@@ -23,6 +23,7 @@ interface AdminHeaderProps {
 export function AdminHeader({ title }: AdminHeaderProps) {
   const { isCollapsed, isMobileOpen, setMobileOpen } = useSidebarStore();
   const { t } = useTranslation();
+  const user = useAuthStore((state) => state.user);
 
   return (
     <header className={cn(
@@ -51,12 +52,6 @@ export function AdminHeader({ title }: AdminHeaderProps) {
 
       <div className="flex items-center gap-3 ml-4">
         <LanguageSwitcher />
-        <Button variant="ghost" size="icon" className="relative">
-          <Bell className="h-5 w-5" />
-          <Badge className="absolute -top-1 -right-1 h-5 w-5 p-0 flex items-center justify-center text-xs">
-            3
-          </Badge>
-        </Button>
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -66,8 +61,8 @@ export function AdminHeader({ title }: AdminHeaderProps) {
                 <AvatarFallback>AD</AvatarFallback>
               </Avatar>
               <div className="hidden md:block text-left">
-                <p className="text-sm font-medium">Admin User</p>
-                <p className="text-xs text-muted-foreground">admin@smartmeal.com</p>
+                <p className="text-sm font-medium">{user?.email || 'Admin'}</p>
+                <p className="text-xs text-muted-foreground">{user?.email || 'admin@smartmeal.com'}</p>
               </div>
             </Button>
           </DropdownMenuTrigger>

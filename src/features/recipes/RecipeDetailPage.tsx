@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useRecipe } from '@/api/recipes.api';
 import { Recipe } from '@/types';
 import { useTranslation } from 'react-i18next';
+import { parseInstructionsToSteps } from '@/lib/recipe-instructions.utils';
 
 export function RecipeDetailPage() {
   const { t } = useTranslation();
@@ -202,20 +203,29 @@ export function RecipeDetailPage() {
           </TabsContent>
 
           <TabsContent value="instructions" className="space-y-6">
-            {recipe.instructions && (
+            {recipe.instructions && recipe.instructions.length > 0 && (
               <Card>
                 <CardHeader>
                   <CardTitle>{t('recipes.recipeDetail.sections.instructions')}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="whitespace-pre-wrap text-muted-foreground">
-                    {recipe.instructions}
-                  </p>
+                  <div className="space-y-4">
+                    {parseInstructionsToSteps(recipe.instructions).map((step, index) => (
+                      <div key={step.id || index} className="flex gap-4">
+                        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold">
+                          {index + 1}
+                        </div>
+                        <p className="text-muted-foreground flex-1 pt-1">
+                          {step.content}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
                 </CardContent>
               </Card>
             )}
 
-            {!recipe.instructions && (
+            {(!recipe.instructions || recipe.instructions.length === 0) && (
               <Card>
                 <CardContent className="py-8 text-center">
                   <p className="text-muted-foreground">{t('recipes.recipeDetail.emptyStates.noInstructions')}</p>

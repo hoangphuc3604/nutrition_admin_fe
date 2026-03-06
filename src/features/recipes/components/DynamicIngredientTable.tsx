@@ -60,6 +60,8 @@ interface DynamicIngredientTableProps {
   items: IngredientItem[];
   onChange: (items: IngredientItem[]) => void;
   availableIngredients: AvailableIngredient[];
+  onLoadMoreIngredients?: () => void;
+  hasMoreIngredients?: boolean;
 }
 
 const units = ['gram', 'kg', 'piece', 'tbsp', 'tsp', 'cup', 'ml', 'liter'];
@@ -74,6 +76,8 @@ interface SortableItemProps {
   onIngredientSelect: (itemId: string, ingredient: AvailableIngredient | null) => void;
   onUpdateItem: (itemId: string, field: keyof IngredientItem, value: string | number | boolean) => void;
   onDeleteItem: (itemId: string) => void;
+  onLoadMoreIngredients?: () => void;
+  hasMoreIngredients?: boolean;
   t: any;
 }
 
@@ -85,6 +89,8 @@ function SortableItem({
   onIngredientSelect,
   onUpdateItem,
   onDeleteItem,
+  onLoadMoreIngredients,
+  hasMoreIngredients,
   t,
 }: SortableItemProps) {
   const {
@@ -130,6 +136,8 @@ function SortableItem({
                         value={item.ingredientId}
                         onSelect={(ing) => onIngredientSelect(item.id, ing)}
                         placeholder={t('recipes.ingredientsTable.placeholders.selectIngredient')}
+                        onLoadMore={onLoadMoreIngredients}
+                        hasMore={hasMoreIngredients}
                       />
       </td>
       <td className="py-3 px-3">
@@ -176,7 +184,7 @@ function SortableItem({
   );
 }
 
-export function DynamicIngredientTable({ items, onChange, availableIngredients }: DynamicIngredientTableProps) {
+export function DynamicIngredientTable({ items, onChange, availableIngredients, onLoadMoreIngredients, hasMoreIngredients }: DynamicIngredientTableProps) {
   const { t } = useTranslation();
   const [hoveredRow, setHoveredRow] = useState<string | null>(null);
 
@@ -292,6 +300,8 @@ export function DynamicIngredientTable({ items, onChange, availableIngredients }
                       onIngredientSelect={handleIngredientSelect}
                       onUpdateItem={updateRow}
                       onDeleteItem={removeRow}
+                      onLoadMoreIngredients={onLoadMoreIngredients}
+                      hasMoreIngredients={hasMoreIngredients}
                       t={t}
                     />
                   ))
